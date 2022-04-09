@@ -1,0 +1,100 @@
+- Abstract [S.1] Deutsch
+- Abstract [S.1] Englisch
+- Einleitung
+	- Relevanz [S.1-2]
+	- Zielsetzung [S.1]
+	- Abbildung der Applikation
+	- Planung
+		- Recherchephase (Wissenschaftliche Daten (Geschwindigkeiten etc.))
+		- Architektur
+		- Anpassung Projekt Outerspace
+			- Physik
+			- Kollisionen
+			- 2D Ui-System
+			- Schrift
+		- UI Sprache(Eingabeparameter buttons, UI tool implemetieren)
+			- - Abstract [S.1] Deutsch
+- Abstract [S.1] Englisch
+- Einleitung
+	- Relevanz [S.1-2] (Zeitungsartikel, Bücher???)
+	- Zielsetzung [S.1]
+	- Abbildung der Applikation
+	- Planung
+		- Recherchephase (Wissenschaftliche Daten (Geschwindigkeiten etc.))
+		- Architektur
+		- Anpassung Projekt Outerspace
+			- Physik
+			- Kollisionen
+			- 2D Ui-System
+			- Schrift
+		- UI Sprache(Eingabeparameter buttons, UI tool implemetieren)
+			- Difinition der Sprache (agile Programmierung)
+			- Tests
+		- Ui Layout
+			- Geplante Seiten (Aufzählung)
+			- virtueller Prototyp			
+		- Parallelisierung
+			- Kollisionssystem
+			- Bewegung der Agenten
+			- Ladebildschirm
+		- Ablauf der Application (Struktogramm)		
+- Hauptteil		
+	- Entwicklung
+		- Anpassung der Grundstruktur (Projekt Outerspace)
+			- Kamera
+			- Zeitsystem
+			- Objektphysik
+		- UI Sprache ??? (wenn noch Zeit) 
+			- Lexer
+			- Parser
+			- Typechecker
+		- UI-System
+		- Agenten
+			- Eigenschaften
+			- Verhalten
+		- Configfile (json)		
+		- Parallelisierung
+	- Analyze
+		- Performance
+		
+- Fazit
+	- Ergebnisse
+		- paralleles/ nicht paralleles Kollisionssystem
+	- Erkenntnisse
+	- Ausblick der Sprache (agile Programmierung)
+			- Tests
+		- Ui Layout
+			- Geplante Seiten (Aufzählung)
+			- virtueller Prototyp			
+		- Parallelisierung
+			- Kollisionssystem
+			- Bewegung der Agenten
+			- Ladebildschirm
+		- Ablauf der Application (Struktogramm)		
+- Hauptteil		
+	- Entwicklung
+		- Anpassung der Grundstruktur (Projekt Outerspace)
+			- Kamera
+			- Zeitsystem
+			- Objektphysik
+		- Kollisionssystem
+		- UI Sprache ??? (wenn noch Zeit) 
+			- Lexer
+			- Parser
+			- Typechecker
+		- UI-System
+		- Agenten
+			- Eigenschaften
+			- Verhalten
+		- Configfile (json)		
+		- Parallelisierung
+	- Analyze
+		- Performance
+		
+- Fazit
+	- Ergebnisse
+		- paralleles/ nicht paralleles Kollisionssystem
+	- Erkenntnisse
+	- Ausblick
+	
+	

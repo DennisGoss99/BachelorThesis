@@ -30,6 +30,7 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
+import kotlinx.coroutines.*
 
 class Scene(private val window: GameWindow) {
 
@@ -52,7 +53,7 @@ class Scene(private val window: GameWindow) {
     private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(1f), Vector2f(0.0f, 0f))
     //private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
 
-    private val frameCount = GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(0.0f, -0.0f), 0f)
+    private val frameCount = GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(1f, -0.0f), 0f)
     private val test = Text(hashMapOf(fonts["Calibri"]!! to listOf(frameCount,GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(1.0f, 0f)),
         GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(0.0f, -0.2f)))))
 
@@ -64,19 +65,19 @@ class Scene(private val window: GameWindow) {
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
     private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
 
-    private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
+    //private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
 
-    private val renderables = RenderableContainer( hashMapOf(
-        "spaceShip" to spaceship,
-        "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
-    ))
+//    private val renderables = RenderableContainer( hashMapOf(
+//        "spaceShip" to spaceship,
+//        "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
+//    ))
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-    private val pointLightHolder = PointLightHolder( mutableListOf(
-        PointLight(Vector3f(0f,4f,5f), Color(150 * 8 ,245 * 8,255 * 8).toVector3f(), renderables["spaceShipInside"])
-        //PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f))
-    ))
+//    private val pointLightHolder = PointLightHolder( mutableListOf(
+//        PointLight(Vector3f(0f,4f,5f), Color(150 * 8 ,245 * 8,255 * 8).toVector3f(), renderables["spaceShipInside"])
+//        //PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f))
+//    ))
 
     private val spotLightHolder = SpotLightHolder( mutableListOf(
 //        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,1f),  50f, 70f),
@@ -108,10 +109,6 @@ class Scene(private val window: GameWindow) {
 
     private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, listOf(RenderCategory.PressToPlay), Vector2f(0.4f,0.4f))
 
-
-
-
-
     private val loadingBarGuiElement = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 2, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
     private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
     private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
@@ -124,7 +121,7 @@ class Scene(private val window: GameWindow) {
     private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
     private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
 
-    private val cursor = GuiElement("assets/textures/gui/mouse-cursor.png" , 2, renderAlways, Vector2f(0.05f,0.05f))
+    private val cursor = GuiElement("assets/textures/gui/mouse-cursor.png" , 2, renderStartUpScreen, Vector2f(0.05f,0.05f))
 
     private val gui = Gui( hashMapOf(
         "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
@@ -151,16 +148,16 @@ class Scene(private val window: GameWindow) {
     ))
 
 
-    /*
+
     private val earth = Planet(
         "earth",
-        1f,149f,0.0001f,0.00f,Vector3f(2f,20f,0f),
+        1f,0f,0f,0.00f, Vector3f(2f,20f,0f),
         MapGeneratorMaterials.earthMaterial,
         Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
         null,
         listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), MapGeneratorMaterials.moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
+ /*
     private val mars = Planet(
         "mars",
         0.6f,227f,0.0002f,0.1f,Vector3f(0f,40f,0f),
@@ -210,13 +207,13 @@ class Scene(private val window: GameWindow) {
         MapGeneratorMaterials.sunMaterial,
         Atmosphere(listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson), 1.2f, MapGeneratorMaterials.sunAtmosphereMaterial),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+*/
 
-    private var solarSystem = SolarSystem(emptyList(), emptyList(), emptyList())
-    */
 
     //scene setup
     init {
-        
+     runBlocking {
+
         //initial opengl state
         glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
@@ -226,6 +223,10 @@ class Scene(private val window: GameWindow) {
 
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
+        GlobalScope.launch {
+            delay(1000)
+            gameState = mutableListOf(RenderCategory.FirstPerson)
+        }
 
 
 
@@ -265,6 +266,7 @@ class Scene(private val window: GameWindow) {
 
 
     }
+    }
 
     var frameCounter = 0
     var lastT = 0f
@@ -283,28 +285,33 @@ class Scene(private val window: GameWindow) {
             frameCounter = 0
         }
         frameCounter ++
+
+
 //
 //        //-- main Shader
 //        pointLightHolder.bind(mainShader,"pointLight")
 //        spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
 //
-//        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+        mainShader.use()
+        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 //
-//        if(t-lastTime > 0.01f)
-//            mainShader.setUniform("time", t)
+        if(t-lastTime > 0.01f)
+            mainShader.setUniform("time", t)
 //
-//        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+
+
+        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
 //        renderables.render(gameState, mainShader)
-//
-//        solarSystem.renderSpaceObjects(mainShader)
-//
-//
-//
-//        //-- SkyBoxShader
-//
-//        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//        skyboxRenderer.render(skyBoxShader)
-//        //--
+
+        earth.render(mainShader)
+
+
+
+        //-- SkyBoxShader
+
+        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+        skyboxRenderer.render(skyBoxShader)
+        //--
 //
 //
 //        //-- Particle
@@ -327,14 +334,15 @@ class Scene(private val window: GameWindow) {
         test.render(renderAlways, fontShader)
         //--
 
+
+
         if(t-lastTime > 0.01f)
             lastTime = t
     }
 
-
-
     fun update(dt: Float, t: Float) {
 
+        earth.orbit()
 //        when(speedMarker.state){
 //            1 -> solarSystem.update(dt,t)
 //            2 -> {
@@ -360,8 +368,8 @@ class Scene(private val window: GameWindow) {
 //        loadingBarGuiElement3.update(dt,t)
 //
 //
-//        val rotationMultiplier = 30f
-//        val translationMultiplier = 35.0f
+        val rotationMultiplier = 30f
+        val translationMultiplier = 35.0f
 //
 //        if (window.getKeyState(GLFW_KEY_Q)) {
 //            movingObject.rotateLocal(rotationMultiplier * dt, 0.0f, 0.0f)
@@ -372,14 +380,14 @@ class Scene(private val window: GameWindow) {
 //        }
 //
 //
-//        if (window.getKeyState ( GLFW_KEY_W) && !window.getKeyState ( GLFW_KEY_T)) {
-//            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-//            spaceship.activateMainThrusters()
-//        }
-//
-//        if (window.getKeyState ( GLFW_KEY_S)) {
-//            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
-//        }
+        if (window.getKeyState ( GLFW_KEY_W) && !window.getKeyState ( GLFW_KEY_T)) {
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
+            //spaceship.activateMainThrusters()
+        }
+
+        if (window.getKeyState ( GLFW_KEY_S)) {
+            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
+        }
 //
 //        if (window.getKeyState ( GLFW_KEY_G)) {
 //            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 10))
@@ -515,17 +523,18 @@ class Scene(private val window: GameWindow) {
         // sets cursor position Vector2f(openGlMouseXPos / openGlMouseYPos)
         cursor.setPosition(Vector2f(((mouseXPos / window.windowWidth) * -2) +1,((mouseYPos / window.windowHeight) * 2) -1))
 
-//        if(!gameState.contains(RenderCategory.Zoom))
-//            when{
-//                gameState.contains(RenderCategory.FirstPerson) ->{
-//                    camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
-//
-//                }
-//                gameState.contains(RenderCategory.ThirdPerson) -> {
-//                    camera.rotateAroundPoint((oldYpos-ypos).toFloat() * 0.002f , (oldXpos-xpos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
-//                }
-//            }
-//
+        if(!gameState.contains(RenderCategory.Zoom))
+            when{
+                gameState.contains(RenderCategory.FirstPerson) ->{
+                    camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
+
+                }
+                gameState.contains(RenderCategory.ThirdPerson) -> {
+                    camera.rotateAroundPoint((oldYpos-ypos).toFloat() * 0.002f , (oldXpos-xpos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
+                }
+            }
+
+
         oldXpos = xpos
         oldYpos = ypos
     }
@@ -549,7 +558,7 @@ class Scene(private val window: GameWindow) {
 
     fun cleanup() {
 
-        renderables.cleanup()
+        //renderables.cleanup()
         gui.cleanup()
         fontShader.cleanup()
         mainShader.cleanup()

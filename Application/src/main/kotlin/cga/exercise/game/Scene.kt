@@ -13,19 +13,15 @@ import cga.exercise.components.geometry.gui.animation.*
 import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.light.*
-import cga.exercise.components.mapGenerator.MapGenerator
 import cga.exercise.components.mapGenerator.MapGeneratorMaterials
-import cga.exercise.components.mapGenerator.SolarSystem
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
-import cga.exercise.components.spaceObjects.spaceship.Spaceship
 import cga.exercise.components.text.FontType
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
 import org.joml.Math.abs
-import org.joml.Math.toRadians
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
@@ -53,9 +49,11 @@ class Scene(private val window: GameWindow) {
     private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(1f), Vector2f(0.0f, 0f))
     //private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
 
-    private val frameCount = GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(1f, -0.0f), 0f)
-    private val test = Text(hashMapOf(fonts["Calibri"]!! to listOf(frameCount,GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(1.0f, 0f)),
-        GuiText("",10f ,fonts["Calibri"]!!,30f,false, Vector2f(0.0f, -0.2f)))))
+    private val frameCount = GuiText("",6f ,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f), 0f)
+
+
+
+    private val fontContainer = Text(hashMapOf(fonts["Arial"]!! to listOf(frameCount)))
 
 
     private val renderAlways = RenderCategory.values().toList()
@@ -83,9 +81,6 @@ class Scene(private val window: GameWindow) {
 //        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,1f),  50f, 70f),
 //        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,0.6f),  30f, 90f )
     ))
-
-
-
 
     // camera
 
@@ -134,11 +129,7 @@ class Scene(private val window: GameWindow) {
         "loadingBar3" to loadingBarGuiElement3,
 
         "helpScreen" to animatedHelpScreen,
-
-
-
-        "outerSpace" to GuiElement("assets/textures/gui/Logo.png", 0, renderFirstPerson, Vector2f(0.20f), Vector2f(0f,0.4f)),
-
+        
         "speedDisplay" to speedDisplay,
         "speedMarker" to speedMarker,
 
@@ -151,7 +142,7 @@ class Scene(private val window: GameWindow) {
 
     private val earth = Planet(
         "earth",
-        1f,0f,0f,0.00f, Vector3f(2f,20f,0f),
+        1f,3f,0f,0.00f, Vector3f(2f,20f,0f),
         MapGeneratorMaterials.earthMaterial,
         Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
         null,
@@ -223,6 +214,7 @@ class Scene(private val window: GameWindow) {
 
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
+
         GlobalScope.launch {
             delay(1000)
             gameState = mutableListOf(RenderCategory.FirstPerson)
@@ -280,7 +272,7 @@ class Scene(private val window: GameWindow) {
         if (t - lastT  > 0.5f){
             lastT = t
             frameCounter *= 2
-            frameCount.text = "fps=$frameCounter"
+            frameCount.text = "$frameCounter"
             frameCount.textHasChanged()
             frameCounter = 0
         }
@@ -331,7 +323,7 @@ class Scene(private val window: GameWindow) {
         //--
 
         //-- FontShader
-        test.render(renderAlways, fontShader)
+        fontContainer.render(renderAlways, fontShader)
         //--
 
 

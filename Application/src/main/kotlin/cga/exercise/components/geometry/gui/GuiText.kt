@@ -1,7 +1,6 @@
 package cga.exercise.components.geometry.gui
 
 import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.geometry.material.SimpleMaterial
 import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.shader.ShaderProgram
@@ -22,6 +21,9 @@ class GuiText (var text : String, var fontSize : Float, val font : FontType, val
     private var iboData = mutableListOf<Int>()
     private var iboCursor = 0
 
+    private var length = 0f
+    private var height = 0f
+
     var color = Vector3f(1f,1f,1f)
 
     private val vao = arrayOf(
@@ -34,7 +36,21 @@ class GuiText (var text : String, var fontSize : Float, val font : FontType, val
             setLetter(c, fontSize /3)
         }
 
+
+
         mesh = Mesh(vertexData.toFloatArray(),iboData.toIntArray(),vao, font.fontImageMaterial)
+
+
+
+        //unify all translate coordinates
+        translate.x *= 2
+        translate.y *= -2
+
+        translate.y += 0.002f * fontSize
+
+        if(centered) {
+            translate.x -= length
+        }
 
         translateLocal(translate)
         rotateLocal(roll)
@@ -54,6 +70,7 @@ class GuiText (var text : String, var fontSize : Float, val font : FontType, val
 
         addVertices(properX, properY, properMaxX, properMaxY, fontTypeChar.xTextureCoord, fontTypeChar.yTextureCoord, fontTypeChar.xMaxTextureCoord, fontTypeChar.yMaxTextureCoord)
         cursorX += fontTypeChar.xAdvance * fontSize
+        length += fontTypeChar.xAdvance * fontSize
     }
 
     private fun addVertices(x: Float, y: Float, maxX: Float, maxY: Float, texx: Float, texy: Float, texmaxX: Float, texmaxY: Float) {
@@ -78,6 +95,8 @@ class GuiText (var text : String, var fontSize : Float, val font : FontType, val
         iboCursor = 0
         cursorX = 0f
         cursorY = 0f
+        length = 0f
+        height = 0f
 
         text.forEach { c ->
             setLetter(c, fontSize /3)

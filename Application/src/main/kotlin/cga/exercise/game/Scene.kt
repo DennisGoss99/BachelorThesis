@@ -52,38 +52,17 @@ class Scene(private val window: GameWindow) {
     private val frameCount = GuiText("",6f ,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f), 0f)
 
 
-
     private val fontContainer = Text(hashMapOf(fonts["Arial"]!! to listOf(frameCount)))
-
 
     private val renderAlways = RenderCategory.values().toList()
     private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
     private val renderMainGame = listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson, RenderCategory.Zoom, RenderCategory.HelpScreen)
     private val renderStartUpScreen = listOf(RenderCategory.Loading, RenderCategory.PressToPlay)
     private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
-    private val renderThirdPerson = listOf(RenderCategory.ThirdPerson)
-
-    //private val spaceship = Spaceship(Renderable( renderThirdPerson ,ModelLoader.loadModel("assets/models/Spaceship/spaceShip.obj",0f,toRadians(180f),0f)!!))
-
-//    private val renderables = RenderableContainer( hashMapOf(
-//        "spaceShip" to spaceship,
-//        "spaceShipInside" to Renderable( renderFirstPerson ,ModelLoader.loadModel("assets/models/SpaceshipInside/spaceshipInside.obj",0f,toRadians(-90f),toRadians(0f))!!)
-//    ))
-
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-//    private val pointLightHolder = PointLightHolder( mutableListOf(
-//        PointLight(Vector3f(0f,4f,5f), Color(150 * 8 ,245 * 8,255 * 8).toVector3f(), renderables["spaceShipInside"])
-//        //PointLight(Vector3f(20f,1f,20f),Vector3f(1f,0f,1f))
-//    ))
-
-    private val spotLightHolder = SpotLightHolder( mutableListOf(
-//        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,1f),  50f, 70f),
-//        SpotLight(Vector3f(0f,1f,0f),Vector3f(1f,1f,0.6f),  30f, 90f )
-    ))
 
     // camera
-
     private val firstPersonCamera = FirstPersonCamera()
     private val thirdPersonCamera = ThirdPersonCamera()
 
@@ -129,7 +108,7 @@ class Scene(private val window: GameWindow) {
         "loadingBar3" to loadingBarGuiElement3,
 
         "helpScreen" to animatedHelpScreen,
-        
+
         "speedDisplay" to speedDisplay,
         "speedMarker" to speedMarker,
 
@@ -137,8 +116,6 @@ class Scene(private val window: GameWindow) {
 
         "cursor" to cursor
     ))
-
-
 
     private val earth = Planet(
         "earth",
@@ -148,116 +125,33 @@ class Scene(private val window: GameWindow) {
         null,
         listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), MapGeneratorMaterials.moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
- /*
-    private val mars = Planet(
-        "mars",
-        0.6f,227f,0.0002f,0.1f,Vector3f(0f,40f,0f),
-        MapGeneratorMaterials.marsMaterial,
-        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(208,105,70, 50))),
-        null,
-        listOf(),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    private val uranus = Planet(
-        "uranus",
-        4.1f, 520f, 0.0002f, 0.5f,Vector3f(60f,0f,0f),
-        MapGeneratorMaterials.uranusMaterial,
-        null,
-        null,
-        listOf(),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    private val venus = Planet(
-        "venus",
-        0.95f, 80f, 0.0001f, 0.2f,Vector3f(30f,20f,0f),
-        MapGeneratorMaterials.venusMaterial,
-        null,
-        null,
-        listOf(),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    private val saturn = Planet(
-        "saturn",
-        5.5f, 400f, 0.00001f, 0.6f,Vector3f(60f,0f,0f),
-        MapGeneratorMaterials.saturnMaterial,
-        null,
-        PlanetRing(1f,0f,0f,0f, Vector3f(0f,0f,0f),Renderable( renderAlways ,ModelLoader.loadModel("assets/models/ring/ring.obj",0f,0f,0f)!!)),
-        listOf(),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    private val jupiter = Planet(
-        "jupiter",7.0f, 300f, 0.0001f, 0.3f,Vector3f(0f,0f,0f),
-        MapGeneratorMaterials.jupiterMaterial,
-        null,
-        null,
-        listOf(),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    private val sun = Sun(
-        20f,0f,0f,0.00f,Vector3f(20f,40f,0f),
-        MapGeneratorMaterials.sunMaterial,
-        Atmosphere(listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson), 1.2f, MapGeneratorMaterials.sunAtmosphereMaterial),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-*/
-
 
     //scene setup
     init {
-     runBlocking {
+         runBlocking {
 
-        //initial opengl state
-        glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
+            //initial opengl state
+            glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
-        glEnable(GL_CULL_FACE); GLError.checkThrow()
-        glFrontFace(GL_CCW); GLError.checkThrow()
-        glCullFace(GL_BACK); GLError.checkThrow()
+            glEnable(GL_CULL_FACE); GLError.checkThrow()
+            glFrontFace(GL_CCW); GLError.checkThrow()
+            glCullFace(GL_BACK); GLError.checkThrow()
 
-        glEnable(GL_DEPTH_TEST); GLError.checkThrow()
-        glDepthFunc(GL_LESS); GLError.checkThrow()
+            glEnable(GL_DEPTH_TEST); GLError.checkThrow()
+            glDepthFunc(GL_LESS); GLError.checkThrow()
 
-        GlobalScope.launch {
-            delay(1000)
-            gameState = mutableListOf(RenderCategory.FirstPerson)
+            GlobalScope.launch {
+                delay(1000)
+                gameState = mutableListOf(RenderCategory.FirstPerson)
+            }
+
+
+    //        //configure LoadingBar
+    //        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
+    //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
+
+
         }
-
-
-
-
-
-
-//        spaceship.modelMatrix = earth.getWorldModelMatrix()
-//
-//        spaceship.translateLocal(Vector3f(30f,4f, 30f))
-//        spaceship.rotateLocal(0f,90f, 0f)
-//
-//        //-- Camera init
-//
-//            // firstPersonCamera
-//                firstPersonCamera.parent = null
-//                firstPersonCamera.modelMatrix = spaceship.getWorldModelMatrix()
-//
-//                renderables["spaceShipInside"]!!.parent = firstPersonCamera
-//                renderables["spaceShipInside"]!!.translateLocal(Vector3f(0f,-5f,-12f))
-//                renderables["spaceShipInside"]!!.rotateLocal(5f,0f,0f)
-//
-//            // thirdPersonCamera
-//                spaceship.modelMatrix = thirdPersonCamera.modelMatrix
-//                thirdPersonCamera.parent = spaceship
-//                thirdPersonCamera.translateGlobal(Vector3f(0f, 6f, 14f))
-//                thirdPersonCamera.rotateLocal(-40f,0f,0f)
-//
-//            // zoomCamera
-//                zoomCamera.parent = firstPersonCamera
-//                zoomCamera.translateLocal(Vector3f(0f,0f, -zoomCamera.zoomFactor))
-//
-//        //--
-//
-//        //configure LoadingBar
-//        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
-//        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
-
-
-    }
     }
 
     var frameCounter = 0
@@ -278,12 +172,6 @@ class Scene(private val window: GameWindow) {
         }
         frameCounter ++
 
-
-//
-//        //-- main Shader
-//        pointLightHolder.bind(mainShader,"pointLight")
-//        spotLightHolder.bind(mainShader,"spotLight", camera.getCalculateViewMatrix())
-//
         mainShader.use()
         mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 //

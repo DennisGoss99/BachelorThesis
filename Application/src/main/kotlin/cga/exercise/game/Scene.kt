@@ -7,9 +7,9 @@ import cga.exercise.components.camera.ThirdPersonCamera
 import cga.exercise.components.camera.ZoomCamera
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
-import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
 import cga.exercise.components.geometry.mesh.*
+import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.GuiRenderer
 import cga.exercise.components.gui.Image
@@ -23,17 +23,20 @@ import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
+import kotlinx.coroutines.*
 import org.joml.Math.abs
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.joml.Vector4f
+import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
-import kotlinx.coroutines.*
-import org.joml.Vector4f
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 
-class Scene(private val window: GameWindow) {
 
+var Test = "Hallo"
+
+class Scene(private val window: GameWindow) {
 
     var fonts = hashMapOf("Arial" to FontType("assets/fonts/Arial.fnt"),
                           "Calibri" to FontType("assets/fonts/Calibri.fnt"),
@@ -98,7 +101,7 @@ class Scene(private val window: GameWindow) {
 //    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
 //    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
 
-//    private val cursor = GuiElement("assets/textures/gui/mouse-cursor.png" , 2, renderStartUpScreen, Vector2f(0.05f,0.05f))
+
 
 //    private val gui = Gui( hashMapOf(
 //        "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
@@ -131,6 +134,27 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
+    val testGuiElement = Rectangle(Vector2f(0.8f,0.25f),Vector2f(-0.125f,-0.28f),
+        children = listOf(Rectangle(Vector2f(0.75f,0.25f),Vector2f(-0.125f,0.25f), color = Vector4f(1f,1f,0f,1f)))
+//            Vector2f(0.5f),
+//            color = Vector4f(1f,1f,0f,1f),
+//            children = listOf(
+//                Image(Texture2D("assets/textures/gui/SpeedSymbols.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR),
+//                    Vector2f(0.5f),Vector2f(0.5f), children = listOf(
+//                    Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.5f,0f) , color = Vector4f(0f,0f,0f,1f))
+//                )),
+//                Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.25f,0.4f) , color = Vector4f(0f,0f,0f,1f))
+//            )
+//        )
+//        )
+    )
+
+    private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR),
+        Vector2f(0.05f,0.05f))
+
+    private val fpsGuiElement = Text("",6f,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f) , color = Vector4f(1f,1f,1f,1f))
+
+
     //scene setup
     init {
          runBlocking {
@@ -157,22 +181,12 @@ class Scene(private val window: GameWindow) {
 
 
         }
+        testGuiElement.getWorldPixelPosition()
+        println()
+        testGuiElement.children[0].getWorldPixelPosition()
     }
 
 
-    val testGuiElement = Rectangle(
-        Vector2f(0.5f),
-        color = Vector4f(1f,1f,0f,1f),
-        children = listOf(
-            Image(Texture2D("assets/textures/gui/SpeedSymbols.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR),
-                Vector2f(0.5f),Vector2f(0.5f), children = listOf(
-                Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.5f,0f) , color = Vector4f(0f,0f,0f,1f))
-            )),
-            Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.25f,0.4f) , color = Vector4f(0f,0f,0f,1f))
-        )
-    )
-
-    private val fpsGuiElement = Text("",6f,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f) , color = Vector4f(1f,1f,1f,1f))
 
     var frameCounter = 0
     var lastT = 0f
@@ -236,6 +250,8 @@ class Scene(private val window: GameWindow) {
         //-- FPS Count
         guiRenderer.render(fpsGuiElement)
         //--
+
+        guiRenderer.render(cursorGuiElement)
 
         if(t-lastTime > 0.01f)
             lastTime = t
@@ -422,7 +438,10 @@ class Scene(private val window: GameWindow) {
             mouseYPos = (abs(mouseYPos + mouseSensitivity * oldYpos-ypos)% window.windowHeight).toFloat()
 
         // sets cursor position Vector2f(openGlMouseXPos / openGlMouseYPos)
-        //cursor.setPosition(Vector2f(((mouseXPos / window.windowWidth) * -2) +1,((mouseYPos / window.windowHeight) * 2) -1))
+        cursorGuiElement.setPosition(Vector2f(((mouseXPos / window.windowWidth) * -2) +1,((mouseYPos / window.windowHeight) * 2) -1))
+
+//        println("MouseXPos: [$mouseXPos] | MouseYPos: [$mouseYPos] ${window.windowWidth} ${window.windowHeight}")
+
 
         if(!gameState.contains(RenderCategory.Zoom))
             when{

@@ -18,7 +18,6 @@ class Text (var text : String,
             val maxLineLength : Float,
             val centered : Boolean,
             translate : Vector2f = Vector2f(0f,0f),
-            roll : Float = 0f,
             override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement() {
 
     private var mesh: Mesh
@@ -60,7 +59,6 @@ class Text (var text : String,
         }
 
         translateLocal(translate)
-        rotateLocal(roll)
     }
 
     private fun setLetter(character: Char, fontSize: Float) {

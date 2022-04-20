@@ -48,7 +48,7 @@ open class oldGuiElement(path: String,
 
 
         translateLocal(translate)
-        rotateLocal(roll)
+        //rotateLocal(roll)
         scaleLocal(scale)
 
     }

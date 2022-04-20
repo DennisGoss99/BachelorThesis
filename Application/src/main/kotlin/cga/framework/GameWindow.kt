@@ -15,6 +15,14 @@ import org.lwjgl.system.MemoryUtil
 /**
  * Base class for GameWindows using OpenGL for rendering
  */
+
+class WindowStats{
+    companion object{
+        var windowWidth: Int = 0
+        var windowHeight: Int = 0
+    }
+}
+
 abstract class GameWindow(
         /**
          * Returns the current width of the window
@@ -85,6 +93,8 @@ abstract class GameWindow(
      * @param updatefrequency   Frequency the update method should be called with. 2x the expected frame rate is lastTime good rule of thumb
      */
     init {
+        WindowStats.windowWidth = windowWidth
+        WindowStats.windowHeight = windowHeight
         framebufferWidth = windowWidth
         framebufferHeight = windowHeight
         m_fullscreen = fullscreen
@@ -155,6 +165,9 @@ abstract class GameWindow(
         GLFW.glfwSetWindowSizeCallback(m_window) { _, width, height ->
             windowWidth = width
             windowHeight = height
+            WindowStats.windowWidth = width
+            WindowStats.windowHeight = height
+
             onWindowSize(width, height)
         }
     }
@@ -280,6 +293,8 @@ abstract class GameWindow(
     protected fun onWindowSize(width: Int, height: Int) {
         windowWidth = width
         windowHeight = height
+        WindowStats.windowWidth = width
+        WindowStats.windowHeight = height
     }
     //public methods
     /**

@@ -8,14 +8,12 @@ import org.joml.Vector4f
 class Image (private val texture: Texture2D,
              private var scale: Vector2f = Vector2f(1f),
              private var translate: Vector2f = Vector2f(0f),
-             private var roll: Float = 0f,
              override var color : Vector4f = Vector4f(0f,0f,0f,0f),
              children: List<GuiElement> = listOf()) : GuiElement(children) {
 
     init {
 
         translateLocal(translate)
-        rotateLocal(roll)
         scaleLocal(scale)
     }
 

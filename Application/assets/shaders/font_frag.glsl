@@ -4,7 +4,7 @@ in vec2 pass_textureCoords;
 
 out vec4 out_color;
 
-uniform vec3 color;
+uniform vec4 elementColor;
 uniform sampler2D fontAtlas;
 
 const float width = 0.5;
@@ -15,5 +15,5 @@ void main() {
     float distance = 1 - texture(fontAtlas, pass_textureCoords).a;
     float alpha = 1.0 - smoothstep(width, width + edge, distance);
 
-    out_color = vec4(color, alpha);
+    out_color = vec4(elementColor.xyz, alpha);
 }

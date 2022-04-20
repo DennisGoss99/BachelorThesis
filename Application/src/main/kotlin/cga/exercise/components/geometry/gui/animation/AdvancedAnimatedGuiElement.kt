@@ -1,7 +1,7 @@
 package cga.exercise.components.geometry.gui.animation
 
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.gui.GuiElement
+import cga.exercise.components.geometry.gui.oldGuiElement
 import org.joml.Vector2f
 
 class AdvancedAnimatedGuiElement (
@@ -11,7 +11,7 @@ class AdvancedAnimatedGuiElement (
     shouldRender: List<RenderCategory>,
     scale: Vector2f = Vector2f(1f),
     roll: Float = 0f,
-    parent: GuiElement? = null
+    parent: oldGuiElement? = null
 ) : AnimatedGuiElement(animator, path, zAxisPosition, shouldRender, scale, roll, parent) {
 
     override fun update(dt: Float, t: Float) {
@@ -33,7 +33,7 @@ class AdvancedAnimatedGuiElement (
 
         advancedAnimator.currentLocationState = state
 
-        setPosition(advancedAnimator.positions[advancedAnimator.currentLocationState].first)
+        //setPosition(advancedAnimator.positions[advancedAnimator.currentLocationState].first)
 
     }
 

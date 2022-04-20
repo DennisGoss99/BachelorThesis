@@ -1,18 +1,18 @@
 package cga.exercise.components.geometry.gui.animation
 
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.gui.GuiElement
+import cga.exercise.components.geometry.gui.oldGuiElement
 import org.joml.Vector2f
 
 abstract class AnimatedGuiElement(
-    var animator: IAnimator,
+    var animator : IAnimator,
     path: String,
     zAxisPosition : Int,
     shouldRender: List<RenderCategory>,
     scale: Vector2f = Vector2f(1f),
     roll: Float = 0f,
-    parent: GuiElement? = null
-) : GuiElement(path, zAxisPosition, shouldRender, scale, animator.getStartPosition(), roll, parent) {
+    parent: oldGuiElement? = null
+) : oldGuiElement(path, zAxisPosition, shouldRender, scale, animator.getStartPosition(), roll, parent) {
 
     abstract fun update(dt : Float, t: Float)
 

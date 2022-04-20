@@ -9,9 +9,12 @@ import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.gui.*
-import cga.exercise.components.geometry.gui.animation.*
 import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.transformable.Transformable
+import cga.exercise.components.gui.GuiRenderer
+import cga.exercise.components.gui.Image
+import cga.exercise.components.gui.Rectangle
+import cga.exercise.components.gui.Text
 import cga.exercise.components.mapGenerator.MapGeneratorMaterials
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
@@ -26,6 +29,8 @@ import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import kotlinx.coroutines.*
+import org.joml.Vector4f
+import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 
 class Scene(private val window: GameWindow) {
 
@@ -40,18 +45,17 @@ class Scene(private val window: GameWindow) {
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
     private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
     private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
+
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
     private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
 
     private var gameState = mutableListOf(RenderCategory.PressToPlay)
 
-    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(1f), Vector2f(0.0f, 0f))
+//    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(1f), Vector2f(0.0f, 0f))
     //private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
 
-    private val frameCount = GuiText("",6f ,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f), 0f)
 
-
-    private val fontContainer = Text(hashMapOf(fonts["Arial"]!! to listOf(frameCount)))
+    //private val fontContainer = oldText(hashMapOf(fonts["Arial"]!! to listOf(frameCount)))
 
     private val renderAlways = RenderCategory.values().toList()
     private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
@@ -80,41 +84,41 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-    private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, listOf(RenderCategory.PressToPlay), Vector2f(0.4f,0.4f))
+//    private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, listOf(RenderCategory.PressToPlay), Vector2f(0.4f,0.4f))
+//
+//    private val loadingBarGuiElement = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 2, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
+//    private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
+//    private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
+//
+//
+//
+//    private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
 
-    private val loadingBarGuiElement = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 2, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
-    private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
-    private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
 
+//    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
+//    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
 
+//    private val cursor = GuiElement("assets/textures/gui/mouse-cursor.png" , 2, renderStartUpScreen, Vector2f(0.05f,0.05f))
 
-    private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
-
-
-    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
-    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
-
-    private val cursor = GuiElement("assets/textures/gui/mouse-cursor.png" , 2, renderStartUpScreen, Vector2f(0.05f,0.05f))
-
-    private val gui = Gui( hashMapOf(
-        "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
-
-        "pressKeyToPlay" to animatedGuiElement,
-
-        "loading" to loadingGuiElement,
-        "loadingBar" to loadingBarGuiElement,
-        "loadingBar2" to loadingBarGuiElement2,
-        "loadingBar3" to loadingBarGuiElement3,
-
-        "helpScreen" to animatedHelpScreen,
-
-        "speedDisplay" to speedDisplay,
-        "speedMarker" to speedMarker,
-
-        "pressKeyToPlay" to loadingGuiElement,
-
-        "cursor" to cursor
-    ))
+//    private val gui = Gui( hashMapOf(
+//        "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
+//
+//        "pressKeyToPlay" to animatedGuiElement,
+//
+//        "loading" to loadingGuiElement,
+//        "loadingBar" to loadingBarGuiElement,
+//        "loadingBar2" to loadingBarGuiElement2,
+//        "loadingBar3" to loadingBarGuiElement3,
+//
+//        "helpScreen" to animatedHelpScreen,
+//
+//        "speedDisplay" to speedDisplay,
+//        "speedMarker" to speedMarker,
+//
+//        "pressKeyToPlay" to loadingGuiElement,
+//
+//        "cursor" to cursor
+//    ))
 
     private val earth = Planet(
         "earth",
@@ -124,6 +128,8 @@ class Scene(private val window: GameWindow) {
         null,
         listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), MapGeneratorMaterials.moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    val guiRenderer = GuiRenderer(guiShader, fontShader)
 
     //scene setup
     init {
@@ -139,10 +145,10 @@ class Scene(private val window: GameWindow) {
             glEnable(GL_DEPTH_TEST); GLError.checkThrow()
             glDepthFunc(GL_LESS); GLError.checkThrow()
 
-            GlobalScope.launch {
-                delay(1000)
-                gameState = mutableListOf(RenderCategory.FirstPerson)
-            }
+//            GlobalScope.launch {
+//                delay(1000)
+//                gameState = mutableListOf(RenderCategory.FirstPerson)
+//            }
 
 
     //        //configure LoadingBar
@@ -152,6 +158,21 @@ class Scene(private val window: GameWindow) {
 
         }
     }
+
+
+    val testGuiElement = Rectangle(
+        Vector2f(0.5f),
+        color = Vector4f(1f,1f,0f,1f),
+        children = listOf(
+            Image(Texture2D("assets/textures/gui/SpeedSymbols.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR),
+                Vector2f(0.5f),Vector2f(0.5f), children = listOf(
+                Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.5f,0f) , color = Vector4f(0f,0f,0f,1f))
+            )),
+            Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.25f,0.4f) , color = Vector4f(0f,0f,0f,1f))
+        )
+    )
+
+    private val fpsGuiElement = Text("",6f,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f) , color = Vector4f(1f,1f,1f,1f))
 
     var frameCounter = 0
     var lastT = 0f
@@ -165,55 +186,56 @@ class Scene(private val window: GameWindow) {
         if (t - lastT  > 0.5f){
             lastT = t
             frameCounter *= 2
-            frameCount.text = "$frameCounter"
-            frameCount.textHasChanged()
+            fpsGuiElement.text = "$frameCounter"
+            fpsGuiElement.textHasChanged()
             frameCounter = 0
         }
         frameCounter ++
-
-        mainShader.use()
-        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
-//
-        if(t-lastTime > 0.01f)
-            mainShader.setUniform("time", t)
-//
-
-
-        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//        renderables.render(gameState, mainShader)
-
-        earth.render(mainShader)
-
-
-
-        //-- SkyBoxShader
-
-        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-        skyboxRenderer.render(skyBoxShader)
-        //--
 //
 //
-//        //-- Particle
-//        if(gameState.contains( RenderCategory.ThirdPerson)){
-//            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
-//            spaceship.renderThrusters(particleShader)
-//        }
+//
+//
+//        mainShader.use()
+//        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+////
+//        if(t-lastTime > 0.01f)
+//            mainShader.setUniform("time", t)
+////
+//
+//
+//        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+////        renderables.render(gameState, mainShader)
+//
+//        earth.render(mainShader)
+//
+//
+//
+//        //-- SkyBoxShader
+//
+//        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+//        skyboxRenderer.render(skyBoxShader)
 //        //--
+////
+////
+////        //-- Particle
+////        if(gameState.contains( RenderCategory.ThirdPerson)){
+////            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
+////            spaceship.renderThrusters(particleShader)
+////        }
+////        //--
+////
+////        //-- AtmosphereShader
+////        atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+////        solarSystem.renderAtmosphere(atmosphereShader)
+////        //--
 //
-//        //-- AtmosphereShader
-//        atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//        solarSystem.renderAtmosphere(atmosphereShader)
-//        //--
-
-        //-- GuiShader
-        gui.render(gameState, guiShader)
+        //-- GuiRenderer
+        guiRenderer.render(testGuiElement)
         //--
 
-        //-- FontShader
-        fontContainer.render(renderAlways, fontShader)
+        //-- FPS Count
+        guiRenderer.render(fpsGuiElement)
         //--
-
-
 
         if(t-lastTime > 0.01f)
             lastTime = t
@@ -221,7 +243,7 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
 
-        earth.orbit()
+//        earth.orbit()
 //        when(speedMarker.state){
 //            1 -> solarSystem.update(dt,t)
 //            2 -> {
@@ -400,7 +422,7 @@ class Scene(private val window: GameWindow) {
             mouseYPos = (abs(mouseYPos + mouseSensitivity * oldYpos-ypos)% window.windowHeight).toFloat()
 
         // sets cursor position Vector2f(openGlMouseXPos / openGlMouseYPos)
-        cursor.setPosition(Vector2f(((mouseXPos / window.windowWidth) * -2) +1,((mouseYPos / window.windowHeight) * 2) -1))
+        //cursor.setPosition(Vector2f(((mouseXPos / window.windowWidth) * -2) +1,((mouseYPos / window.windowHeight) * 2) -1))
 
         if(!gameState.contains(RenderCategory.Zoom))
             when{
@@ -438,7 +460,9 @@ class Scene(private val window: GameWindow) {
     fun cleanup() {
 
         //renderables.cleanup()
-        gui.cleanup()
+        //gui.cleanup()
+        testGuiElement.cleanup()
+        guiRenderer.cleanup()
         fontShader.cleanup()
         mainShader.cleanup()
         guiShader.cleanup()

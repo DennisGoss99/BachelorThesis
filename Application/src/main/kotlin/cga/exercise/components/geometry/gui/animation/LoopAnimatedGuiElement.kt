@@ -1,7 +1,7 @@
 package cga.exercise.components.geometry.gui.animation
 
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.gui.GuiElement
+import cga.exercise.components.geometry.gui.oldGuiElement
 import org.joml.Vector2f
 
 class LoopAnimatedGuiElement(
@@ -11,7 +11,7 @@ class LoopAnimatedGuiElement(
     shouldRender: List<RenderCategory>,
     scale: Vector2f = Vector2f(1f),
     roll: Float = 0f,
-    parent: GuiElement? = null
+    parent: oldGuiElement? = null
 ) : AnimatedGuiElement(animator, path, zAxisPosition, shouldRender, scale, roll, parent) {
 
     override fun update(dt: Float, t: Float) {

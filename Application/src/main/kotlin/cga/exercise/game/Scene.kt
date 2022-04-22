@@ -128,14 +128,8 @@ class Scene(private val window: GameWindow) {
 
     val f1 = {_: Int, _: Int -> println("Button 1") }
     val f2 = {_: Int, _: Int -> println("Button 2") }
-
-//    val testGuiElement = Rectangle(Vector2f(1f,1f),Vector2f(-0f,0f),Vector4f(1f,1f,0.0f,0.5f)
-//        ,children = listOf(
-//            Text("Hallo Welt",4f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, -0.5f) , color = Vector4f(1f,0f,0f,1f)),
-//        )
-//    )
-
-    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f),Vector4f(1f,0.5f,0.0f,1f),
+    
+    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f),Color(255,128,0),
         children = listOf(
             Button("Button 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), onClick = f1),
             Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), onClick = f2)
@@ -145,7 +139,7 @@ class Scene(private val window: GameWindow) {
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
 
-    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, -0.5f) , color = Vector4f(1f,1f,1f,1f))
+    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, -0.5f) , color = Color(255f,255f,255f))
 
 
     //scene setup

@@ -1,4 +1,4 @@
-package cga.exercise.components
+package cga.exercise.components.gui
 
 import org.joml.*
 

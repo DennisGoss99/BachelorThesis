@@ -1,6 +1,6 @@
 package cga.exercise.game
 
-import cga.exercise.components.Color
+import cga.exercise.components.gui.Color
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.FirstPersonCamera
 import cga.exercise.components.camera.ThirdPersonCamera
@@ -128,8 +128,8 @@ class Scene(private val window: GameWindow) {
 
     val f1 = {_: Int, _: Int -> println("Button 1") }
     val f2 = {_: Int, _: Int -> println("Button 2") }
-    
-    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f),Color(255,128,0),
+
+    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0),
         children = listOf(
             Button("Button 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), onClick = f1),
             Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), onClick = f2)

@@ -1,6 +1,6 @@
 package cga.exercise.components.mapGenerator
 
-import cga.exercise.components.Color
+import cga.exercise.components.gui.Color
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial

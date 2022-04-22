@@ -70,7 +70,7 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
 
         // ScalePos Lower Right
         val scaleX2 = WindowStats.windowWidth * (1 - scale.x) / 2f
-        val scaleY2= WindowStats.windowHeight * (1 - scale.y) / 2f
+        val scaleY2 = WindowStats.windowHeight * (1 - scale.y) / 2f
 
         // ScalePos Upper Left
         val scaleX1 = WindowStats.windowWidth - scaleX2
@@ -80,8 +80,13 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
         val transY = WindowStats.windowHeight / 2f * translate.y
 
         // contains x1,y1,x2,y2
-        return Vector4f(scaleX1 - transX, scaleY1 + transY, scaleX2 - transX, scaleY2 + transY)
+        return Vector4f(scaleX2 + transX, scaleY1 + transY, scaleX1 + transX, scaleY2 + transY)
     }
 
+    fun getWidthAndHeight() : Vector2f {
+        val imageCorners = getWorldPixelPosition()
+
+        return Vector2f(imageCorners.z - imageCorners.x, imageCorners.y - imageCorners.w)
+    }
 
 }

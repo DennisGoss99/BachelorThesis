@@ -1,6 +1,5 @@
 package cga.exercise.components.gui
 
-import cga.exercise.components.gui.Color
 import cga.exercise.components.text.FontType
 import cga.exercise.game.StaticResources
 import org.joml.Vector2f

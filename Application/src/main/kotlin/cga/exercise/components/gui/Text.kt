@@ -149,14 +149,7 @@ class Text (var text : String,
     }
 
     override fun render(shaderProgram: ShaderProgram) {
-//        GL30.glEnable(GL11.GL_BLEND)
-//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-//        GL11.glDisable(GL11.GL_DEPTH_TEST)
-
         mesh.render(shaderProgram)
-
-//        GL11.glEnable(GL11.GL_DEPTH_TEST)
-//        GL30.glDisable(GL11.GL_BLEND)
     }
 
     /**

@@ -25,7 +25,7 @@ abstract class GuiElement(children: List<GuiElement>) : Transformable2D() {
     fun globalClickEvent(button: Int, mode: Int, position: Vector2f) : Boolean{
         val elementPosition = getWorldPixelPosition()
 
-        if(elementPosition.x >= position.x && elementPosition.z <= position.x && elementPosition.y >= position.y && elementPosition.w <= position.y){
+        if(elementPosition.x <= position.x && elementPosition.z >= position.x && elementPosition.y >= position.y && elementPosition.w <= position.y){
 
             if(!children.any{ it.globalClickEvent(button, mode, position)}){
                 if(onClick == null)

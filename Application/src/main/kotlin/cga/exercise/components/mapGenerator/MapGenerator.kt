@@ -5,7 +5,6 @@ import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial
 import cga.exercise.components.geometry.mesh.Renderable
-import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.Moon
 import cga.exercise.components.spaceObjects.Planet
 import cga.exercise.components.spaceObjects.PlanetRing

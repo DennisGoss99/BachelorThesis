@@ -6,19 +6,12 @@ import org.joml.Vector2f
 import org.joml.Vector4f
 
 class Image (private val texture: Texture2D,
-             private var scale: Vector2f = Vector2f(1f),
-             private var translate: Vector2f = Vector2f(0f),
-             override var color : Vector4f = Vector4f(0f,0f,0f,0f),
-             children: List<GuiElement> = listOf()) : GuiElement(children) {
-
-    init {
-
-        translateLocal(translate)
-        scaleLocal(scale)
-    }
+             scale: Vector2f = Vector2f(1f),
+             translate: Vector2f = Vector2f(0f),
+             color : Vector4f = Vector4f(0f,0f,0f,0f),
+             children: List<GuiElement> = listOf()) : Rectangle(scale, translate, color, children = children) {
 
     override fun render(shaderProgram: ShaderProgram) {
-
     }
 
     override fun bind(shaderProgram: ShaderProgram) {

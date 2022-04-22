@@ -7,6 +7,7 @@ import org.joml.Vector4f
 open class Rectangle(protected var scale : Vector2f = Vector2f(1f),
                      protected var translate : Vector2f = Vector2f(0f),
                      override var color: Vector4f = Vector4f(1f,1f,1f,1f),
+                     protected var cornerRadius : Int = 0,
                      override val onClick: ((Int, Int) -> Unit)? = null,
                      children: List<GuiElement> = listOf()) : GuiElement(children) {
 
@@ -20,6 +21,8 @@ open class Rectangle(protected var scale : Vector2f = Vector2f(1f),
 
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
+        shaderProgram.setUniform("elementCorners", getWorldPixelPosition())
+        shaderProgram.setUniform("borderRadius", cornerRadius)
     }
 
     override fun cleanup() {

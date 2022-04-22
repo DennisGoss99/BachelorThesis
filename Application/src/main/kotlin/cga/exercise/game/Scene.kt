@@ -14,7 +14,6 @@ import cga.exercise.components.gui.*
 import cga.exercise.components.mapGenerator.MapGeneratorMaterials
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
-import cga.exercise.components.text.FontType
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
@@ -23,7 +22,6 @@ import kotlinx.coroutines.*
 import org.joml.Math.abs
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
@@ -46,17 +44,7 @@ class Scene(private val window: GameWindow) {
 
     private var gameState = mutableListOf(RenderCategory.PressToPlay)
 
-//    private val loadingGuiElement = GuiElement("assets/textures/gui/Loading.png", 1, listOf(RenderCategory.Loading), Vector2f(1f), Vector2f(0.0f, 0f))
-    //private val gui = Gui( hashMapOf( "pressKeyToPlay" to loadingGuiElement))
-
-
-    //private val fontContainer = oldText(hashMapOf(fonts["Arial"]!! to listOf(frameCount)))
-
     private val renderAlways = RenderCategory.values().toList()
-    private val renderHelpScreen = listOf(RenderCategory.HelpScreen)
-    private val renderMainGame = listOf(RenderCategory.FirstPerson, RenderCategory.ThirdPerson, RenderCategory.Zoom, RenderCategory.HelpScreen)
-    private val renderStartUpScreen = listOf(RenderCategory.Loading, RenderCategory.PressToPlay)
-    private val renderFirstPerson = listOf(RenderCategory.FirstPerson)
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -85,35 +73,10 @@ class Scene(private val window: GameWindow) {
 //    private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
 //    private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
 //
-//
-//
 //    private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
-
 
 //    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
 //    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
-
-
-
-//    private val gui = Gui( hashMapOf(
-//        "startupScreen" to GuiElement("assets/textures/gui/StartupScreen.png", 0, renderStartUpScreen, Vector2f(1f), Vector2f(0f)),
-//
-//        "pressKeyToPlay" to animatedGuiElement,
-//
-//        "loading" to loadingGuiElement,
-//        "loadingBar" to loadingBarGuiElement,
-//        "loadingBar2" to loadingBarGuiElement2,
-//        "loadingBar3" to loadingBarGuiElement3,
-//
-//        "helpScreen" to animatedHelpScreen,
-//
-//        "speedDisplay" to speedDisplay,
-//        "speedMarker" to speedMarker,
-//
-//        "pressKeyToPlay" to loadingGuiElement,
-//
-//        "cursor" to cursor
-//    ))
 
     private val earth = Planet(
         "earth",
@@ -135,7 +98,6 @@ class Scene(private val window: GameWindow) {
             Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), onClick = f2)
         )
     )
-
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
 
@@ -188,9 +150,7 @@ class Scene(private val window: GameWindow) {
         }
         frameCounter ++
 //
-//
-//
-//
+
 //        mainShader.use()
 //        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
 ////
@@ -226,12 +186,11 @@ class Scene(private val window: GameWindow) {
 ////        //--
 //
         //-- GuiRenderer
-
-        guiRenderer.render(testGuiElement)
+            guiRenderer.render(testGuiElement)
         //--
 
         //-- FPS Count
-        guiRenderer.render(fpsGuiElement)
+            guiRenderer.render(fpsGuiElement)
         //--
 
         guiRenderer.render(cursorGuiElement)
@@ -405,6 +364,11 @@ class Scene(private val window: GameWindow) {
 
     }
 
+    fun onMouseButton(button: Int, action: Int, mode: Int) {
+        if(action == 1){
+            testGuiElement.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
+        }
+    }
 
     var oldXpos : Double = 0.0
     var oldYpos : Double = 0.0
@@ -413,23 +377,21 @@ class Scene(private val window: GameWindow) {
     var mouseXPos = window.windowWidth / 2f
     var mouseYPos = window.windowHeight / 2f
 
-    fun onMouseButton(button: Int, action: Int, mode: Int) {
-        if(action == 1){
-            testGuiElement.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
-        }
-    }
-
     fun onMouseMove(xpos: Double, ypos: Double) {
 
-        if(mouseXPos + mouseSensitivity * oldXpos-xpos < window.windowWidth)
-            mouseXPos = (abs(mouseXPos + mouseSensitivity * oldXpos-xpos)% window.windowWidth).toFloat()
-        if(mouseYPos + mouseSensitivity * oldYpos-ypos < window.windowHeight)
-            mouseYPos = (abs(mouseYPos + mouseSensitivity * oldYpos-ypos)% window.windowHeight).toFloat()
+        val mouseMovementX = mouseXPos + (-oldXpos + xpos) * mouseSensitivity
+        val mouseMovementY = mouseYPos + (oldYpos - ypos) * mouseSensitivity
+
+        if(mouseMovementX >= 0 && mouseMovementX <= window.windowWidth)
+            mouseXPos = mouseMovementX.toFloat()
+
+        if(mouseMovementY >= 0 && mouseMovementY <= window.windowHeight)
+            mouseYPos = mouseMovementY.toFloat()
 
         // sets cursor position Vector2f(openGlMouseXPos / openGlMouseYPos)
-        cursorGuiElement.setPosition(Vector2f(((mouseXPos / window.windowWidth) * -2) +1,((mouseYPos / window.windowHeight) * 2) -1))
+        cursorGuiElement.setPosition(Vector2f(((mouseXPos / window.windowWidth) * 2) -1,((mouseYPos / window.windowHeight) * 2) -1))
 
-//        println("MouseXPos: [$mouseXPos] | MouseYPos: [$mouseYPos] ${window.windowWidth} ${window.windowHeight}")
+//        println("MouseXPos: [$mouseXPos] $xpos | MouseYPos: [$mouseYPos]")
 
 
         if(!gameState.contains(RenderCategory.Zoom))

@@ -38,9 +38,15 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
     }
 
     fun getWorldPosition(): Vector2f {
-        val tempVector = Vector3f();
+        val tempVector = Vector3f()
         getWorldModelMatrix().getColumn(3, tempVector)
         return Vector2f(tempVector.x,tempVector.y);
+    }
+
+    fun getParentWordPosition(): Vector3f {
+        val tempVector = Vector3f()
+        parent?.getWorldModelMatrix()?.getColumn(3, tempVector)
+        return tempVector
     }
 
     fun getScaleLocal(): Vector2f {

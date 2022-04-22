@@ -9,6 +9,10 @@ uniform mat4 transformationMatrix;
 
 void main() {
 
-    gl_Position = transformationMatrix * vec4(position, 0.0, 1.0);
+    mat4 tm = transformationMatrix;
+    tm[3][0] = (tm[3][0] + 0.5f) * 2.0f;
+    tm[3][1] = (tm[3][1] - 0.5f) * 2.0f;
+
+    gl_Position = tm * vec4(position, 0.0, 1.0);
     pass_textureCoords = textureCoords;
 }

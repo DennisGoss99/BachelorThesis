@@ -6,7 +6,9 @@ import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
+import org.joml.Matrix4f
 import org.joml.Vector2f
+import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
@@ -18,7 +20,7 @@ class Text (var text : String,
             val maxLineLength : Float,
             val centered : Boolean,
             translate : Vector2f = Vector2f(0f,0f),
-            override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement() {
+            override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
 
     private var mesh: Mesh
     private var cursorX = 0f
@@ -43,20 +45,12 @@ class Text (var text : String,
             setLetter(c, fontSize / 3)
         }
 
-
-
         mesh = Mesh(vertexData.toFloatArray(), iboData.toIntArray(), vao, font.fontImageMaterial)
 
 
-        //unify all translate coordinates
-        translate.x *= 2
-        translate.y *= -2
+        //translate.y -= 0.002f * fontSize
 
-        translate.y += 0.002f * fontSize
 
-        if (centered) {
-            translate.x -= length
-        }
 
         translateLocal(translate)
     }
@@ -125,8 +119,33 @@ class Text (var text : String,
     }
 
     override fun bind(shaderProgram: ShaderProgram) {
+
+        val mat = getLocalModelMatrix()
+
+
+        val translateColumn = Vector4f()
+        mat.getColumn(3, translateColumn)
+
+        val globalScale = getWorldScale()
+
+        translateColumn.x *= globalScale.x
+        translateColumn.y *= -globalScale.y
+
+        mat.setColumn(3, translateColumn)
+
+        val globalTranslate = getParentWordPosition()
+        globalTranslate.mul(0.5f)
+        mat.translate(globalTranslate)
+
+        if (centered) {
+            mat.translate(Vector3f(-length / 2f,0.005f * fontSize,0f))
+        }
+
         super.bind(shaderProgram)
         shaderProgram.setUniform("color", color)
+
+
+        shaderProgram.setUniform("transformationMatrix" , mat,false)
     }
 
     override fun render(shaderProgram: ShaderProgram) {

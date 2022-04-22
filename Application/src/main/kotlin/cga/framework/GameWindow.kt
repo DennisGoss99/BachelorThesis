@@ -257,7 +257,7 @@ abstract class GameWindow(
      * @param action    GLFW action name
      * @param mode      GLFW modifiers
      */
-    protected fun onMouseButton(button: Int, action: Int, mode: Int) {}
+    protected open fun onMouseButton(button: Int, action: Int, mode: Int) {}
 
     /**
      * Is called when lastTime scroll event occurs

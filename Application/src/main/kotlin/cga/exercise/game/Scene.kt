@@ -7,14 +7,10 @@ import cga.exercise.components.camera.ThirdPersonCamera
 import cga.exercise.components.camera.ZoomCamera
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
-import cga.exercise.components.geometry.gui.*
 import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.transformable.Transformable
-import cga.exercise.components.gui.GuiRenderer
-import cga.exercise.components.gui.Image
-import cga.exercise.components.gui.Rectangle
-import cga.exercise.components.gui.Text
+import cga.exercise.components.gui.*
 import cga.exercise.components.mapGenerator.MapGeneratorMaterials
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
@@ -28,7 +24,6 @@ import org.joml.Math.abs
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
-import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
@@ -38,10 +33,7 @@ var Test = "Hallo"
 
 class Scene(private val window: GameWindow) {
 
-    var fonts = hashMapOf("Arial" to FontType("assets/fonts/Arial.fnt"),
-                          "Calibri" to FontType("assets/fonts/Calibri.fnt"),
-                          "Comic Sans MS" to FontType("assets/fonts/Comic Sans MS.fnt"),
-                          "Times New Roman" to FontType("assets/fonts/Times New Roman.fnt"))
+
 
 //    //Shader
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
@@ -134,25 +126,26 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
-    val testGuiElement = Rectangle(Vector2f(0.8f,0.25f),Vector2f(-0.125f,-0.28f),
-        children = listOf(Rectangle(Vector2f(0.75f,0.25f),Vector2f(-0.125f,0.25f), color = Vector4f(1f,1f,0f,1f)))
-//            Vector2f(0.5f),
-//            color = Vector4f(1f,1f,0f,1f),
-//            children = listOf(
-//                Image(Texture2D("assets/textures/gui/SpeedSymbols.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR),
-//                    Vector2f(0.5f),Vector2f(0.5f), children = listOf(
-//                    Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.5f,0f) , color = Vector4f(0f,0f,0f,1f))
-//                )),
-//                Text("Test",10f,fonts["Arial"]!!,10f,true, translate = Vector2f(0.25f,0.4f) , color = Vector4f(0f,0f,0f,1f))
-//            )
+    val f1 = {_: Int, _: Int -> println("Button 1") }
+    val f2 = {_: Int, _: Int -> println("Button 2") }
+
+//    val testGuiElement = Rectangle(Vector2f(1f,1f),Vector2f(-0f,0f),Vector4f(1f,1f,0.0f,0.5f)
+//        ,children = listOf(
+//            Text("Hallo Welt",4f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, -0.5f) , color = Vector4f(1f,0f,0f,1f)),
 //        )
-//        )
+//    )
+
+    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f),Vector4f(1f,0.5f,0.0f,1f),
+        children = listOf(
+            Button("Button 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), onClick = f1),
+            Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), onClick = f2)
+        )
     )
 
-    private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR),
-        Vector2f(0.05f,0.05f))
 
-    private val fpsGuiElement = Text("",6f,fonts["Arial"]!!,30f,false, Vector2f(0.0f, 0.0f) , color = Vector4f(1f,1f,1f,1f))
+    private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
+
+    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, -0.5f) , color = Vector4f(1f,1f,1f,1f))
 
 
     //scene setup
@@ -178,12 +171,7 @@ class Scene(private val window: GameWindow) {
     //        //configure LoadingBar
     //        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
     //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
-
-
         }
-        testGuiElement.getWorldPixelPosition()
-        println()
-        testGuiElement.children[0].getWorldPixelPosition()
     }
 
 
@@ -244,6 +232,7 @@ class Scene(private val window: GameWindow) {
 ////        //--
 //
         //-- GuiRenderer
+
         guiRenderer.render(testGuiElement)
         //--
 
@@ -430,6 +419,12 @@ class Scene(private val window: GameWindow) {
     var mouseXPos = window.windowWidth / 2f
     var mouseYPos = window.windowHeight / 2f
 
+    fun onMouseButton(button: Int, action: Int, mode: Int) {
+        if(action == 1){
+            testGuiElement.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
+        }
+    }
+
     fun onMouseMove(xpos: Double, ypos: Double) {
 
         if(mouseXPos + mouseSensitivity * oldXpos-xpos < window.windowWidth)
@@ -487,6 +482,5 @@ class Scene(private val window: GameWindow) {
         guiShader.cleanup()
         skyBoxShader.cleanup()
     }
-
 
 }

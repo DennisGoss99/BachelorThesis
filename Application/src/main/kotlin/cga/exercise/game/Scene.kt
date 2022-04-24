@@ -99,8 +99,11 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-//    val testGuiElement = EditText("hallo",6f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, 0f) , color = Color(255f,255f,255f))
-
+//    val testGuiElement = Rectangle(Vector2f(0.5f,0.5f), Vector2f(0.25f,0.25f),
+//        children = listOf(
+//            Text("hallo",6f, StaticResources.standardFont,30f,false, true, Vector2f(-1f, 0f) , color = Color(255,0,0))
+//        )
+//    )
     val testGuiElement = Rectangle(Vector2f(0.9f),onFocus = {->} , children = listOf(
         Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
             children = listOf(
@@ -112,7 +115,7 @@ class Scene(private val window: GameWindow) {
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
 
-    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, -0.5f) , color = Color(255f,255f,255f))
+    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, false, Vector2f(-1f, -1f) , color = Color(255f,255f,255f))
 
 
     //scene setup

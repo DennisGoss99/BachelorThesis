@@ -18,7 +18,8 @@ open class Text (var text : String,
                  var fontSize : Float,
                  val font : FontType,
                  val maxLineLength : Float,
-                 val centered : Boolean,
+                 val centeredX : Boolean,
+                 val centeredY : Boolean,
                  translate : Vector2f = Vector2f(0f,0f),
                  override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
 
@@ -134,12 +135,11 @@ open class Text (var text : String,
         mat.setColumn(3, translateColumn)
 
         val globalTranslate = getParentWordPosition()
-        globalTranslate.mul(0.5f)
+        //globalTranslate.mul(0.5f)
         mat.translate(globalTranslate)
 
-        if (centered) {
-            mat.translate(Vector3f(-length / 2f,0.005f * fontSize,0f))
-        }
+        if (centeredX || centeredY)
+            mat.translate(Vector3f(if(centeredX) -length else 0f, if(centeredY) 0.01f * fontSize else 0f,0f))
 
         shaderProgram.setUniform("color", color)
         shaderProgram.setUniform("transformationMatrix" , mat,false)

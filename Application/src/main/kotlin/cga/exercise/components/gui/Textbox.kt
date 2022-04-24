@@ -34,7 +34,7 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
 
     init {
         children = listOf(
-            Text(text,5f, fontType, 10f, centered, if(centered) Vector2f(0f) else Vector2f(-0.5f,-0.25f), color = Color(20,20,20))
+            Text(text,5f, fontType, 10f, centered, true, if(centered) Vector2f(0f) else Vector2f(-1f,0f), color = Color(20,20,20))
         )
     }
 

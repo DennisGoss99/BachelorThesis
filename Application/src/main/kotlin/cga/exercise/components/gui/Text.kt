@@ -14,13 +14,13 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 import java.util.*
 
-class Text (var text : String,
-            var fontSize : Float,
-            val font : FontType,
-            val maxLineLength : Float,
-            val centered : Boolean,
-            translate : Vector2f = Vector2f(0f,0f),
-            override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
+open class Text (var text : String,
+                 var fontSize : Float,
+                 val font : FontType,
+                 val maxLineLength : Float,
+                 val centered : Boolean,
+                 translate : Vector2f = Vector2f(0f,0f),
+                 override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
 
     private var mesh: Mesh
     private var cursorX = 0f
@@ -119,9 +119,9 @@ class Text (var text : String,
     }
 
     override fun bind(shaderProgram: ShaderProgram) {
+        super.bind(shaderProgram)
 
         val mat = getLocalModelMatrix()
-
 
         val translateColumn = Vector4f()
         mat.getColumn(3, translateColumn)
@@ -141,10 +141,7 @@ class Text (var text : String,
             mat.translate(Vector3f(-length / 2f,0.005f * fontSize,0f))
         }
 
-        super.bind(shaderProgram)
         shaderProgram.setUniform("color", color)
-
-
         shaderProgram.setUniform("transformationMatrix" , mat,false)
     }
 

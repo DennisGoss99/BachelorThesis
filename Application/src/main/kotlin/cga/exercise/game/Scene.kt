@@ -92,12 +92,23 @@ class Scene(private val window: GameWindow) {
     val f1 = {_: Int, _: Int -> println("Button 1") }
     val f2 = {_: Int, _: Int -> println("Button 2") }
 
-    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0),
-        children = listOf(
-            Button("Button 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), onClick = f1),
-            Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), onClick = f2)
+//    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0), cornerRadius = 10,
+//        children = listOf(
+//            Button("Button 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), cornerRadius = 10, onClick = f1),
+//            Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), cornerRadius = 10, onClick = f2)
+//        )
+//    )
+
+//    val testGuiElement = EditText("hallo",6f, StaticResources.standardFont,30f,false, Vector2f(-0.5f, 0f) , color = Color(255f,255f,255f))
+
+    val testGuiElement = Rectangle(Vector2f(0.9f),onFocus = {->} , children = listOf(
+        Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+            children = listOf(
+                Textbox("T 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), centered = false),
+                Textbox("T 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f)),
+            )
         )
-    )
+    ))
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
 
@@ -129,8 +140,6 @@ class Scene(private val window: GameWindow) {
     //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
         }
     }
-
-
 
     var frameCounter = 0
     var lastT = 0f
@@ -293,6 +302,11 @@ class Scene(private val window: GameWindow) {
     private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
+
+        //println("key:$key scancode:$scancode action:$action mode:$mode")
+
+        if(action == 1)
+            testGuiElement.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
 
 //        if(gameState.contains(RenderCategory.PressToPlay)){
 //

@@ -1,9 +1,10 @@
 package cga.exercise.components.geometry.transformable
 
+import cga.exercise.components.gui.GuiElement
 import cga.framework.WindowStats
 import org.joml.*
 
-open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent: Transformable2D? = null) {
+open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent: GuiElement? = null) {
 
     //fun rotateLocal( roll: Float) = modelMatrix.rotateXYZ(0f,0f,toRadians(roll));
 

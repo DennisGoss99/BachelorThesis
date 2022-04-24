@@ -17,7 +17,8 @@ open class oldGuiElement(path: String,
                          val shouldRender : List<RenderCategory>,
                          protected var scale: Vector2f = Vector2f(1f),
                          protected var translate: Vector2f  = Vector2f(0f),
-                         protected var roll: Float = 0f, parent: oldGuiElement? = null) : Transformable2D(parent = parent ){
+                         protected var roll: Float = 0f, parent: oldGuiElement? = null) //: Transformable2D(parent = parent )
+{
 
     private val mesh : Mesh
     private var tex : Texture2D
@@ -47,9 +48,9 @@ open class oldGuiElement(path: String,
         mesh = Mesh(VBO, IBO, VAO, material)
 
 
-        translateLocal(translate)
+//        translateLocal(translate)
         //rotateLocal(roll)
-        scaleLocal(scale)
+//        scaleLocal(scale)
 
     }
 
@@ -57,9 +58,9 @@ open class oldGuiElement(path: String,
     }
 
     fun render(shaderProgram: ShaderProgram){
-        beforeRender()
-        shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
-        mesh.render(shaderProgram)
+//        beforeRender()
+//        shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
+//        mesh.render(shaderProgram)
     }
 
     /**

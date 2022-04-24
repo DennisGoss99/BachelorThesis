@@ -9,6 +9,7 @@ open class Rectangle(protected var scale : Vector2f = Vector2f(1f),
                      override var color: Vector4f = Vector4f(1f,1f,1f,1f),
                      protected var cornerRadius : Int = 0,
                      override val onClick: ((Int, Int) -> Unit)? = null,
+                     override val onFocus: (() -> Unit)? = null,
                      children: List<GuiElement> = listOf()) : GuiElement(children) {
 
     init {
@@ -17,6 +18,7 @@ open class Rectangle(protected var scale : Vector2f = Vector2f(1f),
     }
 
     override fun render(shaderProgram: ShaderProgram) {
+
     }
 
     override fun bind(shaderProgram: ShaderProgram) {

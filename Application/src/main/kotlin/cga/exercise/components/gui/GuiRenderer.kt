@@ -62,9 +62,9 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                 guiElement.render(guiShaderProgram)
                 GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
 
-                guiElement.children.forEach(::doRender)
             }
         }
+        guiElement.children.forEach(::doRender)
     }
 
     fun render(guiElement: GuiElement) {

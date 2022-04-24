@@ -17,41 +17,41 @@ abstract class AnimatedGuiElement(
     abstract fun update(dt : Float, t: Float)
 
     fun move(lastPoint: Vector2f, nextPoint: Vector2f, currentSpeed: Float, nextState: Int) {
-
-        if(currentSpeed == 0f)
-            return
-
-        val direction = Vector2f(lastPoint.x - nextPoint.x, lastPoint.y - nextPoint.y)
-
-        translateLocal(direction.negate().normalize().mul( currentSpeed))
-
-        val currentPosition = getPosition()
-
-        var changeState = false
-
-        when {
-            direction.x >= 0 && direction.y >= 0 ->
-                if (currentPosition.x >= nextPoint.x && currentPosition.y >= nextPoint.y)
-                    changeState = true
-
-            direction.x <= 0 && direction.y <= 0 ->
-                if (currentPosition.x <= nextPoint.x && currentPosition.y <= nextPoint.y)
-                    changeState = true
-
-            direction.x >= 0 && direction.y <= 0 ->
-                if (currentPosition.x >= nextPoint.x && currentPosition.y <= nextPoint.y)
-                    changeState = true
-
-            direction.x <= 0 && direction.y >= 0 ->
-                if (currentPosition.x <= nextPoint.x && currentPosition.y >= nextPoint.y)
-                    changeState = true
-
-        }
-
-        if (changeState) {
-            setPosition(nextPoint)
-            animator.currentLocationState = nextState
-        }
+//
+//        if(currentSpeed == 0f)
+//            return
+//
+//        val direction = Vector2f(lastPoint.x - nextPoint.x, lastPoint.y - nextPoint.y)
+//
+//        translateLocal(direction.negate().normalize().mul( currentSpeed))
+//
+//        val currentPosition = getPosition()
+//
+//        var changeState = false
+//
+//        when {
+//            direction.x >= 0 && direction.y >= 0 ->
+//                if (currentPosition.x >= nextPoint.x && currentPosition.y >= nextPoint.y)
+//                    changeState = true
+//
+//            direction.x <= 0 && direction.y <= 0 ->
+//                if (currentPosition.x <= nextPoint.x && currentPosition.y <= nextPoint.y)
+//                    changeState = true
+//
+//            direction.x >= 0 && direction.y <= 0 ->
+//                if (currentPosition.x >= nextPoint.x && currentPosition.y <= nextPoint.y)
+//                    changeState = true
+//
+//            direction.x <= 0 && direction.y >= 0 ->
+//                if (currentPosition.x <= nextPoint.x && currentPosition.y >= nextPoint.y)
+//                    changeState = true
+//
+//        }
+//
+//        if (changeState) {
+//            setPosition(nextPoint)
+//            animator.currentLocationState = nextState
+//        }
     }
 
     abstract fun changeCurrentLocationState(state : Int)

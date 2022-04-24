@@ -28,11 +28,11 @@ class LoopAnimatedGuiElement(
     }
 
     override fun changeCurrentLocationState(state: Int) {
-        val loopAnimator = animator as Animator
+//        val loopAnimator = animator as Animator
+//
+//        loopAnimator.currentLocationState = state
 
-        loopAnimator.currentLocationState = state
-
-        setPosition(loopAnimator.positions[loopAnimator.currentLocationState])
+//        setPosition(loopAnimator.positions[loopAnimator.currentLocationState])
     }
 
 }

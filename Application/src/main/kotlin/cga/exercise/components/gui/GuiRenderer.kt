@@ -34,7 +34,7 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, VBO, GL30.GL_STATIC_DRAW)
 
-        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(0)
         glVertexAttribPointer(0, VAO.size, VAO.type, false, VAO.stride, VAO.offset.toLong())
 
         //Unbind
@@ -49,8 +49,7 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
     private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
 
         when(guiElement){
-            is Text,
-            is EditText -> {
+            is Text -> {
                 fontShaderProgram.use()
                 guiElement.bind(fontShaderProgram)
                 guiElement.render(fontShaderProgram)

@@ -47,14 +47,13 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
         }
 
         if(textHasChanged) {
-            textGuiElement.text = text
             textGuiElement.textHasChanged()
         }
     }
 
     init {
         children = listOf(
-            EditText(text,5f, fontType, 10f, centered, true, if(centered) Vector2f(0f) else Vector2f(-1f,0f), color = Color(20,20,20))
+            EditText(text,4f, fontType, 10f, centered, true, if(centered) Vector2f(0f) else Vector2f(-1f,0f), color = Color(20,20,20))
         )
     }
 

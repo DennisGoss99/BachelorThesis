@@ -43,7 +43,7 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,indexdata, GL_STATIC_DRAW)
 
 
-        for(i in 0 until attributes.size){
+        for(i in attributes.indices){
             glEnableVertexAttribArray(i);
             glVertexAttribPointer(i, attributes[i].size, attributes[i].type, false, attributes[i].stride, attributes[i].offset.toLong())
         }

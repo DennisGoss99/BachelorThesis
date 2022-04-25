@@ -24,8 +24,9 @@ open class Text (var text : String,
                  override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
 
     private var mesh: Mesh
-    public var cursorX = 0f
-    public var cursorY = 0f
+
+    var cursorX = 0f
+    var cursorY = 0f
 
     private var vertexData = mutableListOf<Float>()
     private var iboData = mutableListOf<Int>()
@@ -34,7 +35,7 @@ open class Text (var text : String,
     var length = 0f
     private var height = 0f
 
-    
+
     private val vao = arrayOf(
         VertexAttribute(2, GL11.GL_FLOAT, 16, 0),
         VertexAttribute(2, GL11.GL_FLOAT, 16, 8)
@@ -49,8 +50,6 @@ open class Text (var text : String,
 
 
         //translate.y -= 0.002f * fontSize
-
-
 
         translateLocal(translate)
     }
@@ -78,6 +77,7 @@ open class Text (var text : String,
             fontTypeChar.xMaxTextureCoord,
             fontTypeChar.yMaxTextureCoord
         )
+
         cursorX += fontTypeChar.xAdvance * fontSize
         length += fontTypeChar.xAdvance * fontSize
     }

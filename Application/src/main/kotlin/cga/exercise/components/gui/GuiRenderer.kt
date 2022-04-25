@@ -49,7 +49,8 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
     private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
 
         when(guiElement){
-            is Text -> {
+            is Text,
+            is EditText -> {
                 fontShaderProgram.use()
                 guiElement.bind(fontShaderProgram)
                 guiElement.render(fontShaderProgram)

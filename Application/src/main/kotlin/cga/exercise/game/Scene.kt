@@ -331,7 +331,7 @@ class Scene(private val window: GameWindow) {
 
         //println("key:$key scancode:$scancode action:$action mode:$mode")
 
-        if(action == 1)
+        if(action == 1 || action == 2)
             testGuiElement.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
 
 //        if(gameState.contains(RenderCategory.PressToPlay)){

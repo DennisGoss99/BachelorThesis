@@ -24,25 +24,32 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
 
         val keyAsChar = keyToCharGERLayout(key, mode)
 
+        var textHasChanged = false
+
         if(keyAsChar != null){
-            text += keyAsChar
+            textGuiElement.insertChar(keyAsChar)
+            textHasChanged = true
         }else{
             when(key){
                 GLFW.GLFW_KEY_BACKSPACE ->{
-                    text = text.dropLast(1)
+                    textGuiElement.removeChar()
+                    textHasChanged = true
                 }
-                GLFW.GLFW_KEY_RIGHT -> {
-
+                GLFW.GLFW_KEY_DELETE ->{
+                    textGuiElement.removeForwardChar()
+                    textHasChanged = true
                 }
-                GLFW.GLFW_KEY_LEFT -> {
-
-                }
+                GLFW.GLFW_KEY_HOME -> textGuiElement.setCursorStart()
+                GLFW.GLFW_KEY_END -> textGuiElement.setCursorEnd()
+                GLFW.GLFW_KEY_RIGHT -> textGuiElement.moveCursor(1)
+                GLFW.GLFW_KEY_LEFT -> textGuiElement.moveCursor(-1)
             }
         }
 
-
-        textGuiElement.text = text
-        textGuiElement.textHasChanged()
+        if(textHasChanged) {
+            textGuiElement.text = text
+            textGuiElement.textHasChanged()
+        }
     }
 
     init {

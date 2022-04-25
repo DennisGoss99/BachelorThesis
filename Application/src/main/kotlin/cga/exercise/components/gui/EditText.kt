@@ -1,6 +1,8 @@
 package cga.exercise.components.gui
 
 
+import cga.exercise.components.gui.TextComponents.TextCursor
+import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
 import org.joml.Vector2f
 import org.joml.Vector4f
@@ -16,8 +18,12 @@ class EditText (text : String,
 
     init {
         children = listOf(
-            Rectangle(Vector2f(0.01f,0.7f))
+            TextCursor(Vector2f(0.0005f * fontSize,0.009f * fontSize), color = Color(220,220,220))
         )
+    }
+
+    override fun bind(shaderProgram: ShaderProgram) {
+        super.bind(shaderProgram)
     }
 
 }

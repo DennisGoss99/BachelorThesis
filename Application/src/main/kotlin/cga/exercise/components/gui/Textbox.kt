@@ -12,12 +12,18 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
 
     override val onClick: ((Int, Int) -> Unit)? = null
 
-    override val onFocus: (() -> Unit) = {->}
+    override val onFocus: (() -> Unit) = {->
+        children.forEach { it ->
+            it.hasFocus = true
+            it.children.forEach { it.hasFocus = true }
+        }
+    }
 
     override val onKeyDown : ((Int, Int, Int) -> Unit) = { key: Int, scancode: Int, mode: Int ->
-        val textGuiElement = children[0] as Text
+        val textGuiElement = children[0] as EditText
 
         val keyAsChar = keyToCharGERLayout(key, mode)
+
         if(keyAsChar != null){
             text += keyAsChar
         }else{
@@ -25,8 +31,15 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
                 GLFW.GLFW_KEY_BACKSPACE ->{
                     text = text.dropLast(1)
                 }
+                GLFW.GLFW_KEY_RIGHT -> {
+
+                }
+                GLFW.GLFW_KEY_LEFT -> {
+
+                }
             }
         }
+
 
         textGuiElement.text = text
         textGuiElement.textHasChanged()
@@ -34,11 +47,8 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
 
     init {
         children = listOf(
-            Text(text,5f, fontType, 10f, centered, true, if(centered) Vector2f(0f) else Vector2f(-1f,0f), color = Color(20,20,20))
+            EditText(text,5f, fontType, 10f, centered, true, if(centered) Vector2f(0f) else Vector2f(-1f,0f), color = Color(20,20,20))
         )
     }
-
-
-
 
 }

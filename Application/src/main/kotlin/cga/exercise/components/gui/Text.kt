@@ -24,18 +24,17 @@ open class Text (var text : String,
                  override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
 
     private var mesh: Mesh
-    private var cursorX = 0f
-    private var cursorY = 0f
+    public var cursorX = 0f
+    public var cursorY = 0f
 
     private var vertexData = mutableListOf<Float>()
     private var iboData = mutableListOf<Int>()
     private var iboCursor = 0
 
-    private var length = 0f
+    var length = 0f
     private var height = 0f
 
-
-
+    
     private val vao = arrayOf(
         VertexAttribute(2, GL11.GL_FLOAT, 16, 0),
         VertexAttribute(2, GL11.GL_FLOAT, 16, 8)
@@ -58,7 +57,7 @@ open class Text (var text : String,
 
     private fun setLetter(character: Char, fontSize: Float) {
         val fontTypeChar =
-            font.chars[character.toInt()] ?: throw Exception("Character couldn't be found in $font: [$character]")
+            font.chars[character.code] ?: throw Exception("Character couldn't be found in $font: [$character]")
 
         val x = cursorX + fontTypeChar.xOffset * fontSize
         val y = cursorY + fontTypeChar.yOffset * fontSize
@@ -130,12 +129,11 @@ open class Text (var text : String,
         val globalScale = getWorldScale()
 
         translateColumn.x *= globalScale.x
-        translateColumn.y *= -globalScale.y
+        translateColumn.y *= globalScale.y
 
         mat.setColumn(3, translateColumn)
 
-        val globalTranslate = getParentWordPosition()
-        //globalTranslate.mul(0.5f)
+        val globalTranslate = getParentWorldPosition()
         mat.translate(globalTranslate)
 
         if (centeredX || centeredY)

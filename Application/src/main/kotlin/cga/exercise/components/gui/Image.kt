@@ -12,6 +12,7 @@ class Image (private val texture: Texture2D,
              children: List<GuiElement> = listOf()) : Rectangle(scale, translate, color, children = children) {
 
     override fun render(shaderProgram: ShaderProgram) {
+        super.render(shaderProgram)
     }
 
     override fun bind(shaderProgram: ShaderProgram) {

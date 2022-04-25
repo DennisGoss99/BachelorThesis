@@ -1,6 +1,7 @@
 package cga.exercise.components.gui
 
 import cga.exercise.components.geometry.VertexAttribute
+import cga.exercise.components.gui.TextComponents.TextCursor
 import cga.exercise.components.shader.ShaderProgram
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP
@@ -43,7 +44,9 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
 
     }
 
-    private fun doRender(guiElement: GuiElement) {
+    var lastTimeTextCursor = 0f
+
+    private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
 
         when(guiElement){
             is Text -> {
@@ -54,7 +57,16 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                 guiShaderProgram.use()
                 GL30.glBindVertexArray(vao)
                 GL20.glEnableVertexAttribArray(0)
+            }
+            is TextCursor -> {
+                if(guiElement.hasFocus && (t - guiElement.lastRender).toInt() > 0.5) {
+                    guiElement.bind(guiShaderProgram)
+                    guiElement.render(guiShaderProgram)
+                    GL11.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
+                }
 
+                if((t - guiElement.lastRender).toInt() > 1)
+                    guiElement.lastRender = t
             }
             else -> {
 
@@ -64,10 +76,10 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
 
             }
         }
-        guiElement.children.forEach(::doRender)
+        guiElement.children.forEach { doRender(it,dt,t)}
     }
 
-    fun render(guiElement: GuiElement) {
+    fun render(guiElement: GuiElement, dt: Float, t: Float) {
         guiShaderProgram.use()
 
         GL30.glEnable(GL11.GL_BLEND)
@@ -78,7 +90,7 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
         GL30.glBindVertexArray(vao)
         GL20.glEnableVertexAttribArray(0)
 
-        doRender(guiElement)
+        doRender(guiElement, dt , t)
 
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         GL30.glDisable(GL11.GL_BLEND)

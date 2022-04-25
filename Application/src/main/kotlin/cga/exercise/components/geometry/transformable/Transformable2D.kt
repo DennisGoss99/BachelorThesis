@@ -38,13 +38,13 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
         return Vector2f(tempVector.x,tempVector.y);
     }
 
-    fun getWorldPosition(): Vector2f {
+    fun getWorldPosition(): Vector3f {
         val tempVector = Vector3f()
         getWorldModelMatrix().getColumn(3, tempVector)
-        return Vector2f(tempVector.x,tempVector.y);
+        return tempVector
     }
 
-    fun getParentWordPosition(): Vector3f {
+    fun getParentWorldPosition(): Vector3f {
         val tempVector = Vector3f()
         parent?.getWorldModelMatrix()?.getColumn(3, tempVector)
         return tempVector

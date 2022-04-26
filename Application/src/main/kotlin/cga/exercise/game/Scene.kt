@@ -99,26 +99,6 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-
-//    val testGuiElement = Rectangle(Vector2f(0.5f),Vector2f(0f,0.25f),
-//            children = listOf(
-//            EditText("hallodasfasfgasgasgasg",5f, StaticResources.standardFont,30f,true, true, Vector2f(0f, 0.25f) , color = Color(255,0,0))
-//        )
-//    )
-//    val testGuiElement = Rectangle(Vector2f(0.9f),
-//        children = listOf(
-//            Rectangle(Vector2f(0.5f), Vector2f(-0.125f,-0.28f), Color(255,128,0),
-//                children = listOf(
-//                    Rectangle(Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), Color(128,128,128),
-//                        children = listOf(
-//                            EditText("hallodasfasfgasgasgasg",5f, StaticResources.standardFont,30f,true, true, Vector2f(0f, 0f) , color = Color(255,0,0))
-//                        )
-//                    )
-//                )
-//            )
-//        )
-//    )
-
     val testGuiElement = Rectangle(Vector2f(0.9f),onFocus = {->} , children = listOf(
         Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
             children = listOf(
@@ -128,18 +108,9 @@ class Scene(private val window: GameWindow) {
         )
     ))
 
-//    val testGuiElement = Rectangle(Vector2f(0.9f),onFocus = {->} , children = listOf(
-//        Rectangle(Vector2f(0.5f,0.5f),Vector2f(0f), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
-//            children = listOf(
-//                Textbox("T 1", Vector2f(0.35f,0.2f), Vector2f(0f,0f), centered = true)
-//            )
-//        )
-//    ))
-
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
 
     private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, false, Vector2f(-1f, 1f) , color = Color(255f,255f,255f))
-
 
     //scene setup
     init {
@@ -348,16 +319,6 @@ class Scene(private val window: GameWindow) {
 //            return
 //        }
 
-//        if(GLFW_KEY_F1 == key && action == 0){
-//            if(gameState.contains(RenderCategory.HelpScreen)){
-//                gameState.remove(RenderCategory.HelpScreen)
-//            }else{
-//                animatedHelpScreen.changeCurrentLocationState(0)
-//                gameState.add(RenderCategory.HelpScreen)
-//            }
-//
-//        }
-//
 //        if(GLFW_KEY_F5 == key && action == 0)
 //            when{
 //                gameState.contains(RenderCategory.FirstPerson) ->{

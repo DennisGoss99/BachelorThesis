@@ -33,5 +33,8 @@ class Game(width: Int,
 
     override fun onMouseButton(button: Int, action: Int, mode: Int) = scene.onMouseButton(button, action, mode)
 
-
+    override fun onWindowSize(width: Int, height: Int) {
+        super.onWindowSize(width, height)
+        scene.onWindowSize(width, height)
+    }
 }

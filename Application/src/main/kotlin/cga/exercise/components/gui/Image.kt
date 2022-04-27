@@ -1,15 +1,20 @@
 package cga.exercise.components.gui
 
+import cga.exercise.components.gui.constraints.IScaleConstraint
+import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
 import org.joml.Vector4f
 
 class Image (private val texture: Texture2D,
-             scale: Vector2f = Vector2f(1f),
-             translate: Vector2f = Vector2f(0f),
+             widthConstraint : IScaleConstraint,
+             heightConstraint : IScaleConstraint,
+             translateXConstraint : ITranslateConstraint,
+             translateYConstraint : ITranslateConstraint,
              color : Vector4f = Vector4f(0f,0f,0f,0f),
-             children: List<GuiElement> = listOf()) : Rectangle(scale, translate, color, children = children) {
+             cornerRadius : Int = 0,
+             children: List<GuiElement> = listOf()) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius, children = children) {
 
     override fun render(shaderProgram: ShaderProgram) {
         super.render(shaderProgram)

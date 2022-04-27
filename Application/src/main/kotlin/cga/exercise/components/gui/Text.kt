@@ -6,6 +6,8 @@ import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.mesh.SimpleMesh
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.gui.TextComponents.TextCursor
+import cga.exercise.components.gui.constraints.ITranslateConstraint
+import cga.exercise.components.gui.constraints.Relative
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
 import org.joml.Matrix4f
@@ -22,8 +24,9 @@ open class Text(text : String,
                 val maxLineLength : Float,
                 val centeredX : Boolean,
                 val centeredY : Boolean,
-                translate : Vector2f = Vector2f(0f,0f),
-                override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(listOf()) {
+                translateXConstraint : ITranslateConstraint,
+                translateYConstraint : ITranslateConstraint,
+                override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(Relative(1f),Relative(1f), translateXConstraint, translateYConstraint, children = listOf()) {
 
     private var mesh : SimpleMesh
 
@@ -63,7 +66,7 @@ open class Text(text : String,
 
         mesh = SimpleMesh(vertexData.toFloatArray(), vao, font.fontImageMaterial)
 
-        translateLocal(translate)
+        //translateLocal(translate)
     }
 
     private fun convertChar(character: Char) : cga.exercise.components.text.Char{

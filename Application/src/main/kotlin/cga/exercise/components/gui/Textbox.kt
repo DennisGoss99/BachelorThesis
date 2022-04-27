@@ -1,5 +1,6 @@
 package cga.exercise.components.gui
 
+import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.text.FontType
 import cga.exercise.game.StaticResources
 import cga.exercise.game.StaticResources.Companion.keyToCharGERLayout
@@ -7,7 +8,15 @@ import org.joml.Vector2f
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
-class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Vector4f = Color(180,180,180), centered : Boolean = true ,cornerRadius : Int = 0, fontType: FontType = StaticResources.standardFont) : Rectangle(scale, translate, color,cornerRadius)
+class Textbox(var text : String,
+              widthConstraint : IScaleConstraint,
+              heightConstraint : IScaleConstraint,
+              translateXConstraint : ITranslateConstraint,
+              translateYConstraint : ITranslateConstraint,
+              color: Vector4f = Color(180,180,180),
+              centered : Boolean = true,
+              cornerRadius : Int = 0,
+              fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
 
     override val onClick: ((Int, Int) -> Unit)? = null
@@ -53,7 +62,7 @@ class Textbox(var text : String, scale: Vector2f, translate: Vector2f, color: Ve
 
     init {
         children = listOf(
-            EditText(text,4f, fontType, 10f, centered, true, if(centered) Vector2f(0f) else Vector2f(-1f,0f), color = Color(20,20,20))
+            EditText(text,4f, fontType, 10f, centered, true, if(centered) Center() else Relative(-1f), Center(), color = Color(20,20,20))
         )
     }
 

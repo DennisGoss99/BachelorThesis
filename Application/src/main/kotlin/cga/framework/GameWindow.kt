@@ -290,7 +290,7 @@ abstract class GameWindow(
      * @param width     new window width
      * @param height    new window height
      */
-    protected fun onWindowSize(width: Int, height: Int) {
+    protected open fun onWindowSize(width: Int, height: Int) {
         windowWidth = width
         windowHeight = height
         WindowStats.windowWidth = width

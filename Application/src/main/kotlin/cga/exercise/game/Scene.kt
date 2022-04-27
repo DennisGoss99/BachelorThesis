@@ -11,6 +11,7 @@ import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.*
+import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.mapGenerator.MapGeneratorMaterials
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
@@ -19,15 +20,11 @@ import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
 import kotlinx.coroutines.*
-import org.joml.Math.abs
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
-
-
-var Test = "Hallo"
 
 class Scene(private val window: GameWindow) {
 
@@ -89,28 +86,38 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
-    val f1 = {_: Int, _: Int -> println("Button 1") }
-    val f2 = {_: Int, _: Int -> println("Button 2") }
-
-//    val testGuiElement =  Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0), cornerRadius = 10,
+//    val testGuiElement = Box(Relative(1f),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
-//            Button("Button 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), cornerRadius = 10, onClick = f1),
-//            Button("Button 2", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f), cornerRadius = 10, onClick = f2)
+//            Box(Relative(0.5f),AspectRatio(), Center(), Center(), cornerRadius = 10, color = Color(160,160,160),
+//                children = listOf(
+//                    Box(PixelWidth(100),AspectRatio(), Center(), Center(), cornerRadius = 10 ,color = Color(255,0,0))
+//                )
+//            )
 //        )
 //    )
 
-    val testGuiElement = Rectangle(Vector2f(0.9f),onFocus = {->} , children = listOf(
-        Rectangle(Vector2f(0.5f,0.5f),Vector2f(-0.125f,-0.28f), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+//    val f1 = {_: Int, _: Int -> println("Button 1") }
+//    val f2 = {_: Int, _: Int -> println("Button 2") }
+//
+//    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0), cornerRadius = 10,
+//        children = listOf(
+//            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), cornerRadius = 10, onClick = f1),
+//            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), cornerRadius = 10, onClick = f2)
+//        )
+//    )
+
+    val testGuiElement = Box(Relative(0.9f), Relative(0.9f), Center(), Center(),onFocus = {->} , children = listOf(
+        Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
             children = listOf(
-                Textbox("T 1", Vector2f(0.35f,0.2f), Vector2f(0f,0.4f), centered = false),
-                Textbox("T 2fsdgfsdgdsg", Vector2f(0.35f,0.2f), Vector2f(0f,-0.4f)),
+                Textbox("T 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
+                Textbox("T 2fsdgfsdgdsg", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20)),
             )
         )
     ))
 
-    private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Vector2f(0.05f,0.05f))
+    private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
 
-    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, false, Vector2f(-1f, 1f) , color = Color(255f,255f,255f))
+    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, false, Relative(-1f), Relative(1f), color = Color(255f,255f,255f))
 
     //scene setup
     init {
@@ -135,6 +142,8 @@ class Scene(private val window: GameWindow) {
     //        //configure LoadingBar
     //        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
     //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
+
+             testGuiElement.refresh()
         }
     }
 
@@ -428,6 +437,10 @@ class Scene(private val window: GameWindow) {
 
     }
 
+    fun onWindowSize(width: Int, height: Int) {
+        testGuiElement.refresh()
+    }
+
     fun cleanup() {
 
         //renderables.cleanup()
@@ -439,5 +452,8 @@ class Scene(private val window: GameWindow) {
         guiShader.cleanup()
         skyBoxShader.cleanup()
     }
+
+
+
 
 }

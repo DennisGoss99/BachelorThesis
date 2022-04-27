@@ -8,7 +8,11 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
 
     //fun rotateLocal( roll: Float) = modelMatrix.rotateXYZ(0f,0f,toRadians(roll));
 
-    fun translateLocal(deltaPos: Vector2f){
+    fun translateLocal(deltaPosX : Float, deltaPosY : Float){
+        modelMatrix.translate(Vector3f(deltaPosX, deltaPosY,0f))
+    }
+
+    fun translateLocal(deltaPos : Vector2f){
         modelMatrix.translate(Vector3f(deltaPos,0f))
     }
 
@@ -17,7 +21,13 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
         modelMatrix = tempMatrix.mul(modelMatrix);
     }
 
-    fun scaleLocal(scale: Vector2f) = modelMatrix.scale(Vector3f(scale,1f))
+    fun scaleLocal(scaleX : Float, scaleY : Float){
+        modelMatrix.scale(Vector3f(scaleX,scaleY,1f))
+    }
+
+    fun scaleLocal(scale: Vector2f){
+        modelMatrix.scale(Vector3f(scale,1f))
+    }
 
     fun getWorldModelMatrix(): Matrix4f {
         // transformable parent abfragen, wenn ja links multiplikation der partent matrix wenn nein dann selbst world matrix, kein Patent kopie von Modelmatrix
@@ -88,6 +98,10 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
         val imageCorners = getWorldPixelPosition()
 
         return Vector2f(imageCorners.z - imageCorners.x, imageCorners.y - imageCorners.w)
+    }
+
+    fun clearTransformation(){
+        modelMatrix = Matrix4f()
     }
 
 }

@@ -1,15 +1,18 @@
 package cga.exercise.components.gui.TextComponents
 
+import cga.exercise.components.gui.Box
 import cga.exercise.components.gui.EditText
-import cga.exercise.components.gui.Rectangle
+import cga.exercise.components.gui.constraints.IScaleConstraint
+import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.shader.ShaderProgram
 import org.joml.Vector2f
-import org.joml.Vector3f
 import org.joml.Vector4f
 
-class TextCursor (scale: Vector2f = Vector2f(1f),
-                  translate: Vector2f = Vector2f(0f),
-                  color : Vector4f = Vector4f(0f,0f,0f,0f)) : Rectangle(scale, translate, color) {
+class TextCursor (widthConstraint : IScaleConstraint,
+                  heightConstraint : IScaleConstraint,
+                  translateXConstraint : ITranslateConstraint,
+                  translateYConstraint : ITranslateConstraint,
+                  color : Vector4f = Vector4f(0f,0f,0f,0f)) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color) {
 
     val offsetX = 0.004f
 

@@ -10,6 +10,7 @@ import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.gui.constraints.Relative
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
+import cga.framework.WindowStats
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -172,7 +173,21 @@ open class Text(text : String,
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
 
+        shaderProgram.setUniform("color", color)
+        shaderProgram.setUniform("transformationMatrix" , getLocalModelMatrix(),false)
+    }
+
+    override fun render(shaderProgram: ShaderProgram) {
+        mesh.render(shaderProgram)
+    }
+
+    override fun refresh() {
+        super.refresh()
         val mat = getLocalModelMatrix()
+
+        //DisplayAspectRatio
+//        val aspectRatioMultiply = (16f/9f) / (WindowStats.windowWidth.toFloat() / WindowStats.windowHeight)
+//        mat.set(0, 0, mat.get(0,0) * aspectRatioMultiply)
 
         val translateColumn = Vector4f()
         mat.getColumn(3, translateColumn)
@@ -190,12 +205,7 @@ open class Text(text : String,
         if (centeredX || centeredY)
             mat.translate(Vector3f(if(centeredX) -length else 0f, if(centeredY) 0.01f * fontSize else 0f,0f))
 
-        shaderProgram.setUniform("color", color)
-        shaderProgram.setUniform("transformationMatrix" , mat,false)
-    }
-
-    override fun render(shaderProgram: ShaderProgram) {
-        mesh.render(shaderProgram)
+        modelMatrix = mat
     }
 
     /**

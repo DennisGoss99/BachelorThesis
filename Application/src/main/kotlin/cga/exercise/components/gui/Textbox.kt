@@ -57,6 +57,7 @@ class Textbox(var text : String,
 
         if(textHasChanged) {
             textGuiElement.textHasChanged()
+            textGuiElement.refresh()
         }
     }
 

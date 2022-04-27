@@ -88,11 +88,7 @@ class Scene(private val window: GameWindow) {
 
 //    val testGuiElement = Box(Relative(1f),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
-//            Box(Relative(0.5f),AspectRatio(), Center(), Center(), cornerRadius = 10, color = Color(160,160,160),
-//                children = listOf(
-//                    Box(PixelWidth(100),AspectRatio(), Center(), Center(), cornerRadius = 10 ,color = Color(255,0,0))
-//                )
-//            )
+//    val testGuiElement = Text("Hallo", 5f, StaticResources.standardFont, 10f, false, false, PixelLeft(0), Center())
 //        )
 //    )
 

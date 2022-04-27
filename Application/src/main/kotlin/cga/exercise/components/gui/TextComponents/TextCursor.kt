@@ -5,6 +5,7 @@ import cga.exercise.components.gui.EditText
 import cga.exercise.components.gui.constraints.IScaleConstraint
 import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.shader.ShaderProgram
+import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector4f
 
@@ -25,9 +26,21 @@ class TextCursor (widthConstraint : IScaleConstraint,
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
 
+        shaderProgram.setUniform("transformationMatrix" , getLocalModelMatrix(),false)
+    }
+
+    override fun render(shaderProgram: ShaderProgram) {
+        super.render(shaderProgram)
+    }
+
+    override fun refresh() {
+        super.refresh()
+
         val parent = parent as EditText
 
-        val mat = getWorldModelMatrix()
+        val mat = parent.parent?.getWorldModelMatrix() ?: Matrix4f()
+
+        mat.translate(parent.translateXConstraint.getTranslate(parent), parent.translateYConstraint.getTranslate(parent),0f)
 
         val translateColumn = Vector4f()
         mat.getColumn(3, translateColumn)
@@ -38,19 +51,14 @@ class TextCursor (widthConstraint : IScaleConstraint,
             translateColumn.x -= parent.length
 
         if (!parent.centeredY)
-            translateColumn.y += 0.01f * parent.fontSize
+            translateColumn.y -= 0.01f * parent.fontSize
 
         mat.setColumn(3, translateColumn)
 
-        val scale = getScaleLocal()
+        mat.set(0,0, widthConstraint.getScale(this))
+        mat.set(1,1, heightConstraint.getScale(this))
 
-        mat.set(0,0, scale.x)
-        mat.set(1,1, scale.y)
+        modelMatrix = mat
 
-        shaderProgram.setUniform("transformationMatrix" , mat,false)
-    }
-
-    override fun render(shaderProgram: ShaderProgram) {
-        super.render(shaderProgram)
     }
 }

@@ -12,16 +12,13 @@ class Circle(diameterConstraint : IScaleConstraint,
              color: Vector4f = Vector4f(1f,1f,1f,1f),
              override val onClick: ((Int, Int) -> Unit)? = null,
              override val onFocus: (() -> Unit)? = null,
-             children: List<GuiElement> = listOf()) : Box(diameterConstraint, AspectRatio(), translateXConstraint, translateYConstraint, color){
+             children: List<GuiElement> = listOf()) : Box(diameterConstraint, AspectRatio(), translateXConstraint, translateYConstraint, color, children = children){
 
-
-    override fun bind(shaderProgram: ShaderProgram) {
-
+    override fun refresh() {
+        super.refresh()
         val worldPosition = getWorldPixelPosition()
         val radius = (worldPosition.z - worldPosition.x) /2f
         cornerRadius = radius.toInt()
-
-        super.bind(shaderProgram)
     }
 
 }

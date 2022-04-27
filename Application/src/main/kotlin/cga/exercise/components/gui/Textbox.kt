@@ -62,7 +62,8 @@ class Textbox(var text : String,
 
     init {
         children = listOf(
-            EditText(text,4f, fontType, 10f, if(centered) Center() else PixelLeft(5), Center(), color = Color(20,20,20))
+//            EditText(text,4f, fontType, 10f, if(centered) Center() else PixelLeft(0), Center(), color = Color(20,20,20))
+            EditText(text,4f, fontType, 10f, TextMode.Center ,Center(), Center(), color = Color(20,20,20))
         )
     }
 

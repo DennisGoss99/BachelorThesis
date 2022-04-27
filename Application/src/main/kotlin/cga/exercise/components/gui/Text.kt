@@ -18,23 +18,15 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 import java.util.*
 
-private class TextScaleConstrain() : IScaleConstraint, Constraint(){
-
-    var relativeScale = 0f
-
-    override fun getScale(guiElement: GuiElement): Float {
-        return relativeScale
-    }
-
-}
-
 open class Text(text : String,
                 var fontSize : Float,
                 private val font : FontType,
                 val maxLineLength : Float,
+                var textMode : TextMode,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
                 override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
+
 
     private var mesh : SimpleMesh? = null
 
@@ -53,6 +45,8 @@ open class Text(text : String,
         private set
     var cursorPosX = 0
         private set
+    var cursorPosY = 0
+        private set
 
     private val textChars = mutableListOf<cga.exercise.components.text.Char>()
 
@@ -61,6 +55,7 @@ open class Text(text : String,
     var length = 0f
 
     private var height = 0f
+    var lineHeight = 0f
 
     private val vao = arrayOf(
         VertexAttribute(2, GL11.GL_FLOAT, 16, 0),
@@ -73,7 +68,7 @@ open class Text(text : String,
             textChars.add(convertChar(c))
         }
 
-        cursorPosX = text.length
+//        cursorPosX = text.length
         textHasChanged()
 
     }
@@ -82,12 +77,32 @@ open class Text(text : String,
         return font.chars[character.code] ?: throw Exception("Character couldn't be found in $font: [$character]")
     }
 
-    private fun setLetter(fontTypeChar: cga.exercise.components.text.Char, fontSize: Float) {
+    private fun getMaxLength() : Float{
+        var tempLength = 0f
+        var tempLength1 = 0f
 
-        val x = cursorX + fontTypeChar.xOffset * fontSize
-        val y = cursorY + fontTypeChar.yOffset * fontSize
-        val maxX = x + fontTypeChar.sizeX * fontSize
-        val maxY = y + fontTypeChar.sizeY * fontSize
+        textChars.forEach {
+            if(it.id == 10){
+                if(tempLength1 > tempLength)
+                    tempLength = tempLength1
+                tempLength1 = 0f
+            }else{
+                tempLength1 += it.xAdvance * fontSize / 3
+            }
+        }
+
+        if(tempLength1 > tempLength)
+            tempLength = tempLength1
+
+        return tempLength
+    }
+
+    private fun setLetter(fontTypeChar: cga.exercise.components.text.Char) {
+
+        val x = cursorX + fontTypeChar.xOffset * fontSize / 3f
+        val y = cursorY + fontTypeChar.yOffset * fontSize / 3f
+        val maxX = x + fontTypeChar.sizeX * fontSize / 3f
+        val maxY = y + fontTypeChar.sizeY * fontSize / 3f
         val properX = (2 * x) - 1
         val properY = (-2 * y) + 1
         val properMaxX = (2 * maxX) - 1
@@ -106,8 +121,16 @@ open class Text(text : String,
 
         textChars.add(fontTypeChar)
 
-        cursorX += fontTypeChar.xAdvance * fontSize
-        length += fontTypeChar.xAdvance * fontSize
+
+
+        if(fontTypeChar.id == 10){
+            cursorX = 0f
+            cursorY += lineHeight
+            height += lineHeight
+            cursorPosY++
+        }else{
+            cursorX += fontTypeChar.xAdvance * fontSize / 3f
+        }
     }
 
     private fun addVertices(x: Float,y: Float,maxX: Float,maxY: Float,texx: Float, texy: Float, texmaxX: Float, texmaxY: Float) {
@@ -126,16 +149,40 @@ open class Text(text : String,
         mesh?.cleanupMesh()
 
         vertexData.clear()
-        length = 0f
-        height = 0.01f * fontSize
+
+        lineHeight = 0.01f * fontSize
+        height = lineHeight
+
+        //get first line length
+        var lineLength = textChars.takeWhile { it.id != 10 }.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
+        //get max line length
+        length = getMaxLength()
+
+        //set first xPos starting point
+        cursorX = when(textMode){
+            TextMode.Center -> (length - lineLength) / 2f
+            TextMode.Left -> 0f
+            TextMode.Right -> length - lineLength
+        }
+        cursorY = 0f
+        cursorPosY = 0
 
         val cpyTextChars = textChars.toList()
-
         textChars.clear()
-        cursorX = 0f
 
-        cpyTextChars.forEach {
-            setLetter(it, fontSize/3)
+        cpyTextChars.forEachIndexed { index, it ->
+            setLetter(it)
+
+            //set xPos starting point
+            if (it.id == 10 && index < cpyTextChars.count()) {
+                lineLength = cpyTextChars.drop(index + 1).takeWhile { it.id != 10 }.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
+                cursorX = when(textMode){
+                    TextMode.Center -> (length - lineLength) / 2f
+                    TextMode.Left -> 0f
+                    TextMode.Right -> length - lineLength
+                }
+            }
+
         }
 
         moveCursor(0)
@@ -217,7 +264,7 @@ open class Text(text : String,
         mat.translate(globalTranslate)
 
 
-        mat.translate(Vector3f(-length, 0.01f * fontSize,0f))
+        mat.translate(Vector3f(-length, height,0f))
 
         modelMatrix = mat
 

@@ -17,6 +17,7 @@ class StaticResources {
         fun keyToCharGERLayout(keyCode : Int, mode : Int) : Char?{
             return when(keyCode){
                 GLFW_KEY_SPACE -> ' '
+                GLFW_KEY_ENTER -> '\n'
                 GLFW_KEY_1 -> if(mode == 1) '!' else '1'
                 GLFW_KEY_2 -> if(mode == 1) '"' else '2'
                 GLFW_KEY_3 -> if(mode == 1) '§' else '3'

@@ -75,6 +75,9 @@ class Scene(private val window: GameWindow) {
 //    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
 //    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
 
+    val f1 = {_: Int, _: Int -> println("Button 1") }
+    val f2 = {_: Int, _: Int -> println("Button 2") }
+
     private val earth = Planet(
         "earth",
         1f,3f,0f,0.00f, Vector3f(2f,20f,0f),
@@ -86,15 +89,13 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
-    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
-        children = listOf(
-            Circle(Relative(1f),Center(),Center(), color = Color(255,0 ,0))
-        )
-    )
+//    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
+//        children = listOf(
+//            Text("Hallo\nHWelt!", 6f, StaticResources.standardFont, 10f, Center(), Center(), color = Color(255,0,0))
+//        )
+//    )
 
-//    val f1 = {_: Int, _: Int -> println("Button 1") }
-//    val f2 = {_: Int, _: Int -> println("Button 2") }
-//
+
 //    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0), cornerRadius = 10,
 //        children = listOf(
 //            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), cornerRadius = 10, onClick = f1),
@@ -102,18 +103,18 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-//    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
-//        Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
-//            children = listOf(
-//                Textbox("T 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
-//                Textbox("T 2fsdgfsdgdsg", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20)),
-//            )
-//        )
-//    ))
+    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
+        Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+            children = listOf(
+                //Textbox("Hallo\nHWelt!", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
+                Textbox("Haaaaa", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20)),
+            )
+        )
+    ))
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
 
-    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
+//    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 
     //scene setup
     init {
@@ -141,7 +142,7 @@ class Scene(private val window: GameWindow) {
 
              testGuiElement.refresh()
              cursorGuiElement.refresh()
-             fpsGuiElement.refresh()
+//             fpsGuiElement.refresh()
         }
     }
 
@@ -157,8 +158,8 @@ class Scene(private val window: GameWindow) {
         if (t - lastT  > 0.5f){
             lastT = t
             frameCounter *= 2
-            fpsGuiElement.text = "$frameCounter"
-            fpsGuiElement.textHasChanged()
+//            fpsGuiElement.text = "$frameCounter"
+//            fpsGuiElement.textHasChanged()
             frameCounter = 0
         }
         frameCounter ++
@@ -203,7 +204,7 @@ class Scene(private val window: GameWindow) {
         //--
 
         //-- FPS Count
-            guiRenderer.render(fpsGuiElement, dt, t)
+//            guiRenderer.render(fpsGuiElement, dt, t)
         //--
 
         guiRenderer.render(cursorGuiElement, dt, t)

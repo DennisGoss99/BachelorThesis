@@ -20,11 +20,9 @@ class EditText (text : String,
                 fontSize : Float,
                 font : FontType,
                 maxLineLength : Float,
-                centeredX : Boolean,
-                centeredY : Boolean,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : Text(text, fontSize, font, maxLineLength, centeredX, centeredY, translateXConstraint, translateYConstraint, color) {
+                color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : Text(text, fontSize, font, maxLineLength, translateXConstraint, translateYConstraint, color) {
 
     init {
         children = listOf(

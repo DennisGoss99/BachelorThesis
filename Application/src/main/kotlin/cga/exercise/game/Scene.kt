@@ -102,7 +102,7 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-    val testGuiElement = Box(Relative(0.9f), Relative(0.9f), Center(), Center(),onFocus = {->} , children = listOf(
+    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
         Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
             children = listOf(
                 Textbox("T 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
@@ -113,7 +113,7 @@ class Scene(private val window: GameWindow) {
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
 
-    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f,false, false, Relative(-1f), Relative(1f), color = Color(255f,255f,255f))
+    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 
     //scene setup
     init {
@@ -140,6 +140,8 @@ class Scene(private val window: GameWindow) {
     //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
 
              testGuiElement.refresh()
+             cursorGuiElement.refresh()
+             fpsGuiElement.refresh()
         }
     }
 

@@ -47,11 +47,7 @@ class TextCursor (widthConstraint : IScaleConstraint,
 
         translateColumn.x += parent.cursorX * 2f + offsetX
 
-        if (parent.centeredX)
-            translateColumn.x -= parent.length
-
-        if (!parent.centeredY)
-            translateColumn.y -= 0.01f * parent.fontSize
+        translateColumn.x -= parent.length
 
         mat.setColumn(3, translateColumn)
 

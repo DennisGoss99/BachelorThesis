@@ -39,8 +39,8 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     init {
         this.children = children
 
-        translateLocal(translateXConstraint.getTranslate(this), translateYConstraint.getTranslate(this))
-        scaleLocal(widthConstraint.getScale(this), heightConstraint.getScale(this))
+//        translateLocal(translateXConstraint.getTranslate(this), translateYConstraint.getTranslate(this))
+//        scaleLocal(widthConstraint.getScale(this), heightConstraint.getScale(this))
     }
 
     protected open val onClick : ((Int, Int) -> Unit)? = null

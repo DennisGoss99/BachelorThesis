@@ -55,15 +55,14 @@ class Textbox(var text : String,
             }
         }
 
-        if(textHasChanged) {
+        if(textHasChanged)
             textGuiElement.textHasChanged()
-            textGuiElement.refresh()
-        }
+        textGuiElement.refresh()
     }
 
     init {
         children = listOf(
-            EditText(text,4f, fontType, 10f, centered, true, if(centered) Center() else Relative(-1f), Center(), color = Color(20,20,20))
+            EditText(text,4f, fontType, 10f, if(centered) Center() else PixelLeft(5), Center(), color = Color(20,20,20))
         )
     }
 

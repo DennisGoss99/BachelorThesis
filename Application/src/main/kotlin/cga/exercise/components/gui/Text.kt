@@ -6,8 +6,7 @@ import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.mesh.SimpleMesh
 import cga.exercise.components.geometry.transformable.Transformable2D
 import cga.exercise.components.gui.TextComponents.TextCursor
-import cga.exercise.components.gui.constraints.ITranslateConstraint
-import cga.exercise.components.gui.constraints.Relative
+import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
 import cga.framework.WindowStats
@@ -19,17 +18,25 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 import java.util.*
 
+private class TextScaleConstrain() : IScaleConstraint, Constraint(){
+
+    var relativeScale = 0f
+
+    override fun getScale(guiElement: GuiElement): Float {
+        return relativeScale
+    }
+
+}
+
 open class Text(text : String,
                 var fontSize : Float,
                 private val font : FontType,
                 val maxLineLength : Float,
-                val centeredX : Boolean,
-                val centeredY : Boolean,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(Relative(1f),Relative(1f), translateXConstraint, translateYConstraint, children = listOf()) {
+                override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
 
-    private var mesh : SimpleMesh
+    private var mesh : SimpleMesh? = null
 
     var text
         get() = textChars.fold(""){acc, char -> acc + char.id.toChar() }
@@ -52,6 +59,7 @@ open class Text(text : String,
     private var vertexData = mutableListOf<Float>()
 
     var length = 0f
+
     private var height = 0f
 
     private val vao = arrayOf(
@@ -60,14 +68,14 @@ open class Text(text : String,
     )
 
     init {
+
         text.forEach { c ->
-            setLetter(convertChar(c), fontSize / 3)
+            textChars.add(convertChar(c))
         }
+
         cursorPosX = text.length
+        textHasChanged()
 
-        mesh = SimpleMesh(vertexData.toFloatArray(), vao, font.fontImageMaterial)
-
-        //translateLocal(translate)
     }
 
     private fun convertChar(character: Char) : cga.exercise.components.text.Char{
@@ -115,11 +123,11 @@ open class Text(text : String,
     }
 
     fun textHasChanged(){
-        mesh.cleanupMesh()
+        mesh?.cleanupMesh()
 
         vertexData.clear()
         length = 0f
-        height = 0f
+        height = 0.01f * fontSize
 
         val cpyTextChars = textChars.toList()
 
@@ -178,11 +186,17 @@ open class Text(text : String,
     }
 
     override fun render(shaderProgram: ShaderProgram) {
-        mesh.render(shaderProgram)
+        mesh?.render(shaderProgram)
     }
 
-    override fun refresh() {
-        super.refresh()
+    final override fun refresh() {
+        (widthConstraint as TextScaleConstrain).relativeScale = length / getWorldScale().x
+        (heightConstraint as TextScaleConstrain).relativeScale = height / getWorldScale().y
+
+        clearTransformation()
+        translateLocal(translateXConstraint.getTranslate(this), translateYConstraint.getTranslate(this))
+        children.forEach { it.refresh() }
+
         val mat = getLocalModelMatrix()
 
         //DisplayAspectRatio
@@ -202,10 +216,11 @@ open class Text(text : String,
         val globalTranslate = getParentWorldPosition()
         mat.translate(globalTranslate)
 
-        if (centeredX || centeredY)
-            mat.translate(Vector3f(if(centeredX) -length else 0f, if(centeredY) 0.01f * fontSize else 0f,0f))
+
+        mat.translate(Vector3f(-length, 0.01f * fontSize,0f))
 
         modelMatrix = mat
+
     }
 
     /**
@@ -213,7 +228,7 @@ open class Text(text : String,
      */
     override fun cleanup() {
         super.cleanup()
-        mesh.cleanup()
+        mesh?.cleanup()
     }
 
 }

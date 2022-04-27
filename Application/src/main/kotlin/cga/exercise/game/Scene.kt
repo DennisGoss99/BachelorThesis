@@ -86,11 +86,11 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
-//    val testGuiElement = Box(Relative(1f),Relative(1f), Center(), Center(), cornerRadius = 10,
-//        children = listOf(
-//    val testGuiElement = Text("Hallo", 5f, StaticResources.standardFont, 10f, false, false, PixelLeft(0), Center())
-//        )
-//    )
+    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
+        children = listOf(
+            Circle(Relative(1f),Center(),Center(), color = Color(255,0 ,0))
+        )
+    )
 
 //    val f1 = {_: Int, _: Int -> println("Button 1") }
 //    val f2 = {_: Int, _: Int -> println("Button 2") }
@@ -102,14 +102,14 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
-        Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
-            children = listOf(
-                Textbox("T 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
-                Textbox("T 2fsdgfsdgdsg", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20)),
-            )
-        )
-    ))
+//    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
+//        Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+//            children = listOf(
+//                Textbox("T 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
+//                Textbox("T 2fsdgfsdgdsg", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20)),
+//            )
+//        )
+//    ))
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
 

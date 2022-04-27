@@ -9,27 +9,27 @@ uniform sampler2D texture2D;
 uniform int useImage;
 uniform vec4 elementColor;
 uniform vec4 elementCorners;
-uniform int borderRadius;
+uniform int cornerRadius;
 
 const float smoothness = 0.7;
 
 float renderCornerPixel(){
-    if(gl_FragCoord.x < elementCorners.x + borderRadius)
+    if(gl_FragCoord.x < elementCorners.x + cornerRadius)
     {
         //upper left
-        if(gl_FragCoord.y > elementCorners.y - borderRadius){
-            return 1.0f - smoothstep(borderRadius - smoothness, borderRadius + smoothness, length(vec2(elementCorners.x + borderRadius - gl_FragCoord.x, elementCorners.y - borderRadius - gl_FragCoord.y)));
+        if(gl_FragCoord.y > elementCorners.y - cornerRadius){
+            return 1.0f - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
         //lower left
-        }else if(gl_FragCoord.y < elementCorners.w + borderRadius){
-            return 1.0f - smoothstep(borderRadius - smoothness, borderRadius + smoothness, length(vec2(elementCorners.x + borderRadius - gl_FragCoord.x, elementCorners.w + borderRadius - gl_FragCoord.y)));
+        }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
+            return 1.0f - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
         }
-    }else if(gl_FragCoord.x > elementCorners.z - borderRadius){
+    }else if(gl_FragCoord.x > elementCorners.z - cornerRadius){
         //upper right
-        if(gl_FragCoord.y > elementCorners.y - borderRadius){
-            return 1.0f - smoothstep(borderRadius - smoothness, borderRadius + smoothness, length(vec2(elementCorners.z - borderRadius - gl_FragCoord.x, elementCorners.y - borderRadius - gl_FragCoord.y)));
+        if(gl_FragCoord.y > elementCorners.y - cornerRadius){
+            return 1.0f - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
         //lower right
-        }else if(gl_FragCoord.y < elementCorners.w + borderRadius){
-            return 1.0f - smoothstep(borderRadius - smoothness, borderRadius + smoothness, length(vec2(elementCorners.z - borderRadius - gl_FragCoord.x, elementCorners.w + borderRadius - gl_FragCoord.y)));
+        }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
+            return 1.0f - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
         }
     }
     return 1.0f;
@@ -40,7 +40,7 @@ void main(void){
     float alphaValue = 1.0f;
 
     //BorderAlgorithm
-    if(borderRadius > 0)
+    if(cornerRadius > 0)
         alphaValue = renderCornerPixel();
 
     if(useImage == 1 ){

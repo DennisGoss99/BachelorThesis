@@ -23,39 +23,43 @@ open class Text(text : String,
                 private val font : FontType,
                 val maxLineLength : Float,
                 var textMode : TextMode,
+                var multiline : Boolean = false,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
                 override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
 
 
-    private var mesh : SimpleMesh? = null
+
 
     var text
-        get() = textChars.fold(""){acc, char -> acc + char.id.toChar() }
+        get() = textChars.fold(""){acc, chars -> acc + chars.fold(""){acc2, char -> acc2 + char.id.toChar() } }
         set(value) {
             textChars.clear()
             value.forEach { c ->
-                textChars.add(convertChar(c))
+                addTextChat(convertChar(c))
             }
         }
 
     var cursorX = 0f
-        private set
+        protected set
     var cursorY = 0f
-        private set
-    var cursorPosX = 0
-        private set
-    var cursorPosY = 0
-        private set
+        protected set
 
-    private val textChars = mutableListOf<cga.exercise.components.text.Char>()
+    var cursorPosX = 0
+        protected set
+    var cursorPosY = 0
+        protected set
+
+    protected val textChars = mutableListOf<MutableList<cga.exercise.components.text.Char>>()
+
+    private var mesh : SimpleMesh? = null
 
     private var vertexData = mutableListOf<Float>()
 
-    var length = 0f
+    private var length = 0f
 
     private var height = 0f
-    var lineHeight = 0f
+    protected var lineHeight = 0f
 
     private val vao = arrayOf(
         VertexAttribute(2, GL11.GL_FLOAT, 16, 0),
@@ -63,40 +67,46 @@ open class Text(text : String,
     )
 
     init {
+        textChars.add(mutableListOf())
 
         text.forEach { c ->
-            textChars.add(convertChar(c))
+            addTextChat(convertChar(c))
         }
 
-//        cursorPosX = text.length
-        textHasChanged()
+        cursorPosY = textChars.size - 1
+        cursorPosX = textChars[cursorPosY].count()
 
+        this.textHasChanged()
+    }
+
+    private fun addTextChat(char: cga.exercise.components.text.Char){
+        if(char.id == 10) {
+            if(!multiline)
+                return
+
+            textChars.add(mutableListOf())
+            cursorPosY++
+        }
+        else
+            textChars[cursorPosY].add(char)
     }
 
     private fun convertChar(character: Char) : cga.exercise.components.text.Char{
         return font.chars[character.code] ?: throw Exception("Character couldn't be found in $font: [$character]")
     }
 
-    private fun getMaxLength() : Float{
-        var tempLength = 0f
-        var tempLength1 = 0f
-
-        textChars.forEach {
-            if(it.id == 10){
-                if(tempLength1 > tempLength)
-                    tempLength = tempLength1
-                tempLength1 = 0f
-            }else{
-                tempLength1 += it.xAdvance * fontSize / 3
-            }
+    protected fun getMaxLength() : Float {
+        return textChars.fold(0f){
+                acc, chars ->
+            val value = chars.fold(0f){acc2, char -> acc2 + char.xAdvance * fontSize / 3 }
+            if(acc < value)
+                value
+            else
+                acc
         }
-
-        if(tempLength1 > tempLength)
-            tempLength = tempLength1
-
-        return tempLength
     }
 
+    private var rowCount = 0
     private fun setLetter(fontTypeChar: cga.exercise.components.text.Char) {
 
         val x = cursorX + fontTypeChar.xOffset * fontSize / 3f
@@ -119,18 +129,8 @@ open class Text(text : String,
             fontTypeChar.yMaxTextureCoord
         )
 
-        textChars.add(fontTypeChar)
-
-
-
-        if(fontTypeChar.id == 10){
-            cursorX = 0f
-            cursorY += lineHeight
-            height += lineHeight
-            cursorPosY++
-        }else{
-            cursorX += fontTypeChar.xAdvance * fontSize / 3f
-        }
+        cursorX += fontTypeChar.xAdvance * fontSize / 3f
+        textChars[rowCount].add(fontTypeChar)
     }
 
     private fun addVertices(x: Float,y: Float,maxX: Float,maxY: Float,texx: Float, texy: Float, texmaxX: Float, texmaxY: Float) {
@@ -145,84 +145,85 @@ open class Text(text : String,
         )
     }
 
-    fun textHasChanged(){
+    open fun textHasChanged(){
         mesh?.cleanupMesh()
 
         vertexData.clear()
 
         lineHeight = 0.01f * fontSize
-        height = lineHeight
+        height = 0f
 
-        //get first line length
-        var lineLength = textChars.takeWhile { it.id != 10 }.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
         //get max line length
         length = getMaxLength()
+        var lineLength: Float
 
-        //set first xPos starting point
-        cursorX = when(textMode){
-            TextMode.Center -> (length - lineLength) / 2f
-            TextMode.Left -> 0f
-            TextMode.Right -> length - lineLength
-        }
         cursorY = 0f
-        cursorPosY = 0
+        rowCount = 0
 
         val cpyTextChars = textChars.toList()
+
         textChars.clear()
 
         cpyTextChars.forEachIndexed { index, it ->
-            setLetter(it)
+            textChars.add(mutableListOf())
 
-            //set xPos starting point
-            if (it.id == 10 && index < cpyTextChars.count()) {
-                lineLength = cpyTextChars.drop(index + 1).takeWhile { it.id != 10 }.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
-                cursorX = when(textMode){
-                    TextMode.Center -> (length - lineLength) / 2f
-                    TextMode.Left -> 0f
-                    TextMode.Right -> length - lineLength
-                }
+            lineLength = it.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
+            cursorX = when(textMode){
+                TextMode.Center -> (length - lineLength) / 2f
+                TextMode.Left -> 0f
+                TextMode.Right -> length - lineLength
             }
 
-        }
+            it.forEach { c ->
+                setLetter(c)
+            }
 
-        moveCursor(0)
+            cursorX = 0f
+            cursorY += lineHeight
+            height += lineHeight
+            rowCount++
+        }
 
         mesh = SimpleMesh(vertexData.toFloatArray(), vao, font.fontImageMaterial)
     }
 
-    fun moveCursor(amount : Int){
-
-        val cursorPosXNewValue = cursorPosX + amount
-
-        if(cursorPosXNewValue >= 0 && cursorPosXNewValue <= textChars.count()){
-            cursorPosX = cursorPosXNewValue
-
-            cursorX = textChars.subList(0,cursorPosX).fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3 }
+    fun removeChar(){
+        if(!(cursorPosY == 0 && cursorPosX == 0)){
+            if(cursorPosX == 0 ){
+                cursorPosX = textChars[cursorPosY-1].count()
+                textChars[cursorPosY - 1].addAll(textChars[cursorPosY])
+                textChars.removeAt(cursorPosY)
+                cursorPosY--
+            }else
+                textChars[cursorPosY].removeAt(--cursorPosX)
         }
     }
 
-    fun setCursorStart() {
-        cursorPosX = 0
-        cursorX = 0f
-    }
-
-    fun setCursorEnd() {
-        cursorPosX = textChars.count()
-        cursorX = textChars.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3 }
-    }
-
-    fun removeChar(){
-        if(cursorPosX > 0)
-            textChars.removeAt(--cursorPosX)
-    }
-
     fun removeForwardChar(){
-        if(cursorPosX < textChars.count())
-            textChars.removeAt(cursorPosX)
+
+        if(!(cursorPosY == textChars.size - 1 && textChars[cursorPosY].size == cursorPosX)){
+            if(textChars[cursorPosY].size ==cursorPosX){
+                textChars[cursorPosY].addAll(textChars[cursorPosY + 1])
+                textChars.removeAt(cursorPosY + 1)
+            }else
+                textChars[cursorPosY].removeAt(cursorPosX)
+        }
     }
 
     fun insertChar(char: Char){
-        textChars.add(cursorPosX++,convertChar(char))
+        val c = convertChar(char)
+
+        if(c.id == 10) {
+            if(!multiline)
+                return
+
+            val currentList = textChars[cursorPosY]
+            val sublist = currentList.subList(cursorPosX, currentList.size).toMutableList()
+            repeat(currentList.size - cursorPosX){ currentList.removeLast() }
+            textChars.add(++cursorPosY, sublist)
+            cursorPosX = 0
+        }else
+            textChars[cursorPosY].add(cursorPosX++,c)
     }
 
     override fun bind(shaderProgram: ShaderProgram) {
@@ -242,6 +243,7 @@ open class Text(text : String,
 
         clearTransformation()
         translateLocal(translateXConstraint.getTranslate(this), translateYConstraint.getTranslate(this))
+
         children.forEach { it.refresh() }
 
         val mat = getLocalModelMatrix()

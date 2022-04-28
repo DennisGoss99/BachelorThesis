@@ -45,9 +45,10 @@ class TextCursor (widthConstraint : IScaleConstraint,
         val translateColumn = Vector4f()
         mat.getColumn(3, translateColumn)
 
-        translateColumn.x += parent.cursorX * 2f + offsetX
+        translateColumn.x += parent.realCursorX * 2f + offsetX
+        translateColumn.x -= parent.cursorLineLength
 
-        translateColumn.x -= parent.length
+        translateColumn.y += parent.realCursorY
 
         mat.setColumn(3, translateColumn)
 

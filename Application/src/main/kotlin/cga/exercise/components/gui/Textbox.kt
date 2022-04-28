@@ -14,7 +14,8 @@ class Textbox(var text : String,
               translateXConstraint : ITranslateConstraint,
               translateYConstraint : ITranslateConstraint,
               color: Vector4f = Color(180,180,180),
-              centered : Boolean = true,
+              textMode: TextMode = TextMode.Center,
+              multiLine : Boolean = true,
               cornerRadius : Int = 0,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
@@ -38,32 +39,39 @@ class Textbox(var text : String,
         if(keyAsChar != null){
             textGuiElement.insertChar(keyAsChar)
             textHasChanged = true
-        }else{
-            when(key){
-                GLFW.GLFW_KEY_BACKSPACE ->{
-                    textGuiElement.removeChar()
-                    textHasChanged = true
-                }
-                GLFW.GLFW_KEY_DELETE ->{
-                    textGuiElement.removeForwardChar()
-                    textHasChanged = true
-                }
-                GLFW.GLFW_KEY_HOME -> textGuiElement.setCursorStart()
-                GLFW.GLFW_KEY_END -> textGuiElement.setCursorEnd()
-                GLFW.GLFW_KEY_RIGHT -> textGuiElement.moveCursor(1)
-                GLFW.GLFW_KEY_LEFT -> textGuiElement.moveCursor(-1)
-            }
         }
+        when(key){
+            GLFW.GLFW_KEY_BACKSPACE ->{
+                textGuiElement.removeChar()
+                textHasChanged = true
+            }
+            GLFW.GLFW_KEY_DELETE ->{
+                textGuiElement.removeForwardChar()
+                textHasChanged = true
+            }
+            GLFW.GLFW_KEY_HOME -> textGuiElement.setCursorStart()
+            GLFW.GLFW_KEY_END -> textGuiElement.setCursorEnd()
+            GLFW.GLFW_KEY_RIGHT -> textGuiElement.moveCursorX(1)
+            GLFW.GLFW_KEY_LEFT -> textGuiElement.moveCursorX(-1)
+            GLFW.GLFW_KEY_UP -> textGuiElement.moveCursorY(-1)
+            GLFW.GLFW_KEY_DOWN -> textGuiElement.moveCursorY(1)
+        }
+
 
         if(textHasChanged)
             textGuiElement.textHasChanged()
+
         textGuiElement.refresh()
     }
 
     init {
         children = listOf(
-//            EditText(text,4f, fontType, 10f, if(centered) Center() else PixelLeft(0), Center(), color = Color(20,20,20))
-            EditText(text,4f, fontType, 10f, TextMode.Center ,Center(), Center(), color = Color(20,20,20))
+            when(textMode){
+                TextMode.Center -> EditText(text,4f, fontType, 10f, TextMode.Center, multiLine, Center(), Center(), color = Color(20,20,20))
+                TextMode.Left -> EditText(text,4f, fontType, 10f, TextMode.Left, multiLine, PixelLeft(5), Center(), color = Color(20,20,20))
+                TextMode.Right -> EditText(text,4f, fontType, 10f, TextMode.Right, multiLine, PixelRight(5), Center(), color = Color(20,20,20))
+            }
+
         )
     }
 

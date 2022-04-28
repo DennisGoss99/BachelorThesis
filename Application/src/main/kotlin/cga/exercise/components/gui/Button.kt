@@ -18,7 +18,7 @@ class Button (text : String,
     init {
         children = listOf(
             Box(Relative(0.984375f),Relative(0.96875f), PixelLeft(0), PixelTop(0) , color = Color(170,170,170), cornerRadius),
-            Text(text,5f, fontType, 10f, TextMode.Center, Center(), Center(), color = Color(20,20,20)))
+            Text(text,5f, fontType, 10f, TextMode.Center, true, Center(), Center(), color = Color(20,20,20)))
     }
 
 }

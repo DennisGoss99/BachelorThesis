@@ -104,10 +104,11 @@ class Scene(private val window: GameWindow) {
 //    )
 
     val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
-        Box(Relative(0.5f), Relative(0.5f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
             children = listOf(
-                //Textbox("Hallo\nHWelt!", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), centered = false),
-                Textbox("Haaaaa", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20)),
+                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
+                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
+                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
             )
         )
     ))

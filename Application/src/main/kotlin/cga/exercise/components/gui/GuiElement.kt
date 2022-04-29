@@ -14,7 +14,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
                           var heightConstraint : IScaleConstraint = Relative(1f),
                           var translateXConstraint : ITranslateConstraint = Relative(0f),
                           var translateYConstraint : ITranslateConstraint = Relative(0f),
-                          children: List<GuiElement>
+                          children: List<GuiElement> = listOf()
                           ) : Transformable2D() {
 
 
@@ -27,8 +27,8 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     }
 
     var hasFocus = false
-    protected var isHovering = false
-    protected var isPressed = true
+    var isHovering = false
+    var isPressed = true
 
     open var color : Vector4f = Vector4f(1f,1f,1f,1f)
 
@@ -42,9 +42,6 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
     init {
         this.children = children
-
-//        translateLocal(translateXConstraint.getTranslate(this), translateYConstraint.getTranslate(this))
-//        scaleLocal(widthConstraint.getScale(this), heightConstraint.getScale(this))
     }
 
     protected open val onClick : ((Int, Int) -> Unit)? = null
@@ -64,7 +61,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         }
     }
 
-    protected fun checkOnHover(){
+    fun checkOnHover(){
         val elementPosition = getWorldPixelPosition()
         val mousePosition = SceneStats.mousePosition
         isHovering = if(elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y){
@@ -73,7 +70,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
             false
     }
 
-    protected fun checkPressed(){
+    fun checkPressed(){
         if (!SceneStats.mouseKeyPressed.first)
             isPressed = false
     }

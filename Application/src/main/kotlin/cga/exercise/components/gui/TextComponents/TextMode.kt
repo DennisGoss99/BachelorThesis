@@ -1,4 +1,4 @@
-package cga.exercise.components.gui
+package cga.exercise.components.gui.TextComponents
 
 enum class TextMode {
     Center,

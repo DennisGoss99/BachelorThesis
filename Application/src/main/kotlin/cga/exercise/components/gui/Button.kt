@@ -1,5 +1,6 @@
 package cga.exercise.components.gui
 
+import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.text.FontType
 import cga.exercise.game.StaticResources
@@ -12,7 +13,7 @@ class Button (text : String,
               translateYConstraint : ITranslateConstraint,
               override var color: Vector4f = Color(30,30,30),
               cornerRadius : Int = 0,
-              override val onClick: ((Int, Int) -> Unit)? = null,
+              override var onClick: ((Int, Int) -> Unit)? = null,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
     init {

@@ -1,20 +1,14 @@
 package cga.exercise.components.gui
 
 import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.geometry.gui.oldGuiElement
-import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.mesh.SimpleMesh
-import cga.exercise.components.geometry.transformable.Transformable2D
-import cga.exercise.components.gui.TextComponents.TextCursor
+import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
-import org.joml.Matrix4f
-import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL30
 import java.util.*
 
 open class Text(text : String,

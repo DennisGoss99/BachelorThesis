@@ -1,5 +1,6 @@
 package cga.exercise.game
 
+import cga.exercise.components.gui.Color
 import cga.exercise.components.text.FontType
 import org.lwjgl.glfw.GLFW.*
 
@@ -86,6 +87,13 @@ class StaticResources {
             }
 
         }
+
+        val white = Color("#F2F2F2")
+        val gray = Color("#262626")
+        val darkGray = Color("#0D0D0D")
+        val lightBrown = Color("#73675A")
+        val brown = Color("#594D43")
+
 
     }
 

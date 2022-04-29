@@ -1,10 +1,10 @@
 package cga.exercise.components.gui
 
+import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.text.FontType
 import cga.exercise.game.StaticResources
 import cga.exercise.game.StaticResources.Companion.keyToCharGERLayout
-import org.joml.Vector2f
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
@@ -20,7 +20,7 @@ class Textbox(var text : String,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
 
-    override val onClick: ((Int, Int) -> Unit)? = null
+    override var onClick: ((Int, Int) -> Unit)? = null
 
     override val onFocus: (() -> Unit) = {->
         children.forEach { it ->

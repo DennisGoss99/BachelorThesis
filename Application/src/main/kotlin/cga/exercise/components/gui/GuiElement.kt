@@ -5,6 +5,8 @@ import cga.exercise.components.gui.constraints.IScaleConstraint
 import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.gui.constraints.Relative
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.game.SceneStats
+import cga.framework.GameWindow
 import org.joml.Vector2f
 import org.joml.Vector4f
 
@@ -25,6 +27,8 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     }
 
     var hasFocus = false
+    protected var isHovering = false
+    protected var isPressed = true
 
     open var color : Vector4f = Vector4f(1f,1f,1f,1f)
 
@@ -45,10 +49,40 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
     protected open val onClick : ((Int, Int) -> Unit)? = null
     protected open val onFocus : (() -> Unit)? = null
+    open val onHover : (() -> Unit)? = null
+    open val onUpdate : ((dt: Float, t: Float) -> Unit)? = null
     open val onKeyDown : ((Int, Int, Int) -> Unit)? = null
 
     private fun getMasterParent() : GuiElement{
         return parent?.getMasterParent() ?: this
+    }
+
+    private fun setHoverFalse(guiElement: GuiElement){
+        isHovering = false
+        guiElement.children.forEach {
+            setHoverFalse(it)
+        }
+    }
+
+    fun globalOnUpdateEvent(dt: Float, t: Float){
+        onUpdate?.invoke(dt, t)
+        children.forEach {
+            it.globalOnUpdateEvent(dt, t)
+        }
+    }
+
+    protected fun checkOnHover(){
+        val elementPosition = getWorldPixelPosition()
+        val mousePosition = SceneStats.mousePosition
+        isHovering = if(elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y){
+            !children.any{ it.isHovering }
+        }else
+            false
+    }
+
+    protected fun checkPressed(){
+        if (!SceneStats.mouseKeyPressed.first)
+            isPressed = false
     }
 
     fun globalClickEvent(button: Int, mode: Int, position: Vector2f) : Boolean{
@@ -73,6 +107,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
                     }
                     onClick != null ->{
                         onClick?.let { it(button, mode) }
+                        isPressed = true
                     }
                 }
             }

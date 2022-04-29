@@ -26,6 +26,15 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 
+class SceneStats{
+    companion object{
+        var windowWidth : Int = 0
+        var windowHeight : Int = 0
+        var mousePosition : Vector2f = Vector2f()
+        var mouseKeyPressed : Pair<Boolean,Boolean> = false to false
+    }
+}
+
 class Scene(private val window: GameWindow) {
 
 
@@ -96,10 +105,10 @@ class Scene(private val window: GameWindow) {
 //    )
 
 
-//    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0), cornerRadius = 10,
+//    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
 //        children = listOf(
-//            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), cornerRadius = 10, onClick = f1),
-//            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), cornerRadius = 10, onClick = f2)
+//            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
+//            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2)
 //        )
 //    )
 
@@ -115,7 +124,7 @@ class Scene(private val window: GameWindow) {
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
 
-//    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
+    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 
     //scene setup
     init {
@@ -143,7 +152,7 @@ class Scene(private val window: GameWindow) {
 
              testGuiElement.refresh()
              cursorGuiElement.refresh()
-//             fpsGuiElement.refresh()
+             fpsGuiElement.refresh()
         }
     }
 
@@ -159,8 +168,8 @@ class Scene(private val window: GameWindow) {
         if (t - lastT  > 0.5f){
             lastT = t
             frameCounter *= 2
-//            fpsGuiElement.text = "$frameCounter"
-//            fpsGuiElement.textHasChanged()
+            fpsGuiElement.text = "$frameCounter"
+            fpsGuiElement.textHasChanged()
             frameCounter = 0
         }
         frameCounter ++
@@ -205,7 +214,7 @@ class Scene(private val window: GameWindow) {
         //--
 
         //-- FPS Count
-//            guiRenderer.render(fpsGuiElement, dt, t)
+            guiRenderer.render(fpsGuiElement, dt, t)
         //--
 
         guiRenderer.render(cursorGuiElement, dt, t)
@@ -215,6 +224,8 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+
+        testGuiElement.globalOnUpdateEvent(dt, t)
 
 //        earth.orbit()
 //        when(speedMarker.state){
@@ -378,6 +389,18 @@ class Scene(private val window: GameWindow) {
         if(action == 1){
             testGuiElement.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
         }
+
+        when(button){
+            0 -> when(action){
+                1 -> SceneStats.mouseKeyPressed = true to SceneStats.mouseKeyPressed.second
+                0 -> SceneStats.mouseKeyPressed = false to SceneStats.mouseKeyPressed.second
+            }
+            1 -> when(action) {
+                1 -> SceneStats.mouseKeyPressed = SceneStats.mouseKeyPressed.first to true
+                0 -> SceneStats.mouseKeyPressed = SceneStats.mouseKeyPressed.first to true
+            }
+        }
+
     }
 
     var oldXpos : Double = 0.0
@@ -387,10 +410,10 @@ class Scene(private val window: GameWindow) {
     var mouseXPos = window.windowWidth / 2f
     var mouseYPos = window.windowHeight / 2f
 
-    fun onMouseMove(xpos: Double, ypos: Double) {
+    fun onMouseMove(xPos: Double, yPos: Double) {
 
-        val mouseMovementX = mouseXPos + (-oldXpos + xpos) * mouseSensitivity
-        val mouseMovementY = mouseYPos + (oldYpos - ypos) * mouseSensitivity
+        val mouseMovementX = mouseXPos + (-oldXpos + xPos) * mouseSensitivity
+        val mouseMovementY = mouseYPos + (oldYpos - yPos) * mouseSensitivity
 
         if(mouseMovementX >= 0 && mouseMovementX <= window.windowWidth)
             mouseXPos = mouseMovementX.toFloat()
@@ -399,6 +422,7 @@ class Scene(private val window: GameWindow) {
             mouseYPos = mouseMovementY.toFloat()
 
         // sets cursor position Vector2f(openGlMouseXPos / openGlMouseYPos)
+        SceneStats.mousePosition = Vector2f(mouseXPos, mouseYPos)
         cursorGuiElement.setPosition(Vector2f(((mouseXPos / window.windowWidth) * 2) -1,((mouseYPos / window.windowHeight) * 2) -1))
 
 //        println("MouseXPos: [$mouseXPos] $xpos | MouseYPos: [$mouseYPos]")
@@ -407,17 +431,16 @@ class Scene(private val window: GameWindow) {
         if(!gameState.contains(RenderCategory.Zoom))
             when{
                 gameState.contains(RenderCategory.FirstPerson) ->{
-                    camera.rotateLocal((oldYpos-ypos).toFloat()/20.0f, (oldXpos-xpos).toFloat()/20.0f, 0f)
+                    camera.rotateLocal((oldYpos-yPos).toFloat()/20.0f, (oldXpos-xPos).toFloat()/20.0f, 0f)
 
                 }
                 gameState.contains(RenderCategory.ThirdPerson) -> {
-                    camera.rotateAroundPoint((oldYpos-ypos).toFloat() * 0.002f , (oldXpos-xpos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
+                    camera.rotateAroundPoint((oldYpos-yPos).toFloat() * 0.002f , (oldXpos-xPos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
                 }
             }
 
-
-        oldXpos = xpos
-        oldYpos = ypos
+        oldXpos = xPos
+        oldYpos = yPos
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {

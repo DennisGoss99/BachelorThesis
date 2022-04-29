@@ -1,12 +1,12 @@
 package cga.exercise.components.gui.constraints
 
 import cga.exercise.components.gui.GuiElement
-import cga.framework.WindowStats
+import cga.exercise.game.SceneStats
 
 class PixelBottom(pixel : Int) : ITranslateConstraint, PixelConstraint(pixel) {
 
     override val windowPixel: Int
-        get() = WindowStats.windowHeight
+        get() = SceneStats.windowHeight
 
     override fun getTranslate(guiElement: GuiElement): Float {
         val parentScale = guiElement.parent?.getWorldScale()?.y ?: 1f

@@ -1,5 +1,6 @@
 package cga.framework
 
+import cga.exercise.game.SceneStats
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.*
 import org.lwjgl.opengl.GL
@@ -15,13 +16,6 @@ import org.lwjgl.system.MemoryUtil
 /**
  * Base class for GameWindows using OpenGL for rendering
  */
-
-class WindowStats{
-    companion object{
-        var windowWidth: Int = 0
-        var windowHeight: Int = 0
-    }
-}
 
 abstract class GameWindow(
         /**
@@ -93,8 +87,8 @@ abstract class GameWindow(
      * @param updatefrequency   Frequency the update method should be called with. 2x the expected frame rate is lastTime good rule of thumb
      */
     init {
-        WindowStats.windowWidth = windowWidth
-        WindowStats.windowHeight = windowHeight
+        SceneStats.windowWidth = windowWidth
+        SceneStats.windowHeight = windowHeight
         framebufferWidth = windowWidth
         framebufferHeight = windowHeight
         m_fullscreen = fullscreen
@@ -165,8 +159,8 @@ abstract class GameWindow(
         GLFW.glfwSetWindowSizeCallback(m_window) { _, width, height ->
             windowWidth = width
             windowHeight = height
-            WindowStats.windowWidth = width
-            WindowStats.windowHeight = height
+            SceneStats.windowWidth = width
+            SceneStats.windowHeight = height
 
             onWindowSize(width, height)
         }
@@ -293,8 +287,8 @@ abstract class GameWindow(
     protected open fun onWindowSize(width: Int, height: Int) {
         windowWidth = width
         windowHeight = height
-        WindowStats.windowWidth = width
-        WindowStats.windowHeight = height
+        SceneStats.windowWidth = width
+        SceneStats.windowHeight = height
     }
     //public methods
     /**

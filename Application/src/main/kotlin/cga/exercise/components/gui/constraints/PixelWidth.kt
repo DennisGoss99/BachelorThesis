@@ -1,12 +1,12 @@
 package cga.exercise.components.gui.constraints
 
 import cga.exercise.components.gui.GuiElement
-import cga.framework.WindowStats
+import cga.exercise.game.SceneStats
 
 class PixelWidth (pixel : Int) : IScaleConstraint, PixelConstraint(pixel) {
 
     override val windowPixel: Int
-        get() = WindowStats.windowWidth
+        get() = SceneStats.windowWidth
 
     override fun getScale(guiElement: GuiElement): Float {
         val parentScale = guiElement.parent?.getWorldScale()?.x ?: 1f

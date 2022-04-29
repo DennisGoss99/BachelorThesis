@@ -1,16 +1,16 @@
 package cga.exercise.components.gui.constraints
 
 import cga.exercise.components.gui.GuiElement
-import cga.framework.WindowStats
+import cga.exercise.game.SceneStats
 import org.joml.Vector2f
 
 class AspectRatio(private val ratio : Float = 1f) : IScaleConstraint, Constraint() {
 
     private val windowAspectRatioHeightMultiplier
-        get() = WindowStats.windowWidth.toFloat() / WindowStats.windowHeight
+        get() = SceneStats.windowWidth.toFloat() / SceneStats.windowHeight
 
     private val windowAspectRatioWidthMultiplier
-        get() = WindowStats.windowHeight.toFloat() / WindowStats.windowWidth
+        get() = SceneStats.windowHeight.toFloat() / SceneStats.windowWidth
 
     override fun getScale(guiElement: GuiElement): Float {
         return when{

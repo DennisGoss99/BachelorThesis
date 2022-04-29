@@ -9,7 +9,6 @@ import cga.exercise.components.gui.TextComponents.TextCursor
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
-import cga.framework.WindowStats
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -37,6 +36,7 @@ open class Text(text : String,
         get() = textChars.fold(""){acc, chars -> acc + chars.fold(""){acc2, char -> acc2 + char.id.toChar() } }
         set(value) {
             textChars.clear()
+            textChars.add(mutableListOf())
             value.forEach { c ->
                 addTextChat(convertChar(c))
             }

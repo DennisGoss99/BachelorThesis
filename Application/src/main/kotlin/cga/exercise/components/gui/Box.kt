@@ -20,14 +20,20 @@ open class Box (widthConstraint : IScaleConstraint,
     init {
     }
 
-    override fun render(shaderProgram: ShaderProgram) {
-
-    }
-
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
-        shaderProgram.setUniform("elementCorners", getWorldPixelPosition())
-        shaderProgram.setUniform("cornerRadius", cornerRadius)
+
+
+        if (cornerRadius != 0) {
+            shaderProgram.setUniform("cornerRadius", cornerRadius)
+            shaderProgram.setUniform("elementCorners", getWorldPixelPosition())
+        }
+    }
+
+    override fun afterRender(shaderProgram: ShaderProgram) {
+        if (cornerRadius != 0) {
+            shaderProgram.setUniform("cornerRadius", 0)
+        }
     }
 
     override fun cleanup() {

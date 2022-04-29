@@ -100,27 +100,26 @@ class Scene(private val window: GameWindow) {
 
 //    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
-//            Text("Hallo\nHWelt!", 6f, StaticResources.standardFont, 10f, Center(), Center(), color = Color(255,0,0))
+//            Image(Texture2D("",true), AspectRatio(), Relative(0.5f),Center(),Center())
 //        )
 //    )
 
-
-//    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
-//        children = listOf(
-//            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
-//            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2)
-//        )
-//    )
-
-    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
-        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
-            children = listOf(
-                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
-                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
-                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
-            )
+    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
+        children = listOf(
+            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
+            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2),
         )
-    ))
+    )
+
+//    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
+//        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+//            children = listOf(
+//                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
+//                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
+//                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
+//            )
+//        )
+//    ))
 
     private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
 
@@ -428,40 +427,26 @@ class Scene(private val window: GameWindow) {
 //        println("MouseXPos: [$mouseXPos] $xpos | MouseYPos: [$mouseYPos]")
 
 
-        if(!gameState.contains(RenderCategory.Zoom))
-            when{
-                gameState.contains(RenderCategory.FirstPerson) ->{
-                    camera.rotateLocal((oldYpos-yPos).toFloat()/20.0f, (oldXpos-xPos).toFloat()/20.0f, 0f)
-
-                }
-                gameState.contains(RenderCategory.ThirdPerson) -> {
-                    camera.rotateAroundPoint((oldYpos-yPos).toFloat() * 0.002f , (oldXpos-xPos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
-                }
-            }
+//        when{
+//            gameState.contains(RenderCategory.FirstPerson) ->{
+//                camera.rotateLocal((oldYpos-yPos).toFloat()/20.0f, (oldXpos-xPos).toFloat()/20.0f, 0f)
+//
+//            }
+//            gameState.contains(RenderCategory.ThirdPerson) -> {
+//                camera.rotateAroundPoint((oldYpos-yPos).toFloat() * 0.002f , (oldXpos-xPos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
+//            }
+//        }
 
         oldXpos = xPos
         oldYpos = yPos
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
-        val yoffset = -yoffset.toFloat()
-
-        if(gameState.contains(RenderCategory.Zoom) && zoomCamera.zoomFactor + yoffset * 12 >= 20f ){
-            zoomCamera.zoomFactor += yoffset * 12
-            zoomCamera.translateLocal(Vector3f(0f, 0f, -yoffset * 12))
-        }
-
-
-        if(gameState.contains(RenderCategory.ThirdPerson) && thirdPersonCamera.zoomFactor + yoffset > 20f) {
-            thirdPersonCamera.zoomFactor += yoffset
-            thirdPersonCamera.translateLocal(Vector3f(0f, 0f, yoffset))
-        }
-
-
     }
 
     fun onWindowSize(width: Int, height: Int) {
         testGuiElement.refresh()
+        println("a")
     }
 
     fun cleanup() {
@@ -469,6 +454,9 @@ class Scene(private val window: GameWindow) {
         //renderables.cleanup()
         //gui.cleanup()
         testGuiElement.cleanup()
+        cursorGuiElement.cleanup()
+        fpsGuiElement.cleanup()
+
         guiRenderer.cleanup()
         fontShader.cleanup()
         mainShader.cleanup()

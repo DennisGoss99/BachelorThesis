@@ -16,15 +16,19 @@ class Image (private val texture: Texture2D,
              cornerRadius : Int = 0,
              children: List<GuiElement> = listOf()) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius, children = children) {
 
-    override fun render(shaderProgram: ShaderProgram) {
-        super.render(shaderProgram)
-    }
-
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
         shaderProgram.setUniform("useImage" , 1)
         shaderProgram.setUniform("texture2D", 0)
+        if (cornerRadius != 0)
+            shaderProgram.setUniform("cornerRadius", cornerRadius)
         texture.bind(0)
+    }
+
+    override fun afterRender(shaderProgram: ShaderProgram){
+        shaderProgram.setUniform("useImage" , 0)
+        if (cornerRadius != 0)
+            shaderProgram.setUniform("cornerRadius", 0)
     }
 
     override fun cleanup() {

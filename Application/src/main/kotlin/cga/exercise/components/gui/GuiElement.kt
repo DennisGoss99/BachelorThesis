@@ -57,13 +57,6 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         return parent?.getMasterParent() ?: this
     }
 
-    private fun setHoverFalse(guiElement: GuiElement){
-        isHovering = false
-        guiElement.children.forEach {
-            setHoverFalse(it)
-        }
-    }
-
     fun globalOnUpdateEvent(dt: Float, t: Float){
         onUpdate?.invoke(dt, t)
         children.forEach {
@@ -116,13 +109,14 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         return false
     }
 
-    abstract fun render(shaderProgram: ShaderProgram)
-
     open fun bind(shaderProgram: ShaderProgram){
-        shaderProgram.setUniform("useImage" , 0)
         shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
         shaderProgram.setUniform("elementColor" , color)
     }
+
+    open fun render(shaderProgram: ShaderProgram){}
+
+    open fun afterRender(shaderProgram: ShaderProgram){}
 
     open fun cleanup(){
         children.forEach { it.cleanup() }

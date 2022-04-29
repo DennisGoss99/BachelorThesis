@@ -44,8 +44,6 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
 
     }
 
-    var lastTimeTextCursor = 0f
-
     private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
 
         when(guiElement){
@@ -53,16 +51,17 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                 fontShaderProgram.use()
                 guiElement.bind(fontShaderProgram)
                 guiElement.render(fontShaderProgram)
-
                 guiShaderProgram.use()
                 GL30.glBindVertexArray(vao)
                 GL20.glEnableVertexAttribArray(0)
+                guiElement.afterRender(fontShaderProgram)
             }
             is TextCursor -> {
                 if(guiElement.hasFocus && (t - guiElement.lastRender).toInt() > 0.5) {
                     guiElement.bind(guiShaderProgram)
                     guiElement.render(guiShaderProgram)
                     GL11.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
+                    guiElement.afterRender(guiShaderProgram)
                 }
 
                 if((t - guiElement.lastRender).toInt() > 1)
@@ -73,9 +72,10 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                 guiElement.bind(guiShaderProgram)
                 guiElement.render(guiShaderProgram)
                 GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
-
+                guiElement.afterRender(guiShaderProgram)
             }
         }
+
         guiElement.children.forEach { doRender(it,dt,t)}
     }
 

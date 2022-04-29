@@ -44,19 +44,25 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
 
     }
 
+    private var lastElement = -1
     private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
 
         when(guiElement){
             is Text -> {
-                fontShaderProgram.use()
+                if(lastElement != 1)
+                    fontShaderProgram.use()
                 guiElement.bind(fontShaderProgram)
                 guiElement.render(fontShaderProgram)
-                guiShaderProgram.use()
-                GL30.glBindVertexArray(vao)
-                GL20.glEnableVertexAttribArray(0)
                 guiElement.afterRender(fontShaderProgram)
+                lastElement = 1
             }
             is TextCursor -> {
+                if(lastElement != 0) {
+                    guiShaderProgram.use()
+                    GL30.glBindVertexArray(vao)
+                    GL20.glEnableVertexAttribArray(0)
+                }
+
                 if(guiElement.hasFocus && (t - guiElement.lastRender).toInt() > 0.5) {
                     guiElement.bind(guiShaderProgram)
                     guiElement.render(guiShaderProgram)
@@ -66,40 +72,45 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
 
                 if((t - guiElement.lastRender).toInt() > 1)
                     guiElement.lastRender = t
+                lastElement = 0
             }
             else -> {
-
+                if(lastElement != 0) {
+                    guiShaderProgram.use()
+                    GL30.glBindVertexArray(vao)
+                    GL20.glEnableVertexAttribArray(0)
+                }
                 guiElement.bind(guiShaderProgram)
                 guiElement.render(guiShaderProgram)
                 GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
                 guiElement.afterRender(guiShaderProgram)
+                lastElement = 0
             }
         }
 
         guiElement.children.forEach { doRender(it,dt,t)}
     }
 
-    fun render(guiElement: GuiElement, dt: Float, t: Float) {
-        guiShaderProgram.use()
-
+    fun beforeGUIRender(){
+        lastElement = -1
         GL30.glEnable(GL11.GL_BLEND)
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
         GL11.glDisable(GL11.GL_DEPTH_TEST)
+    }
 
-        // activate VAO
-        GL30.glBindVertexArray(vao)
-        GL20.glEnableVertexAttribArray(0)
-
+    fun render(guiElement: GuiElement, dt: Float, t: Float) {
         doRender(guiElement, dt , t)
+    }
 
+    fun afterGUIRender(){
         GL11.glEnable(GL11.GL_DEPTH_TEST)
         GL30.glDisable(GL11.GL_BLEND)
 
         // call the rendering method every frame
         GL20.glDisableVertexAttribArray(0)
         GL30.glBindVertexArray(0)
-
     }
+
 
     fun cleanup() {
         if (vbo != 0) GL15.glDeleteBuffers(vbo)

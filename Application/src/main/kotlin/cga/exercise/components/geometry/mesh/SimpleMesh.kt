@@ -17,9 +17,6 @@ class SimpleMesh(vertexdata: FloatArray, attributes: Array<VertexAttribute>, var
     private var vbo = 0
     private var vertexcount = 0
 
-
-    val VAO = VertexAttribute(2, GL11.GL_FLOAT,0,0)
-
     init {
         vertexcount = vertexdata.size
 
@@ -47,21 +44,17 @@ class SimpleMesh(vertexdata: FloatArray, attributes: Array<VertexAttribute>, var
      */
     private fun render() {
         // activate VAO
-
         GL30.glBindVertexArray(vao)
         GL20.glEnableVertexAttribArray(0)
 
         // render call
         GL11.glDrawArrays(GL11.GL_TRIANGLES,0, vertexcount)
-        GL30.glBindVertexArray(0)
-        // call the rendering method every frame
 
-        GL20.glDisableVertexAttribArray(0)
         GL30.glBindVertexArray(0)
+        GL20.glDisableVertexAttribArray(0)
     }
 
     fun render(shaderProgram: ShaderProgram) {
-        shaderProgram.use()
         material?.bind(shaderProgram)
         render()
     }

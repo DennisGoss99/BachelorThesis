@@ -54,7 +54,8 @@ open class Text(text : String,
 
     private var length = 0f
 
-    private var height = 0f
+    private var heightText = 0f;
+
     protected var lineHeight = 0f
 
     private val vao = arrayOf(
@@ -149,7 +150,7 @@ open class Text(text : String,
         vertexData.clear()
 
         lineHeight = 0.03f * fontSize
-        height = 0f
+        heightText = 0f
 
         //get max line length
         length = getMaxLength()
@@ -178,7 +179,7 @@ open class Text(text : String,
 
             cursorX = 0f
             cursorY += lineHeight
-            height += lineHeight
+            heightText += lineHeight
             rowCount++
         }
 
@@ -237,7 +238,7 @@ open class Text(text : String,
 
     final override fun refresh() {
         (widthConstraint as TextScaleConstrain).relativeScale = length / getWorldScale().x
-        (heightConstraint as TextScaleConstrain).relativeScale = height / getWorldScale().y
+        (heightConstraint as TextScaleConstrain).relativeScale = heightText / getWorldScale().y
 
         clearTransformation()
         translateLocal(translateXConstraint.getTranslate(this), translateYConstraint.getTranslate(this))
@@ -264,7 +265,7 @@ open class Text(text : String,
         mat.translate(globalTranslate)
 
 
-        mat.translate(Vector3f(-length, height,0f))
+        mat.translate(Vector3f(-length, heightText,0f))
 
         modelMatrix = mat
 

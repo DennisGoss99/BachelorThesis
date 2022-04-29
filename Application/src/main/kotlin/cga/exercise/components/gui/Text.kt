@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL30
 import java.util.*
 
 open class Text(text : String,
-                var fontSize : Float,
+                fontSize : Float,
                 private val font : FontType,
                 val maxLineLength : Float,
                 var textMode : TextMode,
@@ -28,8 +28,10 @@ open class Text(text : String,
                 translateYConstraint : ITranslateConstraint,
                 override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
 
-
-
+    var fontSize : Float = 0.0f
+        set(value) {
+            field = value / 3f
+        }
 
     var text
         get() = textChars.fold(""){acc, chars -> acc + chars.fold(""){acc2, char -> acc2 + char.id.toChar() } }
@@ -67,6 +69,8 @@ open class Text(text : String,
     )
 
     init {
+        this.fontSize = fontSize
+
         textChars.add(mutableListOf())
 
         text.forEach { c ->
@@ -98,7 +102,7 @@ open class Text(text : String,
     protected fun getMaxLength() : Float {
         return textChars.fold(0f){
                 acc, chars ->
-            val value = chars.fold(0f){acc2, char -> acc2 + char.xAdvance * fontSize / 3 }
+            val value = chars.fold(0f){acc2, char -> acc2 + char.xAdvance * fontSize }
             if(acc < value)
                 value
             else
@@ -109,10 +113,10 @@ open class Text(text : String,
     private var rowCount = 0
     private fun setLetter(fontTypeChar: cga.exercise.components.text.Char) {
 
-        val x = cursorX + fontTypeChar.xOffset * fontSize / 3f
-        val y = cursorY + fontTypeChar.yOffset * fontSize / 3f
-        val maxX = x + fontTypeChar.sizeX * fontSize / 3f
-        val maxY = y + fontTypeChar.sizeY * fontSize / 3f
+        val x = cursorX + fontTypeChar.xOffset * fontSize
+        val y = cursorY + fontTypeChar.yOffset * fontSize
+        val maxX = x + fontTypeChar.sizeX * fontSize
+        val maxY = y + fontTypeChar.sizeY * fontSize
         val properX = (2 * x) - 1
         val properY = (-2 * y) + 1
         val properMaxX = (2 * maxX) - 1
@@ -129,7 +133,7 @@ open class Text(text : String,
             fontTypeChar.yMaxTextureCoord
         )
 
-        cursorX += fontTypeChar.xAdvance * fontSize / 3f
+        cursorX += fontTypeChar.xAdvance * fontSize
         textChars[rowCount].add(fontTypeChar)
     }
 
@@ -150,7 +154,7 @@ open class Text(text : String,
 
         vertexData.clear()
 
-        lineHeight = 0.01f * fontSize
+        lineHeight = 0.03f * fontSize
         height = 0f
 
         //get max line length
@@ -167,7 +171,7 @@ open class Text(text : String,
         cpyTextChars.forEachIndexed { index, it ->
             textChars.add(mutableListOf())
 
-            lineLength = it.fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
+            lineLength = it.fold(0f){acc, char -> acc + char.xAdvance * fontSize }
             cursorX = when(textMode){
                 TextMode.Center -> (length - lineLength) / 2f
                 TextMode.Left -> 0f

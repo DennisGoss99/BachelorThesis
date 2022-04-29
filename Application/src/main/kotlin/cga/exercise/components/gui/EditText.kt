@@ -108,7 +108,7 @@ class EditText (text : String,
 
     fun setCursorEnd() {
         cursorPosX = textChars[cursorPosY].count()
-        cursorX = textChars[cursorPosY].fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3 }
+        cursorX = textChars[cursorPosY].fold(0f){acc, char -> acc + char.xAdvance * fontSize}
         realCursorX = cursorX
 
         refreshCursor()
@@ -117,19 +117,19 @@ class EditText (text : String,
     private fun refreshCursor(){
         when(textMode){
             TextMode.Center -> {
-                realCursorX = textChars[cursorPosY].subList(0,cursorPosX).fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3 }
+                realCursorX = textChars[cursorPosY].subList(0,cursorPosX).fold(0f){acc, char -> acc + char.xAdvance * fontSize }
                 realCursorY = lineHeight * ((textChars.size-1) - cursorPosY * 2f)
-                cursorLineLength = textChars[cursorPosY].fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
+                cursorLineLength = textChars[cursorPosY].fold(0f){acc, char -> acc + char.xAdvance * fontSize }
             }
             TextMode.Left -> {
-                realCursorX = textChars[cursorPosY].subList(0,cursorPosX).fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3 }
+                realCursorX = textChars[cursorPosY].subList(0,cursorPosX).fold(0f){acc, char -> acc + char.xAdvance * fontSize }
                 realCursorY = lineHeight * ((textChars.size-1) - cursorPosY * 2f)
                 cursorLineLength = getMaxLength()
             }
             TextMode.Right -> {
-                realCursorX = -textChars[cursorPosY].subList(cursorPosX,textChars[cursorPosY].size).fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3 }
+                realCursorX = -textChars[cursorPosY].subList(cursorPosX,textChars[cursorPosY].size).fold(0f){acc, char -> acc + char.xAdvance * fontSize }
                 realCursorY = lineHeight * ((textChars.size-1) - cursorPosY * 2f)
-                cursorLineLength = -getMaxLength()//textChars[cursorPosY].fold(0f){acc, char -> acc + char.xAdvance * fontSize / 3f }
+                cursorLineLength = -getMaxLength()
             }
         }
     }

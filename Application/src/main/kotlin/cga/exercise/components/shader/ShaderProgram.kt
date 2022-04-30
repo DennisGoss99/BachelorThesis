@@ -16,6 +16,10 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
     private var programID: Int = 0
     //Matrix buffers for setting matrix uniforms. Prevents allocation for each uniform
     private val m4x4buf: FloatBuffer = BufferUtils.createFloatBuffer(16)
+
+    private val uniformLocations = mutableMapOf<String, Int>()
+
+
     /**
      * Sets the active shader program of the OpenGL render pipeline to this shader
      * if this isn't already the currently active shader
@@ -23,7 +27,6 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
     fun use() {
         val curprog = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM)
         if (curprog != programID) GL20.glUseProgram(programID)
-
     }
 
     /**
@@ -31,6 +34,15 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
      */
     fun cleanup() {
         GL20.glDeleteProgram(programID)
+    }
+
+    private fun getUniformLocation(name: String) : Int{
+        return uniformLocations.getOrPut(name){
+            val location = GL20.glGetUniformLocation(programID, name)
+            if(location == -1)
+                throw Exception("Couldn't find uniform location of variable $name")
+            location
+        }
     }
 
     //setUniform() functions are added later during the course
@@ -41,87 +53,47 @@ class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
      * @param value Value
      * @return returns false if the uniform was not found in the shader
      */
-    fun setUniform(name: String, value: Float): Boolean {
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform1f(loc, value)
-            return true
-        }
-        return false
+    fun setUniform(name: String, value: Float){
+        val loc = getUniformLocation(name)
+        GL20.glUniform1f(loc, value)
     }
 
-    fun setUniform(name: String, value: Matrix4f, transpose: Boolean) : Boolean{
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            var matFloatArray = FloatArray(16)
-            matFloatArray = value.get(matFloatArray)
+    fun setUniform(name: String, value: Matrix4f, transpose: Boolean){
+        val loc = getUniformLocation(name)
+        var matFloatArray = FloatArray(16)
+        matFloatArray = value.get(matFloatArray)
 
-            GL20.glUniformMatrix4fv(loc,transpose,matFloatArray)
-            return true
-        }
-        return false
+        GL20.glUniformMatrix4fv(loc,transpose,matFloatArray)
     }
 
-    fun setUniform(name: String, value: Vector4f): Boolean {
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform4f(loc, value.x, value.y, value.z, value.w)
-            return true
-        }
-        return false
+    fun setUniform(name: String, value: Vector4f){
+        val loc = getUniformLocation(name)
+        GL20.glUniform4f(loc, value.x, value.y, value.z, value.w)
     }
 
-    fun setUniform(name: String, value: Vector3f): Boolean {
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform3f(loc, value.x, value.y, value.z)
-            return true
-        }
-        return false
+    fun setUniform(name: String, value: Vector3f){
+        val loc = getUniformLocation(name)
+        GL20.glUniform3f(loc, value.x, value.y, value.z)
     }
 
-    fun setUniform(name: String,  value: Vector2f) : Boolean{
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform2f(loc, value.x, value.y)
-            return true
-        }
-        return false
+    fun setUniform(name: String,  value: Vector2f){
+        val loc = getUniformLocation(name)
+        GL20.glUniform2f(loc, value.x, value.y)
     }
 
-    fun setUniform(name: String, value: Int) : Boolean{
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform1i(loc, value)
-            return true
-        }
-        return false
+    fun setUniform(name: String, value: Int){
+        val loc = getUniformLocation(name)
+        GL20.glUniform1i(loc, value)
     }
 
-    fun setUniform(name: String, value: FloatArray) : Boolean{
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform3fv(loc, value)
-            return true
-        }
-        return false
+    fun setUniform(name: String, value: FloatArray){
+        val loc = getUniformLocation(name)
+        GL20.glUniform3fv(loc, value)
     }
 
-    fun setUniformFloatArray(name: String, value: FloatArray) : Boolean{
-        if (programID == 0) return false
-        val loc = GL20.glGetUniformLocation(programID, name)
-        if (loc != -1) {
-            GL20.glUniform1fv(loc, value)
-            return true
-        }
-        return false
+    fun setUniformFloatArray(name: String, value: FloatArray){
+        val loc = getUniformLocation(name)
+        GL20.glUniform1fv(loc, value)
     }
 
     /**

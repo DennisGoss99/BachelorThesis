@@ -48,31 +48,32 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
 
     private var lastElement = -1
     private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
-
-        when(guiElement){
-            is Text -> {
-                if(lastElement != 1)
-                    fontShaderProgram.use()
-                guiElement.bind(fontShaderProgram)
-                guiElement.render(fontShaderProgram)
-                guiElement.afterRender(fontShaderProgram)
-                lastElement = 1
-            }
-            else -> {
-                if(lastElement != 0) {
-                    guiShaderProgram.use()
-                    GL30.glBindVertexArray(vao)
-                    GL20.glEnableVertexAttribArray(0)
+        if(guiElement.isVisible){
+            when(guiElement){
+                is Text -> {
+                    if(lastElement != 1)
+                        fontShaderProgram.use()
+                    guiElement.bind(fontShaderProgram)
+                    guiElement.render(fontShaderProgram)
+                    guiElement.afterRender(fontShaderProgram)
+                    lastElement = 1
                 }
-                guiElement.bind(guiShaderProgram)
-                guiElement.render(guiShaderProgram)
-                GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
-                guiElement.afterRender(guiShaderProgram)
-                lastElement = 0
+                else -> {
+                    if(lastElement != 0) {
+                        guiShaderProgram.use()
+                        GL30.glBindVertexArray(vao)
+                        GL20.glEnableVertexAttribArray(0)
+                    }
+                    guiElement.bind(guiShaderProgram)
+                    guiElement.render(guiShaderProgram)
+                    GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
+                    guiElement.afterRender(guiShaderProgram)
+                    lastElement = 0
+                }
             }
-        }
 
-        guiElement.children.forEach { doRender(it,dt,t)}
+            guiElement.children.forEach { doRender(it,dt,t)}
+        }
     }
 
     fun beforeGUIRender(){

@@ -18,6 +18,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
                           ) : Transformable2D() {
 
 
+
     private var _focusedElement : GuiElement? = null
 
     var focusedElement : GuiElement?
@@ -26,6 +27,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         getMasterParent()._focusedElement = value
     }
 
+    var isVisible = true
     var hasFocus = false
     var isHovering = false
     var isPressed = true
@@ -107,8 +109,8 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     }
 
     open fun bind(shaderProgram: ShaderProgram){
-        shaderProgram.setUniform("transformationMatrix" , getWorldModelMatrix(),false)
-        shaderProgram.setUniform("elementColor" , color)
+        shaderProgram.setUniform("transformationMatrix", getWorldModelMatrix(),false)
+        shaderProgram.setUniform("elementColor", color)
     }
 
     open fun render(shaderProgram: ShaderProgram){}

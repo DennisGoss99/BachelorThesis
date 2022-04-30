@@ -113,21 +113,15 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-//    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
-//        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
-//            children = listOf(
-//                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
-//                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
-//                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
-//            )
-//        )
-//    ))
-
-    val testGuiElement = Box(Relative(0.7f), Relative(0.6f), PixelLeft(20), Center(),onFocus = {->} ,
-        children = listOf(
-            Text("a", 4f, StaticResources.standardFont, 10f, TextMode.Right, false, PixelRight(5), Center(), color = Color(20,20,20))
+    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
+        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+            children = listOf(
+                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
+                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
+                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
+            )
         )
-    )
+    ))
 
     private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 
@@ -441,7 +435,6 @@ class Scene(private val window: GameWindow) {
 
     fun onWindowSize(width: Int, height: Int) {
         testGuiElement.refresh()
-        println("a")
     }
 
     fun cleanup() {

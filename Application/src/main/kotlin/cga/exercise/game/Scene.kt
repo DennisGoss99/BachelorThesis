@@ -99,12 +99,12 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
-//    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
-//        children = listOf(
-//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
-//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f))
-//        )
-//    )
+    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
+        children = listOf(
+            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
+            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f))
+        )
+    )
 
 //    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
 //        children = listOf(
@@ -123,31 +123,10 @@ class Scene(private val window: GameWindow) {
 //        )
 //    ))
 
-    val testGuiElement = Box(Relative(0.7f), Relative(0.6f), PixelLeft(20), Center(),onFocus = {->} ,
-        children = listOf(
-//            Text("text",4f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",5f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",6f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",7f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",8f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",9f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",10f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",11f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",12f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",13f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",14f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",15f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",16f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",17f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",18f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",19f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",20f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",21f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-//            Text("text",22f, StaticResources.standardFont, 10f, TextMode.Left, true, PixelRight(5), Center(), color = Color(20,20,20)),
-        )
-    )
-
-    private val cursorGuiElement = Image(Texture2D("assets/textures/gui/mouse-cursor.png", false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR), Relative(0.05f), Relative(0.05f), Center(), Center())
+//    val testGuiElement = Box(Relative(0.7f), Relative(0.6f), PixelLeft(20), Center(),onFocus = {->} ,
+//        children = listOf(
+//        )
+//    )
 
     private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 
@@ -176,7 +155,6 @@ class Scene(private val window: GameWindow) {
     //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
 
              testGuiElement.refresh()
-             cursorGuiElement.refresh()
              fpsGuiElement.refresh()
         }
     }
@@ -244,10 +222,8 @@ class Scene(private val window: GameWindow) {
         //-- FPS Count
             guiRenderer.render(fpsGuiElement, dt, t)
         //--
-            guiRenderer.render(cursorGuiElement, dt, t)
 
         guiRenderer.afterGUIRender()
-
 
         if(t-lastTime > 0.01f)
             lastTime = t
@@ -433,28 +409,18 @@ class Scene(private val window: GameWindow) {
 
     }
 
-    var oldXpos : Double = 0.0
-    var oldYpos : Double = 0.0
-
-    val mouseSensitivity = 1f
-    var mouseXPos = window.windowWidth / 2f
-    var mouseYPos = window.windowHeight / 2f
+    var mouseXPos = 0f
+    var mouseYPos = 0f
 
     fun onMouseMove(xPos: Double, yPos: Double) {
 
-        val mouseMovementX = mouseXPos + (-oldXpos + xPos) * mouseSensitivity
-        val mouseMovementY = mouseYPos + (oldYpos - yPos) * mouseSensitivity
+        mouseXPos = xPos.toFloat()
+        mouseYPos = window.windowHeight - yPos.toFloat()
+        SceneStats.mousePosition = Vector2f(mouseXPos, mouseYPos)
 
-        if(mouseMovementX >= 0 && mouseMovementX <= window.windowWidth)
-            mouseXPos = mouseMovementX.toFloat()
-
-        if(mouseMovementY >= 0 && mouseMovementY <= window.windowHeight)
-            mouseYPos = mouseMovementY.toFloat()
 
         // sets cursor position Vector2f(openGlMouseXPos / openGlMouseYPos)
-        SceneStats.mousePosition = Vector2f(mouseXPos, mouseYPos)
-        cursorGuiElement.setPosition(Vector2f(((mouseXPos / window.windowWidth) * 2) -1,((mouseYPos / window.windowHeight) * 2) -1))
-
+//        cursorGuiElement.setPosition(Vector2f(((mouseXPos / window.windowWidth) * 2) -1,((mouseYPos / window.windowHeight) * 2) -1))
 //        println("MouseXPos: [$mouseXPos] $xpos | MouseYPos: [$mouseYPos]")
 
 
@@ -467,9 +433,6 @@ class Scene(private val window: GameWindow) {
 //                camera.rotateAroundPoint((oldYpos-yPos).toFloat() * 0.002f , (oldXpos-xPos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
 //            }
 //        }
-
-        oldXpos = xPos
-        oldYpos = yPos
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
@@ -485,7 +448,6 @@ class Scene(private val window: GameWindow) {
         //renderables.cleanup()
         //gui.cleanup()
         testGuiElement.cleanup()
-        cursorGuiElement.cleanup()
         fpsGuiElement.cleanup()
 
         guiRenderer.cleanup()

@@ -42,7 +42,7 @@ class SimpleMesh(vertexdata: FloatArray, attributes: Array<VertexAttribute>, var
     /**
      * renders the mesh
      */
-    private fun render() {
+    fun render(shaderProgram: ShaderProgram) {
         // activate VAO
         GL30.glBindVertexArray(vao)
         GL20.glEnableVertexAttribArray(0)
@@ -54,9 +54,8 @@ class SimpleMesh(vertexdata: FloatArray, attributes: Array<VertexAttribute>, var
         GL20.glDisableVertexAttribArray(0)
     }
 
-    fun render(shaderProgram: ShaderProgram) {
+    fun bind(shaderProgram: ShaderProgram){
         material?.bind(shaderProgram)
-        render()
     }
 
     /**

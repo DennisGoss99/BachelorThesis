@@ -13,24 +13,28 @@ class TextCursor (widthConstraint : IScaleConstraint,
                   heightConstraint : IScaleConstraint,
                   translateXConstraint : ITranslateConstraint,
                   translateYConstraint : ITranslateConstraint,
-                  color : Vector4f = Vector4f(0f,0f,0f,0f)) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color) {
+                  override var color : Vector4f = Vector4f(0f,0f,0f,0f)) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color) {
 
     val offsetX = 0.004f
 
     var lastRender = 0f
 
-    init {
 
+    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+        dt, t ->
+
+        if(!hasFocus || (t - lastRender).toInt() > 0.5)
+            color.w = 0f
+        else
+            color.w = 1f
+
+        if((t - lastRender).toInt() > 1)
+            lastRender = t
     }
 
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
-
         shaderProgram.setUniform("transformationMatrix" , getLocalModelMatrix(),false)
-    }
-
-    override fun render(shaderProgram: ShaderProgram) {
-        super.render(shaderProgram)
     }
 
     override fun refresh() {

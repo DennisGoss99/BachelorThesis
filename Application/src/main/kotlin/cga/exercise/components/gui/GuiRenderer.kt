@@ -10,6 +10,8 @@ import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
 import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30
+import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontShaderProgram: ShaderProgram) {
 
@@ -55,24 +57,6 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                 guiElement.render(fontShaderProgram)
                 guiElement.afterRender(fontShaderProgram)
                 lastElement = 1
-            }
-            is TextCursor -> {
-                if(lastElement != 0) {
-                    guiShaderProgram.use()
-                    GL30.glBindVertexArray(vao)
-                    GL20.glEnableVertexAttribArray(0)
-                }
-
-                if(guiElement.hasFocus && (t - guiElement.lastRender).toInt() > 0.5) {
-                    guiElement.bind(guiShaderProgram)
-                    guiElement.render(guiShaderProgram)
-                    GL11.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-                    guiElement.afterRender(guiShaderProgram)
-                }
-
-                if((t - guiElement.lastRender).toInt() > 1)
-                    guiElement.lastRender = t
-                lastElement = 0
             }
             else -> {
                 if(lastElement != 0) {

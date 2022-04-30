@@ -99,12 +99,12 @@ class Scene(private val window: GameWindow) {
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
 
-    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
-        children = listOf(
-            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
-            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f))
-        )
-    )
+//    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
+//        children = listOf(
+//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
+//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f))
+//        )
+//    )
 
 //    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
 //        children = listOf(
@@ -123,10 +123,11 @@ class Scene(private val window: GameWindow) {
 //        )
 //    ))
 
-//    val testGuiElement = Box(Relative(0.7f), Relative(0.6f), PixelLeft(20), Center(),onFocus = {->} ,
-//        children = listOf(
-//        )
-//    )
+    val testGuiElement = Box(Relative(0.7f), Relative(0.6f), PixelLeft(20), Center(),onFocus = {->} ,
+        children = listOf(
+            Text("a", 4f, StaticResources.standardFont, 10f, TextMode.Right, false, PixelRight(5), Center(), color = Color(20,20,20))
+        )
+    )
 
     private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 

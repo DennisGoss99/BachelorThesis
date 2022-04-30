@@ -7,13 +7,25 @@ import org.lwjgl.glfw.GLFW.*
 class StaticResources {
     companion object{
 
-        val fonts = hashMapOf("Arial" to FontType("assets/fonts/Arial.fnt"),
-            "Calibri" to FontType("assets/fonts/Calibri.fnt"),
-            "Comic Sans MS" to FontType("assets/fonts/Comic Sans MS.fnt"),
-            "Times New Roman" to FontType("assets/fonts/Times New Roman.fnt")
+//        val fonts = hashMapOf("Arial" to FontType("assets/fonts/Arial.fnt"),
+//            "Calibri" to FontType("assets/fonts/Calibri.fnt"),
+//            "Comic Sans MS" to FontType("assets/fonts/Comic Sans MS.fnt"),
+//            "Times New Roman" to FontType("assets/fonts/Times New Roman.fnt")
+//        )
+
+        val fonts = listOf(
+            FontType("assets/fonts/Arial.fnt"),
+            FontType("assets/fonts/Calibri.fnt"),
+            FontType("assets/fonts/Comic Sans MS.fnt"),
+            FontType("assets/fonts/Times New Roman.fnt")
         )
 
-        var standardFont = fonts["Arial"]!!
+        val standardFont = fonts[0]
+        val arial = fonts[0]
+        val calibri = fonts[1]
+        val comicSans = fonts[2]
+        val timesNewRoman = fonts[3]
+
 
         fun keyToCharGERLayout(keyCode : Int, mode : Int) : Char?{
             return when(keyCode){

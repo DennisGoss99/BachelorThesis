@@ -228,6 +228,7 @@ open class Text(text : String,
     override fun bind(shaderProgram: ShaderProgram) {
         super.bind(shaderProgram)
 
+        mesh?.bind(shaderProgram)
         shaderProgram.setUniform("color", color)
         shaderProgram.setUniform("transformationMatrix" , getLocalModelMatrix(),false)
     }

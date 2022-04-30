@@ -4,6 +4,7 @@ import cga.exercise.components.gui.constraints.Constraint
 import cga.exercise.components.gui.constraints.IScaleConstraint
 import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.game.StaticResources
 import org.joml.Vector2f
 import org.joml.Vector4f
 
@@ -11,7 +12,7 @@ open class Box (widthConstraint : IScaleConstraint,
                 heightConstraint : IScaleConstraint,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                override var color: Vector4f = Vector4f(1f,1f,1f,1f),
+                override var color: Vector4f = StaticResources.backGroundColor,
                 protected var cornerRadius : Int = 0,
                 public override var onClick: ((Int, Int) -> Unit)? = null,
                 override val onFocus: (() -> Unit)? = null,

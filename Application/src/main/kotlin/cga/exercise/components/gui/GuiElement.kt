@@ -6,6 +6,7 @@ import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.gui.constraints.Relative
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.game.SceneStats
+import cga.exercise.game.StaticResources
 import cga.framework.GameWindow
 import org.joml.Vector2f
 import org.joml.Vector4f
@@ -32,7 +33,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     var isHovering = false
     var isPressed = true
 
-    open var color : Vector4f = Vector4f(1f,1f,1f,1f)
+    open var color : Vector4f = StaticResources.backGroundColor
 
     var children: List<GuiElement> = listOf()
         set(value) {

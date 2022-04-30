@@ -7,12 +7,6 @@ import org.lwjgl.glfw.GLFW.*
 class StaticResources {
     companion object{
 
-//        val fonts = hashMapOf("Arial" to FontType("assets/fonts/Arial.fnt"),
-//            "Calibri" to FontType("assets/fonts/Calibri.fnt"),
-//            "Comic Sans MS" to FontType("assets/fonts/Comic Sans MS.fnt"),
-//            "Times New Roman" to FontType("assets/fonts/Times New Roman.fnt")
-//        )
-
         val fonts = listOf(
             FontType("assets/fonts/Arial.fnt"),
             FontType("assets/fonts/Calibri.fnt"),
@@ -100,13 +94,22 @@ class StaticResources {
 
         }
 
-        val white = Color("#F2F2F2")
-        val gray = Color("#262626")
-        val darkGray = Color("#0D0D0D")
-        val lightBrown = Color("#73675A")
-        val brown = Color("#594D43")
+        val backGroundColor = Color.withe
+        val highlightColor = Color.blue
+        val disableColor = Color.silver
+        val activeColor = Color.green
+        val active2Color = Color(50, 255, 126)
+        val componentColor = Color.lightGrey
+        val componentColor2 = Color.grey
 
-
+        val systemCursors = mapOf<SystemCursor, Long?>(
+            SystemCursor.Arrow to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR),
+            SystemCursor.Crosshair to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_CROSSHAIR_CURSOR),
+            SystemCursor.Hand to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR),
+            SystemCursor.HorizontalResize to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_HRESIZE_CURSOR),
+            SystemCursor.VerticalResize to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_VRESIZE_CURSOR),
+            SystemCursor.Ibeam to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_IBEAM_CURSOR)
+        )
     }
 
 }

@@ -3,8 +3,10 @@ package cga.exercise.components.gui
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.text.FontType
+import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
 import cga.exercise.game.StaticResources.Companion.keyToCharGERLayout
+import cga.exercise.game.SystemCursor
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
@@ -62,6 +64,14 @@ class Textbox(var text : String,
             textGuiElement.textHasChanged()
 
         textGuiElement.refresh()
+    }
+
+    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+            dt: Float, t: Float ->
+        checkOnHover()
+
+        if(isHovering)
+            SceneStats.setWindowCursor(SystemCursor.Ibeam)
     }
 
     init {

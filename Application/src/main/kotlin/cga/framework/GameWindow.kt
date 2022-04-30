@@ -1,6 +1,7 @@
 package cga.framework
 
 import cga.exercise.game.SceneStats
+import cga.exercise.game.StaticResources.Companion.systemCursors
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.*
 import org.lwjgl.opengl.GL
@@ -10,6 +11,7 @@ import org.lwjgl.opengl.GLCapabilities
 import org.lwjgl.system.Callback
 import org.lwjgl.system.MemoryUtil
 
+
 /**
  * Created by Fabian on 16.09.2017.
  */
@@ -18,23 +20,23 @@ import org.lwjgl.system.MemoryUtil
  */
 
 abstract class GameWindow(
-        /**
-         * Returns the current width of the window
-         * @return width of the window
-         */
-        var windowWidth: Int,
-        /**
-         * Returns the current height of the window
-         * @return height of the window
-         */
-        var windowHeight: Int,
-        fullscreen: Boolean,
-        vsync: Boolean,
-        cvmaj: Int,
-        cvmin: Int,
-        title: String,
-        msaasamples: Int,
-        updatefrequency: Float
+    /**
+     * Returns the current width of the window
+     * @return width of the window
+     */
+    var windowWidth: Int,
+    /**
+     * Returns the current height of the window
+     * @return height of the window
+     */
+    var windowHeight: Int,
+    fullscreen: Boolean,
+    vsync: Boolean,
+    cvmaj: Int,
+    cvmin: Int,
+    title: String,
+    msaasamples: Int,
+    updatefrequency: Float,
 ) {
     //inner types
     /**
@@ -116,6 +118,7 @@ abstract class GameWindow(
 
         m_window = GLFW.glfwCreateWindow(windowWidth, windowHeight, m_title, if (m_fullscreen) GLFW.glfwGetPrimaryMonitor() else 0L, 0)
         check(m_window != 0L) { "GLFW window couldn't be created." }
+        SceneStats.windowId = m_window
 
         initializeCallbacks()
 
@@ -125,6 +128,10 @@ abstract class GameWindow(
 
         m_caps = GL.createCapabilities(true)
         if (m_msaasamples > 0) GL11.glEnable(GL13.GL_MULTISAMPLE)
+
+
+
+
     }
 
     private fun initializeCallbacks() {
@@ -216,7 +223,12 @@ abstract class GameWindow(
     /**
      * is called when the application quits
      */
-    protected open fun shutdown() {}
+    protected open fun shutdown() {
+        systemCursors.values.forEach {
+            if (it != null)
+                GLFW.glfwDestroyCursor(it)
+        }
+    }
 
     /**
      * Is called for every game state update.

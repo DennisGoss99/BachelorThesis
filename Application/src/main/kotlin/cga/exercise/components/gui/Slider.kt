@@ -2,9 +2,8 @@ package cga.exercise.components.gui
 
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.game.SceneStats
-import cga.exercise.game.StaticResources.Companion.brown
-import cga.exercise.game.StaticResources.Companion.gray
-import cga.exercise.game.StaticResources.Companion.lightBrown
+import cga.exercise.game.StaticResources
+import cga.exercise.game.SystemCursor
 
 class Slider(
     widthConstraint: IScaleConstraint,
@@ -16,11 +15,11 @@ class Slider(
     var sliderPercentage = 0f
 
     private val lineWidth = 10
-    private val sliderKnob = Box(PixelWidth(lineWidth), Relative(1f), Relative(-1f), Center(), lightBrown)
+    private val sliderKnob = Box(PixelWidth(lineWidth), Relative(1f), Relative(-1f), Center(), StaticResources.componentColor2)
 
     init {
         children = listOf(
-            Box(Relative(1f), PixelHeight(lineWidth), Center(), Center(), gray),
+            Box(Relative(1f), PixelHeight(lineWidth), Center(), Center(), StaticResources.componentColor),
             sliderKnob
         )
 
@@ -38,11 +37,13 @@ class Slider(
             this.refresh()
         }
 
-        sliderKnob.color =
-            if(sliderKnob.isPressed || sliderKnob.isHovering)
-                brown
-            else
-                lightBrown
+        sliderKnob.color = if(sliderKnob.isPressed || sliderKnob.isHovering)
+            StaticResources.highlightColor
+        else
+            StaticResources.componentColor2
+
+        if(isHovering)
+            SceneStats.setWindowCursor(SystemCursor.Hand)
     }
 
 }

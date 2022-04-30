@@ -3,7 +3,9 @@ package cga.exercise.components.gui
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.text.FontType
+import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
+import cga.exercise.game.SystemCursor
 import org.joml.Vector4f
 
 class Button (text : String,
@@ -34,6 +36,9 @@ class Button (text : String,
                 Color(180,180,190)
             else
                 Color(170,170,170)
+
+        if(isHovering)
+            SceneStats.setWindowCursor(SystemCursor.Hand)
     }
 
 

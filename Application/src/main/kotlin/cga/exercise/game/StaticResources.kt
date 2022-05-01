@@ -1,6 +1,8 @@
 package cga.exercise.game
 
 import cga.exercise.components.gui.Color
+import cga.exercise.components.gui.MouseCursor
+import cga.exercise.components.gui.MouseCursor.*
 import cga.exercise.components.text.FontType
 import org.lwjgl.glfw.GLFW.*
 
@@ -102,13 +104,13 @@ class StaticResources {
         val componentColor = Color.lightGrey
         val componentColor2 = Color.grey
 
-        val systemCursors = mapOf<SystemCursor, Long?>(
-            SystemCursor.Arrow to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR),
-            SystemCursor.Crosshair to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_CROSSHAIR_CURSOR),
-            SystemCursor.Hand to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR),
-            SystemCursor.HorizontalResize to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_HRESIZE_CURSOR),
-            SystemCursor.VerticalResize to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_VRESIZE_CURSOR),
-            SystemCursor.Ibeam to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_IBEAM_CURSOR)
+        val systemCursors = mapOf<CursorStyle, Long?>(
+            CursorStyle.Arrow to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR),
+            CursorStyle.Crosshair to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_CROSSHAIR_CURSOR),
+            CursorStyle.Hand to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR),
+            CursorStyle.HorizontalResize to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_HRESIZE_CURSOR),
+            CursorStyle.VerticalResize to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_VRESIZE_CURSOR),
+            CursorStyle.Ibeam to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_IBEAM_CURSOR)
         )
     }
 

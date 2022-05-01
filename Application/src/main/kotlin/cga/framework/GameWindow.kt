@@ -1,5 +1,6 @@
 package cga.framework
 
+import cga.exercise.components.gui.MouseCursor
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources.Companion.systemCursors
 import org.lwjgl.BufferUtils
@@ -118,7 +119,7 @@ abstract class GameWindow(
 
         m_window = GLFW.glfwCreateWindow(windowWidth, windowHeight, m_title, if (m_fullscreen) GLFW.glfwGetPrimaryMonitor() else 0L, 0)
         check(m_window != 0L) { "GLFW window couldn't be created." }
-        SceneStats.windowId = m_window
+        MouseCursor.windowId = m_window
 
         initializeCallbacks()
 

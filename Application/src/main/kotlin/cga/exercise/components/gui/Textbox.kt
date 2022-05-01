@@ -6,7 +6,6 @@ import cga.exercise.components.text.FontType
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
 import cga.exercise.game.StaticResources.Companion.keyToCharGERLayout
-import cga.exercise.game.SystemCursor
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
@@ -71,7 +70,7 @@ class Textbox(var text : String,
         checkOnHover()
 
         if(isHovering)
-            SceneStats.setWindowCursor(SystemCursor.Ibeam)
+            MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Ibeam)
     }
 
     init {

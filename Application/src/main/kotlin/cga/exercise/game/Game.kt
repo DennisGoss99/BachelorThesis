@@ -1,5 +1,6 @@
 package cga.exercise.game
 
+import cga.exercise.components.gui.MouseCursor
 import cga.framework.GameWindow
 
 /*
@@ -21,7 +22,10 @@ class Game(width: Int,
 
     override fun shutdown() = scene.cleanup()
 
-    override fun update(dt: Float, t: Float) = scene.update(dt, t)
+    override fun update(dt: Float, t: Float) {
+        scene.update(dt, t)
+        MouseCursor.afterUpdate()
+    }
 
     override fun render(dt: Float, t: Float) = scene.render(dt, t)
 

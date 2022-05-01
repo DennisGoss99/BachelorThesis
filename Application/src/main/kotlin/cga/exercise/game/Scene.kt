@@ -29,21 +29,6 @@ import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 
 class SceneStats{
     companion object{
-        fun setWindowCursor(newCursor: SystemCursor) {
-            if(newCursor == systemCursor)
-                return
-
-            val handle : Long? = StaticResources.systemCursors[newCursor]
-
-            if(handle != null && windowId != 0L){
-                systemCursor = newCursor
-                org.lwjgl.glfw.GLFW.glfwSetCursor(windowId, handle)
-            }
-        }
-        private var systemCursor = SystemCursor.Arrow
-
-        var windowId : Long = 0L
-
         var windowWidth : Int = 0
         var windowHeight : Int = 0
         var mousePosition : Vector2f = Vector2f()
@@ -121,13 +106,13 @@ class Scene(private val window: GameWindow) {
 //            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f))
 //        )
 //    )
-//    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
-//        children = listOf(
-//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
-//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f)),
-//            ToggleButton(false, PixelWidth(45),PixelHeight(20), Center(),Center())
-//        )
-//    )
+    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
+        children = listOf(
+            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
+            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f)),
+            ToggleButton(false, PixelWidth(45),PixelHeight(20), Center(),Center())
+        )
+    )
 
 //    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
 //        children = listOf(
@@ -136,15 +121,15 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
-        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
-            children = listOf(
-                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
-                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
-                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
-            )
-        )
-    ))
+//    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
+//        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
+//            children = listOf(
+//                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
+//                Textbox("Right", PixelWidth(200), PixelHeight(80), Center(), Center(), textMode = TextMode.Right),
+//                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
+//            )
+//        )
+//    ))
 
     private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
 
@@ -251,7 +236,7 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
 
-        SceneStats.setWindowCursor(SystemCursor.Arrow)
+//        SceneStats.setWindowCursor(SystemCursor.Arrow)
         testGuiElement.globalOnUpdateEvent(dt, t)
 
 //        earth.orbit()

@@ -3,7 +3,6 @@ package cga.exercise.components.gui
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
-import cga.exercise.game.SystemCursor
 
 class Slider(
     widthConstraint: IScaleConstraint,
@@ -22,6 +21,9 @@ class Slider(
             Box(Relative(1f), PixelHeight(lineWidth), Center(), Center(), StaticResources.componentColor),
             sliderKnob
         )
+
+
+
 
         sliderKnob.onClick = {_,_->}
     }
@@ -42,8 +44,8 @@ class Slider(
         else
             StaticResources.componentColor2
 
-        if(isHovering)
-            SceneStats.setWindowCursor(SystemCursor.Hand)
+        if(sliderKnob.isHovering)
+            MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)
     }
 
 }

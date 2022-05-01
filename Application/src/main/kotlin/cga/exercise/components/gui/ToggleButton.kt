@@ -3,8 +3,6 @@ package cga.exercise.components.gui
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
-import cga.exercise.game.SystemCursor
-import org.lwjgl.glfw.GLFW
 
 class ToggleButton(
     var value: Boolean = false,
@@ -12,6 +10,7 @@ class ToggleButton(
     heightConstraint: IScaleConstraint,
     translateXConstraint: ITranslateConstraint,
     translateYConstraint: ITranslateConstraint,
+    rounded : Boolean = false
 )
     : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, StaticResources.componentColor, 0){
 
@@ -20,6 +19,8 @@ class ToggleButton(
         children = listOf(
             Box(Relative(0.4f), Relative(1f), PixelLeft(0), Center() , color = StaticResources.componentColor2, cornerRadius)
         )
+
+
 
         statusChanged(value)
     }
@@ -49,7 +50,7 @@ class ToggleButton(
         checkOnHover()
 
         if(isHovering)
-            SceneStats.setWindowCursor(SystemCursor.Hand)
+            MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)
     }
 
 

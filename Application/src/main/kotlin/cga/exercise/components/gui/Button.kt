@@ -12,15 +12,15 @@ class Button (text : String,
               heightConstraint : IScaleConstraint,
               translateXConstraint : ITranslateConstraint,
               translateYConstraint : ITranslateConstraint,
-              override var color: Vector4f = Color(30,30,30),
+              override var color: Vector4f = StaticResources.componentColor2,
               cornerRadius : Int = 0,
               override var onClick: ((Int, Int) -> Unit)? = null,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
     init {
         children = listOf(
-            Box(Relative(0.984375f),Relative(0.96875f), PixelLeft(0), PixelTop(0) , color = Color(170,170,170), cornerRadius),
-            Text(text,5f, fontType, 10f, TextMode.Center, true, Center(), Center(), color = Color(20,20,20)))
+            Box(Relative(0.984375f),Relative(0.96875f), PixelLeft(0), PixelTop(0) , color = StaticResources.componentColor, cornerRadius),
+            Text(text,5f, fontType, 10f, TextMode.Center, true, Center(), Center(), color = StaticResources.fontColor))
     }
 
     override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
@@ -29,12 +29,12 @@ class Button (text : String,
         checkPressed()
 
         if(isPressed){
-            children[0].color = Color(160,160,160)
+            children[0].color = StaticResources.componentColor3
         }else
             children[0].color = if(isHovering)
-                Color(180,180,190)
+                StaticResources.highlightColor
             else
-                Color(170,170,170)
+                StaticResources.componentColor
 
         if(isHovering)
             MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)

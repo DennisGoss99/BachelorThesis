@@ -106,20 +106,21 @@ class Scene(private val window: GameWindow) {
 //            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f))
 //        )
 //    )
-    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
-        children = listOf(
-            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
-            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f)),
-            ToggleButton(false, PixelWidth(45),PixelHeight(20), Center(),Center(), true)
-        )
-    )
 
-//    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
+//    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
-//            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
-//            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2),
+//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
+//            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f)),
+//            ToggleButton(false, PixelWidth(45),PixelHeight(20), Center(),Center(), true)
 //        )
 //    )
+
+    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
+        children = listOf(
+            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
+            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2),
+        )
+    )
 
 //    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
 //        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,

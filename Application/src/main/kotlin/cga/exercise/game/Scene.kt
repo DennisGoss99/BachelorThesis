@@ -110,7 +110,7 @@ class Scene(private val window: GameWindow) {
         children = listOf(
             Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
             Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(0.5f)),
-            ToggleButton(false, PixelWidth(45),PixelHeight(20), Center(),Center())
+            ToggleButton(false, PixelWidth(45),PixelHeight(20), Center(),Center(), true)
         )
     )
 

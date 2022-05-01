@@ -13,7 +13,7 @@ open class Box (widthConstraint : IScaleConstraint,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
                 override var color: Vector4f = StaticResources.backGroundColor,
-                protected var cornerRadius : Int = 0,
+                var cornerRadius : Int = 0,
                 public override var onClick: ((Int, Int) -> Unit)? = null,
                 override val onFocus: (() -> Unit)? = null,
                 children: List<GuiElement> = listOf()) : GuiElement(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, children){

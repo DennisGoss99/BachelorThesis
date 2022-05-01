@@ -22,9 +22,6 @@ class Slider(
             sliderKnob
         )
 
-
-
-
         sliderKnob.onClick = {_,_->}
     }
 

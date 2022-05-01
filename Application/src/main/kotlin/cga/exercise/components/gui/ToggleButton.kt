@@ -3,6 +3,8 @@ package cga.exercise.components.gui
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 class ToggleButton(
     var value: Boolean = false,
@@ -10,18 +12,15 @@ class ToggleButton(
     heightConstraint: IScaleConstraint,
     translateXConstraint: ITranslateConstraint,
     translateYConstraint: ITranslateConstraint,
-    rounded : Boolean = false
+    val rounded : Boolean = false
 )
     : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, StaticResources.componentColor, 0){
 
 
     init {
         children = listOf(
-            Box(Relative(0.4f), Relative(1f), PixelLeft(0), Center() , color = StaticResources.componentColor2, cornerRadius)
+            Box(AspectRatio(), Relative(1f), PixelLeft(0), Center() , color = StaticResources.componentColor2, cornerRadius)
         )
-
-
-
         statusChanged(value)
     }
 
@@ -53,6 +52,13 @@ class ToggleButton(
             MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)
     }
 
+    override fun refresh() {
+        super.refresh()
+        if(rounded) {
+            cornerRadius = (getHeight() / 2).roundToInt()
+            (children[0] as Box).cornerRadius = (getHeight() / 2).roundToInt()
+        }
+    }
 
 
 }

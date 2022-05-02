@@ -30,7 +30,7 @@ class EditText (text : String,
 
     init {
         children = listOf(
-            TextCursor(Relative(0.0005f * fontSize), Relative(0.009f * fontSize), Center(), Center(), color = Color(220,220,220)))
+            TextCursor(Relative(0.0005f * fontSize), Relative(0.009f * fontSize), Center(), Center(), color = Color(0,0,0)))
     }
 
     override fun bind(shaderProgram: ShaderProgram) {

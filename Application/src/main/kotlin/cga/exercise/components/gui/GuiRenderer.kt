@@ -58,6 +58,7 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                     guiElement.afterRender(fontShaderProgram)
                     lastElement = 1
                 }
+                is LayoutBox -> {}
                 else -> {
                     if(lastElement != 0) {
                         guiShaderProgram.use()

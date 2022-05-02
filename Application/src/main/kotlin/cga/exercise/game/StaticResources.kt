@@ -16,7 +16,7 @@ class StaticResources {
             FontType("assets/fonts/Times New Roman.fnt")
         )
 
-        val standardFont = fonts[0]
+        val standardFont = fonts[1]
         val arial = fonts[0]
         val calibri = fonts[1]
         val comicSans = fonts[2]

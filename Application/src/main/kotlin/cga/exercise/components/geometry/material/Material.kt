@@ -14,7 +14,7 @@ open class Material(var diff: Texture2D,
 
     override fun bind(shaderProgram: ShaderProgram) {
 
-        shaderProgram.setUniform("shininess", shininess)
+//        shaderProgram.setUniform("shininess", shininess)
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)
 
         shaderProgram.setUniform("diff",0)

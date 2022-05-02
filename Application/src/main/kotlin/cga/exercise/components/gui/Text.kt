@@ -270,6 +270,11 @@ open class Text(text : String,
 
     }
 
+    override fun updateVariables() {
+        textHasChanged()
+        super.updateVariables()
+    }
+
     /**
      * Deletes the previously allocated OpenGL objects for this mesh
      */

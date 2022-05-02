@@ -9,17 +9,23 @@ import cga.exercise.game.StaticResources.Companion.keyToCharGERLayout
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
-class Textbox(var text : String,
+class Textbox(text : String ,
               widthConstraint : IScaleConstraint,
               heightConstraint : IScaleConstraint,
               translateXConstraint : ITranslateConstraint,
               translateYConstraint : ITranslateConstraint,
-              color: Vector4f = Color(180,180,180),
+              color: Vector4f = StaticResources.componentColor,
               textMode: TextMode = TextMode.Center,
               multiLine : Boolean = true,
               cornerRadius : Int = 0,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
+    var text : String
+        get() = (children[0] as Text).text
+
+    init {
+        this.text = text
+    }
 
     override var onClick: ((Int, Int) -> Unit)? = null
 
@@ -80,7 +86,6 @@ class Textbox(var text : String,
                 TextMode.Left -> EditText(text,4f, fontType, 10f, TextMode.Left, multiLine, PixelLeft(5), Center(), color = Color(20,20,20))
                 TextMode.Right -> EditText(text,4f, fontType, 10f, TextMode.Right, multiLine, PixelRight(5), Center(), color = Color(20,20,20))
             }
-
         )
     }
 

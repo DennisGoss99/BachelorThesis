@@ -7,13 +7,14 @@ import cga.exercise.components.camera.ThirdPersonCamera
 import cga.exercise.components.camera.ZoomCamera
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.*
+import cga.exercise.components.geometry.material.Material
+import cga.exercise.components.geometry.material.OverlayMaterial
 import cga.exercise.components.geometry.mesh.*
 import cga.exercise.components.geometry.skybox.*
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
-import cga.exercise.components.mapGenerator.MapGeneratorMaterials
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.*
 import cga.exercise.components.texture.Texture2D
@@ -50,7 +51,7 @@ class Scene(private val window: GameWindow) {
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
     private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
 
-    private var gameState = mutableListOf(RenderCategory.PressToPlay)
+    private var gameState = RenderCategory.Gui
 
     private val renderAlways = RenderCategory.values().toList()
 
@@ -89,13 +90,28 @@ class Scene(private val window: GameWindow) {
     val f1 = {_: Int, _: Int -> println("Button 1") }
     val f2 = {_: Int, _: Int -> println("Button 2") }
 
+    val moonMaterial = Material(
+        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        32f
+    )
+
+    val earthMaterial = OverlayMaterial(
+        Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        64f
+    )
+
     private val earth = Planet(
         "earth",
         1f,3f,0f,0.00f, Vector3f(2f,20f,0f),
-        MapGeneratorMaterials.earthMaterial,
+        earthMaterial,
         Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
         null,
-        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), MapGeneratorMaterials.moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
+        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
         Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
     val guiRenderer = GuiRenderer(guiShader, fontShader)
@@ -115,12 +131,12 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
-        children = listOf(
-            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
-            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2),
-        )
-    )
+//    val testGuiElement =  Box(Relative(0.75f),Relative(0.5f), Center(), Center(), Color(255,128,0),
+//        children = listOf(
+//            Button("Button 1", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20), onClick = f1),
+//            Button("Button 2", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = f2),
+//        )
+//    )
 
 //    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
 //        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
@@ -131,8 +147,39 @@ class Scene(private val window: GameWindow) {
 //            )
 //        )
 //    ))
+    val startButtonOnClick :((Int,Int) -> Unit)= {_,_ ->
+        gameState = RenderCategory.FirstPerson
+        window.setCursorVisible(false)
+        countText.text = textBoxCount.text
+        mainGui.updateVariables()
+    }
 
-    private val fpsGuiElement = Text("",6f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(0), PixelTop(0), color = Color(255f,255f,255f))
+    val textBoxCount : Textbox = Textbox("100", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(120), multiLine = false)
+
+
+    private val mainMenu = LayoutBox(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
+        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
+        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
+        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
+        textBoxCount,
+        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
+    ))
+
+    private val fpsGuiElement : Text = Text("",4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
+    private val countText = Text(textBoxCount.text,4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
+
+    private var mainGui = Box(Relative(1f),Relative(0.05f),Center(), PixelTop(0), color = Color(40,40,40), children = listOf(
+        LayoutBox(Relative(0.08f), Relative(0.75f),PixelLeft(10),Center(), children = listOf(
+            Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
+            Text("FPS:",4f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
+            fpsGuiElement
+        )),
+        LayoutBox(Relative(0.13f), Relative(0.75f),PixelRight(10),Center(), children = listOf(
+            Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
+            Text("Anzahl:",4f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
+            countText
+        ))
+    ))
 
     //scene setup
     init {
@@ -148,6 +195,9 @@ class Scene(private val window: GameWindow) {
             glEnable(GL_DEPTH_TEST); GLError.checkThrow()
             glDepthFunc(GL_LESS); GLError.checkThrow()
 
+            camera.translateLocal(Vector3f(3f * 20f,0f,60f))
+//             camera.rotateLocal(0f,90f,0f)
+
 //            GlobalScope.launch {
 //                delay(1000)
 //                gameState = mutableListOf(RenderCategory.FirstPerson)
@@ -160,8 +210,11 @@ class Scene(private val window: GameWindow) {
     //        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
     //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
 
-             testGuiElement.refresh()
-             fpsGuiElement.refresh()
+//             testGuiElement.refresh()
+//             fpsGuiElement.refresh()
+             mainMenu.refresh()
+             mainGui.refresh()
+
         }
     }
 
@@ -179,54 +232,57 @@ class Scene(private val window: GameWindow) {
             frameCounter *= 2
             fpsGuiElement.text = "$frameCounter"
             fpsGuiElement.textHasChanged()
+            fpsGuiElement.refresh()
             frameCounter = 0
         }
         frameCounter ++
-//
 
-//        mainShader.use()
+        if(gameState == RenderCategory.FirstPerson) {
+
+            mainShader.use()
 //        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
-////
-//        if(t-lastTime > 0.01f)
-//            mainShader.setUniform("time", t)
-////
+//
+            if (t - lastTime > 0.01f)
+                mainShader.setUniform("time", t)
+
+
+
+            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+            earth.render(mainShader)
+
+
+            //-- SkyBoxShader
+
+            SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+            skyboxRenderer.render(skyBoxShader)
+            //--
 //
 //
-//        camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-////        renderables.render(gameState, mainShader)
-//
-//        earth.render(mainShader)
-//
-//
-//
-//        //-- SkyBoxShader
-//
-//        SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//        skyboxRenderer.render(skyBoxShader)
+//        //-- Particle
+//        if(gameState.contains( RenderCategory.ThirdPerson)){
+//            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
+//            spaceship.renderThrusters(particleShader)
+//        }
 //        //--
-////
-////
-////        //-- Particle
-////        if(gameState.contains( RenderCategory.ThirdPerson)){
-////            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
-////            spaceship.renderThrusters(particleShader)
-////        }
-////        //--
-////
-////        //-- AtmosphereShader
-////        atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-////        solarSystem.renderAtmosphere(atmosphereShader)
-////        //--
 //
+            //-- AtmosphereShader
+            atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+                earth.atmosphere?.render(atmosphereShader)
+            //--
+        }
 
         guiRenderer.beforeGUIRender()
 
         //-- GuiRenderer
-            guiRenderer.render(testGuiElement, dt, t)
+//            guiRenderer.render(testGuiElement, dt, t)
+        if(gameState == RenderCategory.FirstPerson)
+            guiRenderer.render(mainGui, dt, t)
+        else
+            guiRenderer.render(mainMenu, dt, t)
         //--
 
         //-- FPS Count
-            guiRenderer.render(fpsGuiElement, dt, t)
+//            guiRenderer.render(fpsGuiElement, dt, t)
         //--
 
         guiRenderer.afterGUIRender()
@@ -238,9 +294,14 @@ class Scene(private val window: GameWindow) {
     fun update(dt: Float, t: Float) {
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
-        testGuiElement.globalOnUpdateEvent(dt, t)
 
-//        earth.orbit()
+//        testGuiElement.globalOnUpdateEvent(dt, t)
+        if(gameState == RenderCategory.FirstPerson){
+            earth.orbit()
+        }else{
+            mainMenu.globalOnUpdateEvent(dt, t)
+        }
+
 //        when(speedMarker.state){
 //            1 -> solarSystem.update(dt,t)
 //            2 -> {
@@ -307,13 +368,13 @@ class Scene(private val window: GameWindow) {
 //            }
 //        }
 //
-//        if (gameState.contains(RenderCategory.FirstPerson)){
-//            if (window.getKeyState ( GLFW_KEY_A))
-//                movingObject.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
-//
-//            if (window.getKeyState ( GLFW_KEY_D))
-//                movingObject.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
-//        }
+        if (gameState == RenderCategory.FirstPerson){
+            if (window.getKeyState ( GLFW_KEY_A))
+                movingObject.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
+
+            if (window.getKeyState ( GLFW_KEY_D))
+                movingObject.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
+        }
 //
 //        if (gameState.contains(RenderCategory.ThirdPerson)){
 //            if (window.getKeyState ( GLFW_KEY_A)) {
@@ -335,8 +396,17 @@ class Scene(private val window: GameWindow) {
 
         //println("key:$key scancode:$scancode action:$action mode:$mode")
 
-        if(action == 1 || action == 2)
-            testGuiElement.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
+//        if(action == 1 || action == 2)
+//            testGuiElement.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
+
+        if(gameState == RenderCategory.Gui && (action == 1 || action == 2))
+            mainMenu.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
+
+        if(GLFW_KEY_TAB == key && action == 0){
+            gameState = RenderCategory.Gui
+            window.setCursorVisible(true)
+        }
+
 
 //        if(gameState.contains(RenderCategory.PressToPlay)){
 //
@@ -399,8 +469,9 @@ class Scene(private val window: GameWindow) {
     }
 
     fun onMouseButton(button: Int, action: Int, mode: Int) {
-        if(action == 1){
-            testGuiElement.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
+        if(action == 1 && gameState == RenderCategory.Gui){
+//            testGuiElement.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
+            mainMenu.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
         }
 
         when(button){
@@ -418,6 +489,8 @@ class Scene(private val window: GameWindow) {
 
     var mouseXPos = 0f
     var mouseYPos = 0f
+    var oldXpos : Double = 0.0
+    var oldYpos : Double = 0.0
 
     fun onMouseMove(xPos: Double, yPos: Double) {
 
@@ -431,30 +504,33 @@ class Scene(private val window: GameWindow) {
 //        println("MouseXPos: [$mouseXPos] $xpos | MouseYPos: [$mouseYPos]")
 
 
-//        when{
-//            gameState.contains(RenderCategory.FirstPerson) ->{
-//                camera.rotateLocal((oldYpos-yPos).toFloat()/20.0f, (oldXpos-xPos).toFloat()/20.0f, 0f)
-//
-//            }
-//            gameState.contains(RenderCategory.ThirdPerson) -> {
-//                camera.rotateAroundPoint((oldYpos-yPos).toFloat() * 0.002f , (oldXpos-xPos).toFloat() * 0.002f,0f, Vector3f(0f,0f,0f))
-//            }
-//        }
+
+        if (gameState == RenderCategory.FirstPerson){
+            camera.rotateLocal((oldYpos-yPos).toFloat()/20.0f, (oldXpos-xPos).toFloat()/20.0f, 0f)
+        }
+
+        oldXpos = xPos
+        oldYpos = yPos
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
     }
 
     fun onWindowSize(width: Int, height: Int) {
-        testGuiElement.refresh()
+//        testGuiElement.refresh()
+        mainMenu.refresh()
+        mainGui.refresh()
     }
 
     fun cleanup() {
 
-        //renderables.cleanup()
-        //gui.cleanup()
-        testGuiElement.cleanup()
-        fpsGuiElement.cleanup()
+
+//        testGuiElement.cleanup()
+//        fpsGuiElement.cleanup()
+
+        mainMenu.cleanup()
+        mainGui.cleanup()
+
 
         guiRenderer.cleanup()
         fontShader.cleanup()

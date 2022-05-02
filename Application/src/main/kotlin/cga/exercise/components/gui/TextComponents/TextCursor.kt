@@ -24,7 +24,6 @@ class TextCursor (widthConstraint : IScaleConstraint,
         dt, t ->
 
         isVisible = hasFocus && (t - lastRender).toInt() <= 0.5
-
         if((t - lastRender).toInt() > 1)
             lastRender = t
     }

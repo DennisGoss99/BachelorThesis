@@ -1,23 +1,19 @@
 package cga.exercise.game
 
-import cga.exercise.components.gui.Color
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.FirstPersonCamera
-import cga.exercise.components.camera.ThirdPersonCamera
-import cga.exercise.components.camera.ZoomCamera
+import cga.exercise.components.collision.ICollisionBox
+import cga.exercise.components.collision.SAP
+import cga.exercise.components.collision.TestCollisionBox
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.atmosphere.*
-import cga.exercise.components.geometry.material.Material
-import cga.exercise.components.geometry.material.OverlayMaterial
-import cga.exercise.components.geometry.mesh.*
-import cga.exercise.components.geometry.skybox.*
+import cga.exercise.components.geometry.mesh.Cube
+import cga.exercise.components.geometry.skybox.Skybox
+import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
-import cga.exercise.components.spaceObjects.*
-import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
@@ -26,7 +22,8 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
+import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 class SceneStats{
     companion object{
@@ -40,28 +37,24 @@ class SceneStats{
 
 class Scene(private val window: GameWindow) {
 
-
-
 //    //Shader
     private val mainShader: ShaderProgram = ShaderProgram("assets/shaders/main_vert.glsl", "assets/shaders/main_frag.glsl")
     private val skyBoxShader: ShaderProgram = ShaderProgram("assets/shaders/skyBox_vert.glsl", "assets/shaders/skyBox_frag.glsl")
     private val atmosphereShader: ShaderProgram = ShaderProgram("assets/shaders/atmosphere_vert.glsl", "assets/shaders/atmosphere_frag.glsl")
     private val particleShader: ShaderProgram = ShaderProgram("assets/shaders/particle_vert.glsl", "assets/shaders/particle_frag.glsl")
+    private val spaceObjectShader : ShaderProgram = ShaderProgram("assets/shaders/spaceObject_vert.glsl", "assets/shaders/spaceObject_frag.glsl")
 
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
     private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
 
     private var gameState = RenderCategory.Gui
 
-    private val renderAlways = RenderCategory.values().toList()
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
     // camera
     private val firstPersonCamera = FirstPersonCamera()
-    private val thirdPersonCamera = ThirdPersonCamera()
-
-    private val zoomCamera = ZoomCamera()
 
     var camera : Camera = firstPersonCamera
 
@@ -87,34 +80,47 @@ class Scene(private val window: GameWindow) {
 //    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
 //    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
 
-    val f1 = {_: Int, _: Int -> println("Button 1") }
-    val f2 = {_: Int, _: Int -> println("Button 2") }
+//    val f1 = {_: Int, _: Int -> println("Button 1") }
+//    val f2 = {_: Int, _: Int -> println("Button 2") }
 
-    val moonMaterial = Material(
-        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        32f
+//    val moonMaterial = Material(
+//        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        32f
+//    )
+//
+//    val earthMaterial = OverlayMaterial(
+//        Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+//        64f
+//    )
+
+//    private val earth = Planet(
+//        "earth",
+//        1f,3f,0f,0.00f, Vector3f(2f,20f,0f),
+//        earthMaterial,
+//        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
+//        null,
+//        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
+//        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+
+    val sap = SAP()
+
+    private val cubes = listOf<Cube>(
+//        TestCollisionBox(sap.idCounter, 0f, 2f),
+//        TestCollisionBox(sap.idCounter, 1f, 4f),
+//        TestCollisionBox(sap.idCounter, 3f, 6f),
+//        TestCollisionBox(sap.idCounter, 5f, 7f),
+//        TestCollisionBox(sap.idCounter, 8f, 9f),
+        Cube(sap.idCounter),
+        Cube(sap.idCounter),
+        //Cube()
     )
 
-    val earthMaterial = OverlayMaterial(
-        Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-        64f
-    )
-
-    private val earth = Planet(
-        "earth",
-        1f,3f,0f,0.00f, Vector3f(2f,20f,0f),
-        earthMaterial,
-        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
-        null,
-        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
-        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
-
-    val guiRenderer = GuiRenderer(guiShader, fontShader)
+    private val guiRenderer = GuiRenderer(guiShader, fontShader)
 
 //    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
@@ -158,6 +164,7 @@ class Scene(private val window: GameWindow) {
 
 
     private val mainMenu = LayoutBox(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
+        //Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
         Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
         ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
         Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
@@ -181,30 +188,69 @@ class Scene(private val window: GameWindow) {
         ))
     ))
 
+
+
     //scene setup
     init {
          runBlocking {
 
-            //initial opengl state
-            glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
-            glEnable(GL_CULL_FACE); GLError.checkThrow()
-            glFrontFace(GL_CCW); GLError.checkThrow()
-            glCullFace(GL_BACK); GLError.checkThrow()
 
-            glEnable(GL_DEPTH_TEST); GLError.checkThrow()
-            glDepthFunc(GL_LESS); GLError.checkThrow()
+             cubes[0].translateLocal(Vector3f(0f,0f,0f))
+             cubes[0].rotateLocal(0f,45f,0f)
+             cubes[0].scaleLocal(Vector3f(1f,1f,1f))
+             cubes[0].updateCube()
 
-            camera.translateLocal(Vector3f(3f * 20f,0f,60f))
-//             camera.rotateLocal(0f,90f,0f)
+             cubes[1].translateLocal(Vector3f(1.9f,0f,0f))
+             cubes[1].updateCube()
+//             cubes[1].collided = true
+
+//             cubes[2].translateLocal(Vector3f(-2f,0f,-1f))
+//             cubes[2].collided = false
+//             sap.insertBox(CollisionBox("0"),3f, 4f)
+//             sap.insertBox(CollisionBox("1"),3f, 4f)
+//             sap.insertBox(CollisionBox("2"),3.5f, 6f)
+
+             cubes.forEach {
+                 sap.insertBox(it)
+             }
+
+             sap.sort()
+
+             println( measureTimeMillis {
+                 sap.checkCollision()
+             }
+             )
+//
+//             println( measureTimeMillis {
+//                 sap.checkCollision2()
+//             }
+//             )
+//
+//             println( measureTimeMillis {
+//                 sap.checkCollision3()
+//             }
+//             )
+
+             //initial opengl state
+             glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
+
+             glEnable(GL_CULL_FACE); GLError.checkThrow()
+             glFrontFace(GL_CCW); GLError.checkThrow()
+             glCullFace(GL_BACK); GLError.checkThrow()
+
+             glEnable(GL_DEPTH_TEST); GLError.checkThrow()
+             glDepthFunc(GL_LESS); GLError.checkThrow()
+
+//            camera.translateLocal(Vector3f(3f * 20f,0f,60f))
+
+
+             camera.translateLocal(Vector3f(0f,0f,5f))
 
 //            GlobalScope.launch {
 //                delay(1000)
 //                gameState = mutableListOf(RenderCategory.FirstPerson)
 //            }
-
-
-
 
     //        //configure LoadingBar
     //        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
@@ -214,7 +260,7 @@ class Scene(private val window: GameWindow) {
 //             fpsGuiElement.refresh()
              mainMenu.refresh()
              mainGui.refresh()
-
+             //window.setCursorVisible(false)
         }
     }
 
@@ -239,35 +285,31 @@ class Scene(private val window: GameWindow) {
 
         if(gameState == RenderCategory.FirstPerson) {
 
-            mainShader.use()
-//        mainShader.setUniform("emitColor", Vector3f(0f,0.5f,1f))
+//            mainShader.use()
 //
-            if (t - lastTime > 0.01f)
-                mainShader.setUniform("time", t)
+//            if (t - lastTime > 0.01f)
+//                mainShader.setUniform("time", t)
 
 
 
-            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-            earth.render(mainShader)
+//            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+//            earth.render(mainShader)
 
+
+            camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+            cubes.forEach {
+                it.bind(spaceObjectShader)
+                it.render(spaceObjectShader)
+            }
 
             //-- SkyBoxShader
-
             SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
             skyboxRenderer.render(skyBoxShader)
             //--
-//
-//
-//        //-- Particle
-//        if(gameState.contains( RenderCategory.ThirdPerson)){
-//            spaceship.bindThrusters(particleShader,camera.getCalculateProjectionMatrix(),camera.getCalculateViewMatrix())
-//            spaceship.renderThrusters(particleShader)
-//        }
-//        //--
-//
+
             //-- AtmosphereShader
-            atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-                earth.atmosphere?.render(atmosphereShader)
+//            atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+//                earth.atmosphere?.render(atmosphereShader)
             //--
         }
 
@@ -292,12 +334,13 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+        sap.checkCollision()
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 
 //        testGuiElement.globalOnUpdateEvent(dt, t)
         if(gameState == RenderCategory.FirstPerson){
-            earth.orbit()
+//            earth.orbit()
         }else{
             mainMenu.globalOnUpdateEvent(dt, t)
         }
@@ -393,6 +436,23 @@ class Scene(private val window: GameWindow) {
     private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
+
+
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_LEFT){
+            cubes[1].translateLocal(Vector3f(-0.2f,0f,0f))
+            cubes[1].updateCube()
+        }
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_RIGHT){
+            cubes[1].translateLocal(Vector3f(0.2f,0f,0f))
+            cubes[1].updateCube()
+        }
+//        if (key == GLFW_KEY_UP){
+//            cubes[1].translateLocal(Vector3f(0f,-1f,0f))
+//        }
+//        if (key == GLFW_KEY_DOWN){
+//            cubes[1].translateLocal(Vector3f(0f,1f,0f))
+//        }
+        sap.sort()
 
         //println("key:$key scancode:$scancode action:$action mode:$mode")
 

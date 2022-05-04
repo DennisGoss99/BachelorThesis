@@ -40,7 +40,7 @@ class ShaderProgram(var vertexShaderPath: String, fragmentShaderPath: String) {
         return uniformLocations.getOrPut(name){
             val location = GL20.glGetUniformLocation(programID, name)
             if(location == -1)
-                throw Exception("Couldn't find uniform location of variable $name")
+                throw Exception("Couldn't find uniform location of variable $name in shader $vertexShaderPath")
             location
         }
     }

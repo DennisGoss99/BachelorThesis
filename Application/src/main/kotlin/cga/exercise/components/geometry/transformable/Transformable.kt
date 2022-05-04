@@ -59,6 +59,7 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
         modelMatrix.set(3,1, position.y)
         modelMatrix.set(3,2, position.z)
     }
+
     /**
      * Returns position based on aggregated translations.
      * Hint: last column of model matrix

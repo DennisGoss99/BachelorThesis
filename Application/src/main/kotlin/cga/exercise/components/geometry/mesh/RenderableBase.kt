@@ -9,9 +9,12 @@ import org.joml.Matrix4f
 open class RenderableBase(var meshes: MutableList<Mesh>, modelMatrix: Matrix4f = Matrix4f(), parent: Transformable? = null) : Transformable(modelMatrix, parent),
     IRenderable {
 
-    override fun render(shaderProgram: ShaderProgram) {
+    open fun bind(shaderProgram: ShaderProgram){
         shaderProgram.use()
         shaderProgram.setUniform("model_matrix" , getWorldModelMatrix(),false)
+    }
+
+    override fun render(shaderProgram: ShaderProgram) {
         meshes.forEach { m -> m.render(shaderProgram) }
     }
 

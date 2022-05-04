@@ -13,9 +13,11 @@ class Cube(override val id : Int) : ICollisionBox, Transformable(){
     override val minEndPoints = arrayOf(EndPoint(this,-1f,true),EndPoint(this,-1f,true),EndPoint(this,-1f,true))
     override val maxEndPoints = arrayOf(EndPoint(this,-1f,false),EndPoint(this,-1f,false),EndPoint(this,-1f,false))
 
+    override var collisionChecked = false
 
     override var collided = false
     override var collidedWith = mutableListOf<ICollisionBox>()
+
 
     private val vertexData = floatArrayOf(
         -1f,1f,1f,
@@ -56,25 +58,20 @@ class Cube(override val id : Int) : ICollisionBox, Transformable(){
 
     }
 
-    override fun getCoordinates(): Array<Float> {
+    override fun updateEndPoints(){
         val mat = getWorldModelMatrix()
         val max = Vector4f(1f,1f,1f, 1f).mul(mat)
         val min = Vector4f(1f,1f,1f, -1f).mul(mat).mul(-1f)
-
-        return arrayOf(min.x, max.x, min.y, max.y, min.z, max.z)
-    }
-
-    fun updateCube(){
-        val mat = getWorldModelMatrix()
-        val max = Vector4f(1f,1f,1f, 1f).mul(mat)
-        val min = Vector4f(1f,1f,1f, -1f).mul(mat).mul(-1f)
-
+        
         minEndPoints[0].value = min.x
         maxEndPoints[0].value = max.x
+
         minEndPoints[1].value = min.y
         maxEndPoints[1].value = max.y
+
         minEndPoints[2].value = min.z
         maxEndPoints[2].value = max.z
+
     }
 
     fun bind(shaderProgram: ShaderProgram) {

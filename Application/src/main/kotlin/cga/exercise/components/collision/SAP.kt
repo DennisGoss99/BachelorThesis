@@ -19,6 +19,7 @@ class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
 
     fun insertBox(box : ICollisionBox){
         boxes.add(box)
+        box.updateEndPoints()
 
         endPointsX.add(box.minEndPoints[0])
         endPointsX.add(box.maxEndPoints[0])
@@ -40,6 +41,7 @@ class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
 
         boxes.forEach {
             it.collided = false
+            it.collisionChecked = false
             it.collidedWith.clear()
         }
 
@@ -66,6 +68,30 @@ class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
                 }
             }
         }
+
+        boxes.forEach { box ->
+            if(box.collided){
+                box.collidedWith.toList().forEach { collideBox ->
+
+                    if(!collideBox.collisionChecked &&(
+                        (box.maxEndPoints[1].value < collideBox.minEndPoints[1].value || box.minEndPoints[1].value > collideBox.maxEndPoints[1].value)
+                          || (box.maxEndPoints[2].value < collideBox.minEndPoints[2].value || box.minEndPoints[2].value > collideBox.maxEndPoints[2].value)
+                    ))
+                    {
+                        if(box.collidedWith.size < 2)
+                            box.collided = false
+
+                        if(collideBox.collidedWith.size < 2)
+                            collideBox.collided = false
+
+                        collideBox.collidedWith.remove(box)
+                        box.collidedWith.remove(collideBox)
+                    }
+                }
+                box.collisionChecked = true
+            }
+        }
+
     }
 
 //    @OptIn(DelicateCoroutinesApi::class)

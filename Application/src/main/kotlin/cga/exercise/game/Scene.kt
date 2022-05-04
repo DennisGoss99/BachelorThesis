@@ -110,14 +110,9 @@ class Scene(private val window: GameWindow) {
     val sap = SAP()
 
     private val cubes = listOf<Cube>(
-//        TestCollisionBox(sap.idCounter, 0f, 2f),
-//        TestCollisionBox(sap.idCounter, 1f, 4f),
-//        TestCollisionBox(sap.idCounter, 3f, 6f),
-//        TestCollisionBox(sap.idCounter, 5f, 7f),
-//        TestCollisionBox(sap.idCounter, 8f, 9f),
         Cube(sap.idCounter),
         Cube(sap.idCounter),
-        //Cube()
+        //Cube(sap.idCounter)
     )
 
     private val guiRenderer = GuiRenderer(guiShader, fontShader)
@@ -196,17 +191,15 @@ class Scene(private val window: GameWindow) {
 
 
 
-             cubes[0].translateLocal(Vector3f(0f,0f,0f))
-             cubes[0].rotateLocal(0f,45f,0f)
-             cubes[0].scaleLocal(Vector3f(1f,1f,1f))
-             cubes[0].updateCube()
+             cubes[0].translateLocal(Vector3f(3f,3f,0f))
+             cubes[0].scaleLocal(Vector3f(2f,3f,2f))
 
-             cubes[1].translateLocal(Vector3f(1.9f,0f,0f))
-             cubes[1].updateCube()
+//
+//             cubes[1].translateLocal(Vector3f(1.9f,0f,0f))
 //             cubes[1].collided = true
 
-//             cubes[2].translateLocal(Vector3f(-2f,0f,-1f))
-//             cubes[2].collided = false
+//             cubes[2].translateLocal(Vector3f(3f,3f,0f))
+
 //             sap.insertBox(CollisionBox("0"),3f, 4f)
 //             sap.insertBox(CollisionBox("1"),3f, 4f)
 //             sap.insertBox(CollisionBox("2"),3.5f, 6f)
@@ -438,20 +431,31 @@ class Scene(private val window: GameWindow) {
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
 
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_LEFT){
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_4){
             cubes[1].translateLocal(Vector3f(-0.2f,0f,0f))
-            cubes[1].updateCube()
+            cubes[1].updateEndPoints()
         }
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_RIGHT){
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_6){
             cubes[1].translateLocal(Vector3f(0.2f,0f,0f))
-            cubes[1].updateCube()
+            cubes[1].updateEndPoints()
         }
-//        if (key == GLFW_KEY_UP){
-//            cubes[1].translateLocal(Vector3f(0f,-1f,0f))
-//        }
-//        if (key == GLFW_KEY_DOWN){
-//            cubes[1].translateLocal(Vector3f(0f,1f,0f))
-//        }
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_8){
+            cubes[1].translateLocal(Vector3f(0f,-0.2f,0f))
+            cubes[1].updateEndPoints()
+        }
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_2){
+            cubes[1].translateLocal(Vector3f(0f,0.2f,0f))
+            cubes[1].updateEndPoints()
+        }
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_7){
+            cubes[1].translateLocal(Vector3f(0f,0f,-0.2f))
+            cubes[1].updateEndPoints()
+        }
+        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_1){
+            cubes[1].translateLocal(Vector3f(0f,0f,0.2f))
+            cubes[1].updateEndPoints()
+        }
+
         sap.sort()
 
         //println("key:$key scancode:$scancode action:$action mode:$mode")

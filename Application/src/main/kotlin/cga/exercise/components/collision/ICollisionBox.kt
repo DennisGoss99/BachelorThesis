@@ -8,7 +8,8 @@ interface ICollisionBox {
     val maxEndPoints : Array<EndPoint>
 
     var collided : Boolean
+    var collisionChecked : Boolean
     var collidedWith : MutableList<ICollisionBox>
 
-    fun getCoordinates() : Array<Float>
+    fun updateEndPoints()
 }

@@ -193,7 +193,6 @@ class Scene(private val window: GameWindow) {
                 hitBox.translateLocal(Vector3f(x1,y1,z1))
 
                 hitBoxes.add(hitBox)
-                //println("hitBoxes.add(TestHitBox(sap.idCounter, ${x1}f, ${x2}f, ${y1}f, ${y2}f, ${z1}f, ${z2}f))")
              }
 
              hitBoxes.hitboxes.forEach {
@@ -209,7 +208,7 @@ class Scene(private val window: GameWindow) {
              var bestJobTime = Long.MAX_VALUE
 
              repeat(100){
-                 val time = measureTimeMillis {sap.checkCollision2(it + 1)}
+                 val time = measureTimeMillis {sap.checkCollisionHalfParallel(it + 1)}
                  if(bestJobTime > time){
                      bestJobTime = time
                      bestJobSize = it
@@ -219,7 +218,7 @@ class Scene(private val window: GameWindow) {
              println("1 job[${bestJobSize + 1}]: $bestJobTime")
 
              repeat(100){
-                 val time = measureTimeMillis {sap.checkCollision3(it + 1)}
+                 val time = measureTimeMillis {sap.checkCollisionParallel(it + 1)}
                  if(bestJobTime > time){
                      bestJobTime = time
                      bestJobSize = it

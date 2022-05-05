@@ -100,12 +100,12 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
                 hitBox.collisionChecked.set(true)
             }
         }
-        println("c: ${hitBoxes.count(){it.collided.get()}}")
+        //println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
 
 
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun checkCollision2(jobCount : Int){
+    suspend fun checkCollisionHalfParallel(jobCount : Int){
 
         hitBoxes.forEach {
             it.collided.set(false)
@@ -172,7 +172,7 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    suspend fun checkCollision3(jobCount : Int){
+    suspend fun checkCollisionParallel(jobCount : Int){
 
         hitBoxes.forEach {
             it.collided.set(false)

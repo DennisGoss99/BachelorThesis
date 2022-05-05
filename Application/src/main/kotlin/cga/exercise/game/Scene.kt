@@ -2,11 +2,11 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.FirstPersonCamera
-import cga.exercise.components.collision.ICollisionBox
+import cga.exercise.components.collision.IHitBox
 import cga.exercise.components.collision.SAP
-import cga.exercise.components.collision.TestCollisionBox
+import cga.exercise.components.collision.TestHitBox
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.mesh.Cube
+import cga.exercise.components.geometry.mesh.HitBox
 import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
@@ -16,7 +16,6 @@ import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.framework.GLError
 import cga.framework.GameWindow
-import cga.framework.ModelLoader
 import kotlinx.coroutines.*
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -107,14 +106,6 @@ class Scene(private val window: GameWindow) {
 //        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
 //        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
-    val sap = SAP()
-
-    private val cubes = listOf<Cube>(
-        Cube(sap.idCounter),
-        Cube(sap.idCounter),
-        //Cube(sap.idCounter)
-    )
-
     private val guiRenderer = GuiRenderer(guiShader, fontShader)
 
 //    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
@@ -187,43 +178,38 @@ class Scene(private val window: GameWindow) {
 
     //scene setup
     init {
-         runBlocking {
 
+        runBlocking {
 
+            val sap = SAP()
 
-             cubes[0].translateLocal(Vector3f(3f,3f,0f))
-             cubes[0].scaleLocal(Vector3f(2f,3f,2f))
+            val hitBoxes = mutableListOf<IHitBox>()
 
-//
-//             cubes[1].translateLocal(Vector3f(1.9f,0f,0f))
-//             cubes[1].collided = true
+             repeat(10000){
+                 val x1 = Random.nextInt(0,1000).toFloat()
+                 val x2 = x1 + Random.nextInt(0,10)
+                 val y1 = Random.nextInt(0,1000).toFloat()
+                 val y2 = y1 + Random.nextInt(0,10)
+                 val z1 = Random.nextInt(0,1000).toFloat()
+                 val z2 = z1 + Random.nextInt(0,10)
+                 hitBoxes.add(TestHitBox(sap.idCounter, x1,x2,y1,y2,z1,z2))
+                 //println("hitBoxes.add(TestHitBox(sap.idCounter, ${x1}f, ${x2}f, ${y1}f, ${y2}f, ${z1}f, ${z2}f))")
+             }
 
-//             cubes[2].translateLocal(Vector3f(3f,3f,0f))
-
-//             sap.insertBox(CollisionBox("0"),3f, 4f)
-//             sap.insertBox(CollisionBox("1"),3f, 4f)
-//             sap.insertBox(CollisionBox("2"),3.5f, 6f)
-
-             cubes.forEach {
+             hitBoxes.forEach {
                  sap.insertBox(it)
              }
 
              sap.sort()
 
-             println( measureTimeMillis {
-                 sap.checkCollision()
+             println( measureTimeMillis { sap.checkCollision() })
+
+
+
+             repeat(100){
+                println("jobcount[${it + 1}]: ${measureTimeMillis {sap.checkCollision2(it + 1)}}")
              }
-             )
-//
-//             println( measureTimeMillis {
-//                 sap.checkCollision2()
-//             }
-//             )
-//
-//             println( measureTimeMillis {
-//                 sap.checkCollision3()
-//             }
-//             )
+
 
              //initial opengl state
              glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
@@ -290,10 +276,10 @@ class Scene(private val window: GameWindow) {
 
 
             camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-            cubes.forEach {
-                it.bind(spaceObjectShader)
-                it.render(spaceObjectShader)
-            }
+//            hitBoxes.forEach {
+//                it.bind(spaceObjectShader)
+//                it.render(spaceObjectShader)
+//            }
 
             //-- SkyBoxShader
             SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
@@ -327,7 +313,6 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
-        sap.checkCollision()
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 
@@ -429,34 +414,6 @@ class Scene(private val window: GameWindow) {
     private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
-
-
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_4){
-            cubes[1].translateLocal(Vector3f(-0.2f,0f,0f))
-            cubes[1].updateEndPoints()
-        }
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_6){
-            cubes[1].translateLocal(Vector3f(0.2f,0f,0f))
-            cubes[1].updateEndPoints()
-        }
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_8){
-            cubes[1].translateLocal(Vector3f(0f,-0.2f,0f))
-            cubes[1].updateEndPoints()
-        }
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_2){
-            cubes[1].translateLocal(Vector3f(0f,0.2f,0f))
-            cubes[1].updateEndPoints()
-        }
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_7){
-            cubes[1].translateLocal(Vector3f(0f,0f,-0.2f))
-            cubes[1].updateEndPoints()
-        }
-        if ((action ==  0 || action == 2) && key == GLFW_KEY_KP_1){
-            cubes[1].translateLocal(Vector3f(0f,0f,0.2f))
-            cubes[1].updateEndPoints()
-        }
-
-        sap.sort()
 
         //println("key:$key scancode:$scancode action:$action mode:$mode")
 

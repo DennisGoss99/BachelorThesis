@@ -1,34 +1,43 @@
 package cga.exercise.components.collision
 
 import kotlinx.coroutines.*
+import kotlin.math.roundToInt
 
-class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
+class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
 
     var idCounter = 0
         get() = field++
 
-    private val boxes : MutableList<ICollisionBox>
+    val hitBoxes : MutableList<IHitBox>
 
     private val endPointsX = mutableListOf<EndPoint>()
     private val endPointsY = mutableListOf<EndPoint>()
     private val endPointsZ = mutableListOf<EndPoint>()
 
     init {
-        this.boxes = boxes
+        this.hitBoxes = boxes
     }
 
-    fun insertBox(box : ICollisionBox){
-        boxes.add(box)
-        box.updateEndPoints()
+    fun clear(){
+        idCounter = 0
+        hitBoxes.clear()
+        endPointsX.clear()
+        endPointsY.clear()
+        endPointsZ.clear()
+    }
 
-        endPointsX.add(box.minEndPoints[0])
-        endPointsX.add(box.maxEndPoints[0])
+    fun insertBox(hitBox : IHitBox){
+        hitBoxes.add(hitBox)
+        hitBox.updateEndPoints()
 
-        endPointsY.add(box.minEndPoints[1])
-        endPointsY.add(box.maxEndPoints[1])
+        endPointsX.add(hitBox.minEndPoints[0])
+        endPointsX.add(hitBox.maxEndPoints[0])
 
-        endPointsZ.add(box.minEndPoints[2])
-        endPointsZ.add(box.maxEndPoints[2])
+        endPointsY.add(hitBox.minEndPoints[1])
+        endPointsY.add(hitBox.maxEndPoints[1])
+
+        endPointsZ.add(hitBox.minEndPoints[2])
+        endPointsZ.add(hitBox.maxEndPoints[2])
     }
 
     fun sort(){
@@ -37,14 +46,14 @@ class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
         endPointsZ.sortBy { it.value }
     }
 
+
     fun checkCollision(){
 
-        boxes.forEach {
-            it.collided = false
+        hitBoxes.forEach {
+            it.collided.set(false)
             it.collisionChecked = false
             it.collidedWith.clear()
         }
-
 
         endPointsX.forEachIndexed { index, endpoint ->
             if (endpoint.isMin) {
@@ -55,9 +64,9 @@ class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
 
                     if (endpointNext.isMin){
                         val collideWith = endpointNext.owner
-                        collideWith.collided = true
+                        collideWith.collided.set(true)
                         collideWith.collidedWith.add(endpoint.owner)
-                        endpoint.owner.collided = true
+                        endpoint.owner.collided.set(true)
                         endpoint.owner.collidedWith.add(collideWith)
 
                     }else
@@ -69,102 +78,99 @@ class SAP(boxes : MutableList<ICollisionBox> = mutableListOf()) {
             }
         }
 
-        boxes.forEach { box ->
-            if(box.collided){
-                box.collidedWith.toList().forEach { collideBox ->
+        hitBoxes.forEach { hitBox ->
+            if(hitBox.collided.get()){
+                hitBox.collidedWith.toList().forEach { collideHitBox ->
 
-                    if(!collideBox.collisionChecked &&(
-                        (box.maxEndPoints[1].value < collideBox.minEndPoints[1].value || box.minEndPoints[1].value > collideBox.maxEndPoints[1].value)
-                          || (box.maxEndPoints[2].value < collideBox.minEndPoints[2].value || box.minEndPoints[2].value > collideBox.maxEndPoints[2].value)
+                    if(!collideHitBox.collisionChecked &&(
+                        (hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
+                          || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value)
                     ))
                     {
-                        if(box.collidedWith.size < 2)
-                            box.collided = false
+                        if(hitBox.collidedWith.size < 2)
+                            hitBox.collided.set(false)
 
-                        if(collideBox.collidedWith.size < 2)
-                            collideBox.collided = false
+                        if(collideHitBox.collidedWith.size < 2)
+                            collideHitBox.collided.set(false)
 
-                        collideBox.collidedWith.remove(box)
-                        box.collidedWith.remove(collideBox)
+                        collideHitBox.collidedWith.remove(hitBox)
+                        hitBox.collidedWith.remove(collideHitBox)
                     }
                 }
-                box.collisionChecked = true
+                hitBox.collisionChecked = true
             }
         }
-
+        println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
 
-//    @OptIn(DelicateCoroutinesApi::class)
-//    suspend fun checkCollision2(){
-//
-//        boxes.forEach {
-//            it.collided = false
-//            it.collidedWith.clear()
-//        }
-//        val jobs = mutableListOf<Job>()
-//        jobs.add(GlobalScope.launch {
-//            for(i2 in 0/3 * boxes.size  until boxes.size * 1/3){
-//                val box = boxes[i2]
-//
-//                val minIndex = box.minEndPoints[0]
-//                val maxIndex = box.maxEndPoints[0]
-//
-//                for(i in minIndex + 1 until maxIndex){
-//                    if(endPointsX[i].isMin) {
-//                        val collideWith = endPointsX[i].owner
-//                        collideWith.collided = true
-//                        collideWith.collidedWith.add(box)
-//                        box.collided = true
-//                        box.collidedWith.add(collideWith)
-//                    }
-//                }
-//            }
-//        })
-//
-//        jobs.add( GlobalScope.launch {
-//            for(i2 in boxes.size * 1/3 until boxes.size * 2/3){
-//                val box = boxes[i2]
-//
-//                val minIndex = box.minEndPoints[0]
-//                val maxIndex = box.maxEndPoints[0]
-//
-//                for(i in minIndex + 1 until maxIndex){
-//                    if(endPointsX[i].isMin) {
-//                        val collideWith = endPointsX[i].owner
-//                        collideWith.collided = true
-//                        collideWith.collidedWith.add(box)
-//                        box.collided = true
-//                        box.collidedWith.add(collideWith)
-//                    }
-//                }
-//            }
-//        }
-//        )
-//
-//        jobs.add( GlobalScope.launch {
-//            for(i2 in boxes.size * 2/3 until boxes.size * 3/3){
-//                val box = boxes[i2]
-//
-//                val minIndex = box.minEndPoints[0]
-//                val maxIndex = box.maxEndPoints[0]
-//
-//                for(i in minIndex + 1 until maxIndex){
-//                    if(endPointsX[i].isMin) {
-//                        val collideWith = endPointsX[i].owner
-//                        collideWith.collided = true
-//                        collideWith.collidedWith.add(box)
-//                        box.collided = true
-//                        box.collidedWith.add(collideWith)
-//                    }
-//                }
-//            }
-//        }
-//        )
-//
-//        jobs.joinAll()
-//
-//    }
-//
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun checkCollision2(jobCount : Int){
+
+        hitBoxes.forEach {
+            it.collided.set(false)
+            it.collisionChecked = false
+            it.collidedWith.clear()
+        }
+        val jobs = mutableListOf<Job>()
+
+        val chunkSize = endPointsX.size / jobCount
+        val remains = endPointsX.size - (chunkSize * jobCount)
+
+        for(jobIndex in 0 until jobCount){
+            jobs.add(GlobalScope.launch {
+                for(index in jobIndex * chunkSize until (jobIndex + 1) * chunkSize + if(jobIndex != jobCount-1) 0 else remains){
+                    val endpoint = endPointsX[index]
+                    if (endpoint.isMin) {
+                        var i = index + 1
+                        while ( i < endPointsX.size){
+                            val endpointNext = endPointsX[i]
+
+                            if (endpointNext.isMin){
+                                val collideWith = endpointNext.owner
+                                collideWith.collided.set(true)
+                                collideWith.addCollidedWith(endpoint.owner)
+                                endpoint.owner.collided.set(true)
+                                endpoint.owner.addCollidedWith(collideWith)
+
+                            }else
+                                if(endpoint.owner.id == endpointNext.owner.id)
+                                    break
+
+                            i++
+                        }
+                    }
+                }
+            })
+        }
+
+        jobs.joinAll()
+
+        hitBoxes.forEach { hitBox ->
+            if(hitBox.collided.get()){
+                hitBox.collidedWith.toList().forEach { collideHitBox ->
+
+                    if(!collideHitBox.collisionChecked &&(
+                                (hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
+                                        || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value)
+                                ))
+                    {
+                        if(hitBox.collidedWith.size < 2)
+                            hitBox.collided.set(false)
+
+                        if(collideHitBox.collidedWith.size < 2)
+                            collideHitBox.collided.set(false)
+
+                        collideHitBox.collidedWith.remove(hitBox)
+                        hitBox.collidedWith.remove(collideHitBox)
+                    }
+                }
+                hitBox.collisionChecked = true
+            }
+        }
+        println("c: ${hitBoxes.count(){it.collided.get()}}")
+    }
+
 //    @OptIn(DelicateCoroutinesApi::class)
 //    suspend fun checkCollision3(){
 //        boxes.forEach {

@@ -3,6 +3,7 @@ package cga.framework
 import cga.exercise.components.gui.MouseCursor
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources.Companion.systemCursors
+import kotlinx.coroutines.runBlocking
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.*
 import org.lwjgl.opengl.GL
@@ -242,7 +243,7 @@ abstract class GameWindow(
      *
      * @param dt Time delta to advance the game state simulation. dt is 1/updatefrequency seconds, constant.
      */
-    protected open fun update(dt: Float, t: Float) {}
+    protected open suspend fun update(dt: Float, t: Float) {}
 
     /**
      * Is called for each frame to be rendered.
@@ -317,19 +318,23 @@ abstract class GameWindow(
         var accum: Long = 0
         m_currentTime = 0
         currenttime = System.nanoTime()
-        while (!GLFW.glfwWindowShouldClose(m_window)) {
-            newtime = System.nanoTime()
-            frametime = newtime - currenttime
-            m_currentTime += frametime
-            currenttime = newtime
-            accum += frametime
-            GLFW.glfwPollEvents()
-            while (accum >= timedelta) {
-                update((timedelta.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
-                accum -= timedelta
+
+        runBlocking {
+
+            while (!GLFW.glfwWindowShouldClose(m_window)) {
+                newtime = System.nanoTime()
+                frametime = newtime - currenttime
+                m_currentTime += frametime
+                currenttime = newtime
+                accum += frametime
+                GLFW.glfwPollEvents()
+                while (accum >= timedelta) {
+                    update((timedelta.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
+                    accum -= timedelta
+                }
+                render((frametime.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
+                GLFW.glfwSwapBuffers(m_window)
             }
-            render((frametime.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
-            GLFW.glfwSwapBuffers(m_window)
         }
         shutdown()
         // Free the window callbacks and destroy the window

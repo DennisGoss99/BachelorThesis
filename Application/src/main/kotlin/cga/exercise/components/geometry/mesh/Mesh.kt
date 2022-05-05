@@ -68,7 +68,6 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     }
 
     fun render(shaderProgram: ShaderProgram) {
-        shaderProgram.use()
         material?.bind(shaderProgram)
         render()
     }

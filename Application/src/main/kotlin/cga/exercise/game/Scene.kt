@@ -2,11 +2,10 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.Camera
 import cga.exercise.components.camera.FirstPersonCamera
-import cga.exercise.components.collision.IHitBox
 import cga.exercise.components.collision.SAP
-import cga.exercise.components.collision.TestHitBox
 import cga.exercise.components.geometry.RenderCategory
-import cga.exercise.components.geometry.mesh.HitBox
+import cga.exercise.components.collision.HitBox
+import cga.exercise.components.collision.HitBoxRenderer
 import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
@@ -174,29 +173,30 @@ class Scene(private val window: GameWindow) {
         ))
     ))
 
-
+    val sap = SAP()
+    val hitBoxes = HitBoxRenderer()
 
     //scene setup
     init {
 
         runBlocking {
 
-            val sap = SAP()
+            repeat(2000){
+                val x1 = Random.nextInt(0,200).toFloat()
+                val x2 = x1 + Random.nextInt(0,10)
+                val y1 = Random.nextInt(0,200).toFloat()
+                val y2 = y1 + Random.nextInt(0,10)
+                val z1 = Random.nextInt(0,200).toFloat()
+                val z2 = z1 + Random.nextInt(0,10)
+                //hitBoxes.add(TestHitBox(sap.idCounter, x1,x2,y1,y2,z1,z2))
+                val hitBox = HitBox(sap.idCounter)
+                hitBox.translateLocal(Vector3f(x1,y1,z1))
 
-            val hitBoxes = mutableListOf<IHitBox>()
-
-             repeat(10000){
-                 val x1 = Random.nextInt(0,1000).toFloat()
-                 val x2 = x1 + Random.nextInt(0,10)
-                 val y1 = Random.nextInt(0,1000).toFloat()
-                 val y2 = y1 + Random.nextInt(0,10)
-                 val z1 = Random.nextInt(0,1000).toFloat()
-                 val z2 = z1 + Random.nextInt(0,10)
-                 hitBoxes.add(TestHitBox(sap.idCounter, x1,x2,y1,y2,z1,z2))
-                 //println("hitBoxes.add(TestHitBox(sap.idCounter, ${x1}f, ${x2}f, ${y1}f, ${y2}f, ${z1}f, ${z2}f))")
+                hitBoxes.add(hitBox)
+                //println("hitBoxes.add(TestHitBox(sap.idCounter, ${x1}f, ${x2}f, ${y1}f, ${y2}f, ${z1}f, ${z2}f))")
              }
 
-             hitBoxes.forEach {
+             hitBoxes.hitboxes.forEach {
                  sap.insertBox(it)
              }
 
@@ -205,11 +205,27 @@ class Scene(private val window: GameWindow) {
              println( measureTimeMillis { sap.checkCollision() })
 
 
+             var bestJobSize = 0
+             var bestJobTime = Long.MAX_VALUE
 
              repeat(100){
-                println("jobcount[${it + 1}]: ${measureTimeMillis {sap.checkCollision2(it + 1)}}")
-             }
+                 val time = measureTimeMillis {sap.checkCollision2(it + 1)}
+                 if(bestJobTime > time){
+                     bestJobTime = time
+                     bestJobSize = it
+                 }
 
+             }
+             println("1 job[${bestJobSize + 1}]: $bestJobTime")
+
+             repeat(100){
+                 val time = measureTimeMillis {sap.checkCollision3(it + 1)}
+                 if(bestJobTime > time){
+                     bestJobTime = time
+                     bestJobSize = it
+                 }
+             }
+             println("2 job[${bestJobSize + 1}]: $bestJobTime")
 
              //initial opengl state
              glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
@@ -276,10 +292,7 @@ class Scene(private val window: GameWindow) {
 
 
             camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//            hitBoxes.forEach {
-//                it.bind(spaceObjectShader)
-//                it.render(spaceObjectShader)
-//            }
+            hitBoxes.render(spaceObjectShader)
 
             //-- SkyBoxShader
             SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
@@ -312,13 +325,15 @@ class Scene(private val window: GameWindow) {
             lastTime = t
     }
 
-    fun update(dt: Float, t: Float) {
+    suspend fun update(dt: Float, t: Float) {
+
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 
 //        testGuiElement.globalOnUpdateEvent(dt, t)
         if(gameState == RenderCategory.FirstPerson){
 //            earth.orbit()
+//            println( measureTimeMillis {sap.checkCollision3(60)})
         }else{
             mainMenu.globalOnUpdateEvent(dt, t)
         }

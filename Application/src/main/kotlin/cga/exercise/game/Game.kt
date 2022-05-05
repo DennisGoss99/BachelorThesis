@@ -22,7 +22,7 @@ class Game(width: Int,
 
     override fun shutdown() = scene.cleanup()
 
-    override fun update(dt: Float, t: Float) {
+    override suspend fun update(dt: Float, t: Float) {
         scene.update(dt, t)
         MouseCursor.afterUpdate()
     }

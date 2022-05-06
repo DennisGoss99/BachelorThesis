@@ -1,20 +1,4 @@
-- Abstract [S.1] Deutsch
-- Abstract [S.1] Englisch
-- Einleitung
-	- Relevanz [S.1-2]
-	- Zielsetzung [S.1]
-	- Abbildung der Applikation
-	- Planung
-		- Recherchephase (Wissenschaftliche Daten (Geschwindigkeiten etc.))
-		- Architektur
-		- Anpassung Projekt Outerspace
-			- Physik
-			- Kollisionen
-			- 2D Ui-System
-			- Schrift
-		- UI Sprache(Eingabeparameter buttons, UI tool implemetieren)
-			- - Abstract [S.1] Deutsch
-- Abstract [S.1] Englisch
+- Abstract [S.1]
 - Einleitung
 	- Relevanz [S.1-2] (Zeitungsartikel, Bücher???)
 	- Zielsetzung [S.1]
@@ -38,7 +22,15 @@
 			- Bewegung der Agenten
 			- Ladebildschirm
 		- Ablauf der Application (Struktogramm)		
-- Hauptteil		
+- Hauptteil
+	- Anpassung und Erweiterung des Grundaufbaus
+		
+	- Kollisionssystem
+		- Sweep-and-prune Algorithmus
+		- Angewante Parallelisierung
+		
+	
+	
 	- Entwicklung
 		- Anpassung der Grundstruktur (Projekt Outerspace)
 			- Kamera

@@ -1,13 +1,15 @@
 package cga.exercise.components.collision
 
-import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.shader.ShaderProgram
-import org.lwjgl.opengl.GL11
+import org.joml.Matrix4f
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL15.*
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.opengl.GL32.*
+import org.lwjgl.opengl.GL33.glVertexAttribDivisor
+import java.lang.Float.floatToIntBits
+import kotlin.random.Random
 
 
 class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
@@ -85,6 +87,7 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
 
     private var vao = 0
     private var vbo = 0
+    private var vboMat = 0
 
     init {
         // generate IDs
@@ -95,17 +98,74 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
         glBindBuffer(GL_ARRAY_BUFFER, vbo)
         glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW)
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0,3,GL11.GL_FLOAT,false,0,0L)
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(0,3, GL_FLOAT,false,0,0L)
+
+        val vertexDataMat = mutableListOf<Float>()
+
+        repeat(10000){
+            var mat = Matrix4f()
+
+            mat = mat.translate(Vector3f(Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat()))
+
+            vertexDataMat.add(mat.m00());vertexDataMat.add(mat.m01());vertexDataMat.add(mat.m02());vertexDataMat.add(mat.m03())
+            vertexDataMat.add(mat.m10());vertexDataMat.add(mat.m11());vertexDataMat.add(mat.m12());vertexDataMat.add(mat.m13())
+            vertexDataMat.add(mat.m20());vertexDataMat.add(mat.m21());vertexDataMat.add(mat.m22());vertexDataMat.add(mat.m23())
+            vertexDataMat.add(mat.m30());vertexDataMat.add(mat.m31());vertexDataMat.add(mat.m32());vertexDataMat.add(mat.m33())
+            vertexDataMat.add(Random.nextInt(0,2).toFloat())
+        }
+
+        vboMat = glGenBuffers()
+        glBindBuffer(GL_ARRAY_BUFFER, vboMat)
+        glBufferData(GL_ARRAY_BUFFER, vertexDataMat.toFloatArray(), GL_STATIC_DRAW)
+
+        glEnableVertexAttribArray(1)
+        glVertexAttribPointer(1, 4, GL_FLOAT, false, 68, 0)
+        glEnableVertexAttribArray(2)
+        glVertexAttribPointer(2, 4, GL_FLOAT, false, 68, 16)
+        glEnableVertexAttribArray(3)
+        glVertexAttribPointer(3, 4, GL_FLOAT, false, 68, (2 * 16))
+        glEnableVertexAttribArray(4)
+        glVertexAttribPointer(4, 4, GL_FLOAT, false, 68, (3 * 16))
+
+        glEnableVertexAttribArray(5)
+        glVertexAttribPointer(5, 1, GL_FLOAT, false, 68, (4 * 16))
+
+        glVertexAttribDivisor(1, 1)
+        glVertexAttribDivisor(2, 1)
+        glVertexAttribDivisor(3, 1)
+        glVertexAttribDivisor(4, 1)
+        glVertexAttribDivisor(5, 1)
 
         //Unbind
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
     fun add(hitBox: HitBox) {
         hitboxes.add(hitBox)
+    }
+
+    fun updateModelMatrix(){
+
+        val vertexDataMat = mutableListOf<Float>()
+
+        repeat(10000){
+            var mat = Matrix4f()
+
+            mat = mat.translate(Vector3f(Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat()))
+
+            vertexDataMat.add(mat.m00());vertexDataMat.add(mat.m01());vertexDataMat.add(mat.m02());vertexDataMat.add(mat.m03())
+            vertexDataMat.add(mat.m10());vertexDataMat.add(mat.m11());vertexDataMat.add(mat.m12());vertexDataMat.add(mat.m13())
+            vertexDataMat.add(mat.m20());vertexDataMat.add(mat.m21());vertexDataMat.add(mat.m22());vertexDataMat.add(mat.m23())
+            vertexDataMat.add(mat.m30());vertexDataMat.add(mat.m31());vertexDataMat.add(mat.m32());vertexDataMat.add(mat.m33())
+            vertexDataMat.add(Random.nextInt(0,2).toFloat())
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboMat)
+        glBufferData(GL_ARRAY_BUFFER, vertexDataMat.toFloatArray(), GL_STREAM_DRAW)
+
     }
 
     fun render(shaderProgram: ShaderProgram){
@@ -114,18 +174,18 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glEnable(GL_PROGRAM_POINT_SIZE);
         glPointSize(10f)
+
         glBindVertexArray(vao)
 
-        hitboxes.forEach {
-            it.bind(shaderProgram)
-            glDrawArrays(GL_LINE_STRIP,0, 16)
-            it.afterRender(shaderProgram)
-        }
-
+        glDrawArraysInstanced(GL_LINE_STRIP,0, 16, 10000)
         glBindVertexArray(0)
+
+//        it.bind(shaderProgram)
+//        glDrawArraysInstanced(GL_LINE_STRIP,0, 16,1)
+//        it.afterRender(shaderProgram)
+
         glDisable(GL_PROGRAM_POINT_SIZE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
     }
 
     fun cleanup(){

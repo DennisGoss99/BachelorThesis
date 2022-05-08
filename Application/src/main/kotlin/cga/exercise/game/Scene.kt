@@ -327,6 +327,8 @@ class Scene(private val window: GameWindow) {
     suspend fun update(dt: Float, t: Float) {
 
 
+//        hitBoxes.updateModelMatrix()
+
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 
 //        testGuiElement.globalOnUpdateEvent(dt, t)

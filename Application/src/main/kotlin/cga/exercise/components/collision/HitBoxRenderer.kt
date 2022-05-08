@@ -10,12 +10,15 @@ import org.lwjgl.opengl.GL32.*
 import org.lwjgl.opengl.GL33.glVertexAttribDivisor
 import java.lang.Float.floatToIntBits
 import kotlin.random.Random
+import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 
 class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
 
+    var count : Int = 0
 
-
+    private var vertexDataMat = FloatArray(count * 17)
 
     private val vertexData = floatArrayOf(
         -1f,1f,1f,
@@ -45,46 +48,6 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
 //7        1f,1f,-1f,
     )
 
-    //Cube IBO
-/*    private val indexData = intArrayOf(
-        5,6,1,
-        1,6,2,
-
-        2,0,1,
-        3,0,2,
-
-        2,6,7,
-        2,7,3,
-
-        3,7,0,
-        0,7,4,
-
-        0,4,1,
-        1,4,5,
-
-        5,4,6,
-        6,4,7,
-    )
-*/
-
-    //Line IBO
-/*    private val indexData = intArrayOf(
-//        1,2,
-//        2,6,
-//        6,5,
-//        5,1,
-//
-//        3,0,
-//        0,4,
-//        4,7,
-//        7,3,
-//
-//        1,0,
-//        2,3,
-//        5,4,
-//        6,7)
-*/
-
     private var vao = 0
     private var vbo = 0
     private var vboMat = 0
@@ -101,23 +64,24 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
         glEnableVertexAttribArray(0)
         glVertexAttribPointer(0,3, GL_FLOAT,false,0,0L)
 
-        val vertexDataMat = mutableListOf<Float>()
+        count = hitboxes.size
+        vertexDataMat = FloatArray(count * 17)
 
-        repeat(10000){
-            var mat = Matrix4f()
+        for(i in 0 until count * 17 step 17){
 
-            mat = mat.translate(Vector3f(Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat()))
+            val hitBox = hitboxes[i/17]
+            var mat = hitBox.getWorldModelMatrix()
 
-            vertexDataMat.add(mat.m00());vertexDataMat.add(mat.m01());vertexDataMat.add(mat.m02());vertexDataMat.add(mat.m03())
-            vertexDataMat.add(mat.m10());vertexDataMat.add(mat.m11());vertexDataMat.add(mat.m12());vertexDataMat.add(mat.m13())
-            vertexDataMat.add(mat.m20());vertexDataMat.add(mat.m21());vertexDataMat.add(mat.m22());vertexDataMat.add(mat.m23())
-            vertexDataMat.add(mat.m30());vertexDataMat.add(mat.m31());vertexDataMat.add(mat.m32());vertexDataMat.add(mat.m33())
-            vertexDataMat.add(Random.nextInt(0,2).toFloat())
+            vertexDataMat[i     ] = mat[0,0]; vertexDataMat[i + 1 ] = mat[0,1]; vertexDataMat[i + 2 ] = mat[0,2]; vertexDataMat[i + 3 ] = mat[0,3]
+            vertexDataMat[i + 4 ] = mat[1,0]; vertexDataMat[i + 5 ] = mat[1,1]; vertexDataMat[i + 6 ] = mat[1,2]; vertexDataMat[i + 7 ] = mat[1,3]
+            vertexDataMat[i + 8 ] = mat[2,0]; vertexDataMat[i + 9 ] = mat[2,1]; vertexDataMat[i + 10] = mat[2,2]; vertexDataMat[i + 11] = mat[2,3]
+            vertexDataMat[i + 12] = mat[3,0]; vertexDataMat[i + 13] = mat[3,1]; vertexDataMat[i + 14] = mat[3,2]; vertexDataMat[i + 15] = mat[3,3]
+            vertexDataMat[i + 16] = if(hitBox.collided.get()) 1f else 0f
         }
 
         vboMat = glGenBuffers()
         glBindBuffer(GL_ARRAY_BUFFER, vboMat)
-        glBufferData(GL_ARRAY_BUFFER, vertexDataMat.toFloatArray(), GL_STATIC_DRAW)
+        glBufferData(GL_ARRAY_BUFFER, vertexDataMat, GL_STATIC_DRAW)
 
         glEnableVertexAttribArray(1)
         glVertexAttribPointer(1, 4, GL_FLOAT, false, 68, 0)
@@ -145,27 +109,27 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
 
     fun add(hitBox: HitBox) {
         hitboxes.add(hitBox)
+        count++
+        vertexDataMat = FloatArray(count * 17)
     }
 
     fun updateModelMatrix(){
 
-        val vertexDataMat = mutableListOf<Float>()
+        glBindBuffer(GL_ARRAY_BUFFER, vboMat)
 
-        repeat(10000){
-            var mat = Matrix4f()
+        for(i in 0 until count * 17 step 17){
 
-            mat = mat.translate(Vector3f(Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat(), Random.nextInt(0,1000).toFloat()))
+            val hitBox = hitboxes[i/17]
+            var mat = hitBox.getWorldModelMatrix()
 
-            vertexDataMat.add(mat.m00());vertexDataMat.add(mat.m01());vertexDataMat.add(mat.m02());vertexDataMat.add(mat.m03())
-            vertexDataMat.add(mat.m10());vertexDataMat.add(mat.m11());vertexDataMat.add(mat.m12());vertexDataMat.add(mat.m13())
-            vertexDataMat.add(mat.m20());vertexDataMat.add(mat.m21());vertexDataMat.add(mat.m22());vertexDataMat.add(mat.m23())
-            vertexDataMat.add(mat.m30());vertexDataMat.add(mat.m31());vertexDataMat.add(mat.m32());vertexDataMat.add(mat.m33())
-            vertexDataMat.add(Random.nextInt(0,2).toFloat())
+            vertexDataMat[i     ] = mat[0,0]; vertexDataMat[i + 1 ] = mat[0,1]; vertexDataMat[i + 2 ] = mat[0,2]; vertexDataMat[i + 3 ] = mat[0,3]
+            vertexDataMat[i + 4 ] = mat[1,0]; vertexDataMat[i + 5 ] = mat[1,1]; vertexDataMat[i + 6 ] = mat[1,2]; vertexDataMat[i + 7 ] = mat[1,3]
+            vertexDataMat[i + 8 ] = mat[2,0]; vertexDataMat[i + 9 ] = mat[2,1]; vertexDataMat[i + 10] = mat[2,2]; vertexDataMat[i + 11] = mat[2,3]
+            vertexDataMat[i + 12] = mat[3,0]; vertexDataMat[i + 13] = mat[3,1]; vertexDataMat[i + 14] = mat[3,2]; vertexDataMat[i + 15] = mat[3,3]
+            vertexDataMat[i + 16] = if(hitBox.collided.get()) 1f else 0f
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, vboMat)
-        glBufferData(GL_ARRAY_BUFFER, vertexDataMat.toFloatArray(), GL_STREAM_DRAW)
-
+        glBufferData(GL_ARRAY_BUFFER, vertexDataMat, GL_STATIC_DRAW)
     }
 
     fun render(shaderProgram: ShaderProgram){
@@ -177,12 +141,8 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
 
         glBindVertexArray(vao)
 
-        glDrawArraysInstanced(GL_LINE_STRIP,0, 16, 10000)
+        glDrawArraysInstanced(GL_LINE_STRIP,0, 16, count)
         glBindVertexArray(0)
-
-//        it.bind(shaderProgram)
-//        glDrawArraysInstanced(GL_LINE_STRIP,0, 16,1)
-//        it.afterRender(shaderProgram)
 
         glDisable(GL_PROGRAM_POINT_SIZE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

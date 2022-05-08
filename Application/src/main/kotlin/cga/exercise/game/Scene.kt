@@ -183,12 +183,9 @@ class Scene(private val window: GameWindow) {
 
             repeat(2000){
                 val x1 = Random.nextInt(0,200).toFloat()
-                val x2 = x1 + Random.nextInt(0,10)
                 val y1 = Random.nextInt(0,200).toFloat()
-                val y2 = y1 + Random.nextInt(0,10)
                 val z1 = Random.nextInt(0,200).toFloat()
-                val z2 = z1 + Random.nextInt(0,10)
-                //hitBoxes.add(TestHitBox(sap.idCounter, x1,x2,y1,y2,z1,z2))
+
                 val hitBox = HitBox(sap.idCounter)
                 hitBox.translateLocal(Vector3f(x1,y1,z1))
 
@@ -326,8 +323,10 @@ class Scene(private val window: GameWindow) {
 
     suspend fun update(dt: Float, t: Float) {
 
+        sap.checkCollisionParallel(16)
+        hitBoxes.updateModelMatrix()
 
-//        hitBoxes.updateModelMatrix()
+
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 

@@ -1,6 +1,7 @@
 package cga.exercise.components.collision
 
 import cga.exercise.components.shader.ShaderProgram
+import kotlinx.coroutines.*
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL11.*
@@ -131,6 +132,37 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
 
         glBufferData(GL_ARRAY_BUFFER, vertexDataMat, GL_STATIC_DRAW)
     }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun updateModelMatrixParallel(jobCount : Int){
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboMat)
+
+        val chunkSize = count / jobCount
+        val remains = count - (chunkSize * jobCount)
+
+        val jobs = mutableListOf<Job>()
+
+        for(jobIndex in 0 until jobCount){
+            jobs.add(GlobalScope.launch {
+                for(i in jobIndex * chunkSize * 17 until (((jobIndex + 1) * chunkSize + if(jobIndex != jobCount-1) 0 else remains) * 17) step 17){
+                    val hitBox = hitboxes[i/17]
+                    var mat = hitBox.getWorldModelMatrix()
+
+                    vertexDataMat[i     ] = mat[0,0]; vertexDataMat[i + 1 ] = mat[0,1]; vertexDataMat[i + 2 ] = mat[0,2]; vertexDataMat[i + 3 ] = mat[0,3]
+                    vertexDataMat[i + 4 ] = mat[1,0]; vertexDataMat[i + 5 ] = mat[1,1]; vertexDataMat[i + 6 ] = mat[1,2]; vertexDataMat[i + 7 ] = mat[1,3]
+                    vertexDataMat[i + 8 ] = mat[2,0]; vertexDataMat[i + 9 ] = mat[2,1]; vertexDataMat[i + 10] = mat[2,2]; vertexDataMat[i + 11] = mat[2,3]
+                    vertexDataMat[i + 12] = mat[3,0]; vertexDataMat[i + 13] = mat[3,1]; vertexDataMat[i + 14] = mat[3,2]; vertexDataMat[i + 15] = mat[3,3]
+                    vertexDataMat[i + 16] = if(hitBox.collided.get()) 1f else 0f
+                }
+            })
+        }
+
+        jobs.joinAll()
+
+        glBufferData(GL_ARRAY_BUFFER, vertexDataMat, GL_STATIC_DRAW)
+    }
+
 
     fun render(shaderProgram: ShaderProgram){
         shaderProgram.use()

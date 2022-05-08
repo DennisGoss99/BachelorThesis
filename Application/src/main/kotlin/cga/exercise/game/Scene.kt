@@ -21,6 +21,7 @@ import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.random.Random
+import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
 class SceneStats{
@@ -214,6 +215,9 @@ class Scene(private val window: GameWindow) {
              }
              println("1 job[${bestJobSize + 1}]: $bestJobTime")
 
+            bestJobSize = 0
+            bestJobTime = Long.MAX_VALUE
+
              repeat(100){
                  val time = measureTimeMillis {sap.checkCollisionParallel(it + 1)}
                  if(bestJobTime > time){
@@ -222,6 +226,21 @@ class Scene(private val window: GameWindow) {
                  }
              }
              println("2 job[${bestJobSize + 1}]: $bestJobTime")
+
+
+
+            bestJobSize = 0
+            bestJobTime = measureNanoTime {hitBoxes.updateModelMatrix()}
+            repeat(100){
+                val time = measureNanoTime {hitBoxes.updateModelMatrixParallel(it+1)}
+                if(bestJobTime > time){
+                    bestJobTime = time
+                    bestJobSize = it
+                }
+            }
+            println("updateModelMatrix[${bestJobSize + 1}]: $bestJobTime")
+
+
 
              //initial opengl state
              glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
@@ -321,10 +340,16 @@ class Scene(private val window: GameWindow) {
             lastTime = t
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun update(dt: Float, t: Float) {
 
-        sap.checkCollisionParallel(16)
-        hitBoxes.updateModelMatrix()
+        hitBoxes.hitboxes.forEach {
+            it.setPosition(Vector3f(Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat()))
+        }
+
+        sap.checkCollisionParallel(14)
+        hitBoxes.updateModelMatrixParallel(2)
+
 
 
 
@@ -423,6 +448,7 @@ class Scene(private val window: GameWindow) {
 //                spaceship.activateLeftTurnThruster()
 //            }
 //        }
+
     }
 
     private var lastCameraMode = gameState

@@ -43,16 +43,4 @@ class HitBox(override val id : Int) : IHitBox, Transformable(){
         maxEndPoints[2].value = max.z
 
     }
-
-    fun bind(shaderProgram: ShaderProgram) {
-        shaderProgram.setUniform("model_matrix" , getWorldModelMatrix(),false)
-        if(collided.get())
-            shaderProgram.setUniform("collision", 1)
-    }
-
-    fun afterRender(shaderProgram: ShaderProgram) {
-        if(collided.get())
-            shaderProgram.setUniform("collision", 0)
-    }
-
 }

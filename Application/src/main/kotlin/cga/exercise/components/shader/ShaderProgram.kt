@@ -121,14 +121,14 @@ class ShaderProgram(var vertexShaderPath: String, fragmentShaderPath: String) {
             val log = GL20.glGetShaderInfoLog(vShader)
             GL20.glDeleteShader(fShader)
             GL20.glDeleteShader(vShader)
-            throw Exception("Vertex shader compilation failed:\n$log")
+            throw Exception("Vertex shader: [$vertexShaderPath] compilation failed:\n$log")
         }
         GL20.glCompileShader(fShader)
         if (GL20.glGetShaderi(fShader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
             val log = GL20.glGetShaderInfoLog(fShader)
             GL20.glDeleteShader(fShader)
             GL20.glDeleteShader(vShader)
-            throw Exception("Fragment shader compilation failed:\n$log")
+            throw Exception("Fragment shader: [$fragmentShaderPath] compilation failed:\n$log")
         }
         programID = GL20.glCreateProgram()
         if (programID == 0) {

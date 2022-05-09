@@ -83,8 +83,10 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
                 hitBox.collidedWith.toList().forEach { collideHitBox ->
 
                     if(!collideHitBox.collisionChecked.get() &&(
-                        (hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
-                          || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value)
+                        (hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value 
+						|| hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value) || 
+						(hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value 
+						|| hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value)
                     ))
                     {
                         if(hitBox.collidedWith.size < 2)
@@ -100,6 +102,7 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
                 hitBox.collisionChecked.set(true)
             }
         }
+		
         //println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
 
@@ -218,29 +221,22 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
 
         for(jobIndex2 in 0 until jobCount){
             jobs2.add(GlobalScope.launch {
+			
                 for(index2 in jobIndex2 * chunkSize2 until (jobIndex2 + 1) * chunkSize2 + if(jobIndex2 != jobCount - 1) 0 else remains2){
                     val hitBox = hitBoxes[index2]
+					
                     if(hitBox.collided.get()){
+					
                         hitBox.collidedWith.toList().forEach { collideHitBox : IHitBox ->
-                                if(//collideHitBox != null &&// !collideHitBox.collisionChecked.get()&&
-                                     ((hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
-                                                    || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value))
+                                if(((hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
+                                   || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value))
                                 ){
-
-
-//                                    if (collideHitBox.collidedWith.size < 2)
-//                                        collideHitBox.collided.set(false)
-
-
                                     hitBox.removeCollidedWith(collideHitBox)
-//                                    collideHitBox?.removeCollidedWith(hitBox)
                                 }
                         }
 
                         if (hitBox.collidedWith.size == 0)
                             hitBox.collided.set(false)
-
-                        //hitBox.collisionChecked.set(true)
                     }
                 }
             })

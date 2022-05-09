@@ -1,15 +1,9 @@
 package cga.exercise.components.spaceObjects
 
-import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.material.IMaterial
-import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.mesh.RenderableBase
 import cga.exercise.components.geometry.transformable.Transformable
-import cga.exercise.components.texture.Texture2D
-import org.joml.Matrix4f
-import org.joml.Vector2f
 import org.joml.Vector3f
-import org.lwjgl.opengl.ARBCullDistance
 
 abstract class SpaceObject(val size: Float,
                            val distanceToParent: Float,

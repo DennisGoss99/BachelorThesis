@@ -241,7 +241,6 @@ class Scene(private val window: GameWindow) {
             println("updateModelMatrix[${bestJobSize + 1}]: $bestJobTime")
 
 
-
              //initial opengl state
              glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
@@ -274,10 +273,10 @@ class Scene(private val window: GameWindow) {
         }
     }
 
-    var frameCounter = 0
-    var lastT = 0f
+    private var frameCounter = 0
+    private var lastT = 0f
 
-    var lastTime = 0.5f
+    private var lastTime = 0.5f
 
     fun render(dt: Float, t: Float) {
 
@@ -343,12 +342,7 @@ class Scene(private val window: GameWindow) {
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun update(dt: Float, t: Float) {
 
-        hitBoxes.hitboxes.forEach {
-            it.setPosition(Vector3f(Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat()))
-        }
 
-        sap.checkCollisionParallel(14)
-        hitBoxes.updateModelMatrixParallel(2)
 
 
 
@@ -357,6 +351,15 @@ class Scene(private val window: GameWindow) {
 
 //        testGuiElement.globalOnUpdateEvent(dt, t)
         if(gameState == RenderCategory.FirstPerson){
+
+            hitBoxes.hitboxes.forEach {
+                it.setPosition(Vector3f(Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat()))
+                it.updateEndPoints()
+            }
+            sap.sort()
+            sap.checkCollisionParallel(14)
+            hitBoxes.updateModelMatrixParallel(2)
+
 //            earth.orbit()
 //            println( measureTimeMillis {sap.checkCollision3(60)})
         }else{

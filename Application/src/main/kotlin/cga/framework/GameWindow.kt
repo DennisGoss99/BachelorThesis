@@ -329,10 +329,10 @@ abstract class GameWindow(
                 accum += frametime
                 GLFW.glfwPollEvents()
                 while (accum >= timedelta) {
-                    update((timedelta.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
+                    update((timedelta * 1e-9f), (m_currentTime * 1e-9f))
                     accum -= timedelta
                 }
-                render((frametime.toDouble() * 1e-9).toFloat(), (m_currentTime * 1e-9).toFloat())
+                render((frametime * 1e-9f), (m_currentTime * 1e-9f))
                 GLFW.glfwSwapBuffers(m_window)
             }
         }

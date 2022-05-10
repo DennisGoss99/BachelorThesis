@@ -53,6 +53,18 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      */
     fun scaleLocal(scale: Vector3f) = modelMatrix.scale(scale)
 
+    /**
+     * Scales object related to its own origin
+     * @param scale scale factor (x, y, z)
+     */
+    fun scaleLocal(x : Float, y : Float, z : Float) = modelMatrix.scale(x,y,z)
+
+    /**
+     * Scales object related to its own origin
+     * @param scale scale factor (x, y, z)
+     */
+    fun scaleLocal(factor : Float) = modelMatrix.scale(factor, factor, factor)
+
     fun setPosition(position: Vector3f){
         modelMatrix.set(3,0, position.x)
         modelMatrix.set(3,1, position.y)

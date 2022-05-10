@@ -9,6 +9,8 @@ import cga.exercise.components.collision.HitBoxRenderer
 import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
+import cga.exercise.components.gravity.GravityContainer
+import cga.exercise.components.gravity.Test
 import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
@@ -176,12 +178,64 @@ class Scene(private val window: GameWindow) {
 
     val sap = SAP()
     val hitBoxes = HitBoxRenderer()
+    val gravityContainer = GravityContainer()
 
     //scene setup
     init {
 
         runBlocking {
 
+
+            repeat(1000){
+
+                val hitBox = HitBox(sap.idCounter)
+                hitBox.translateLocal(Vector3f(Random.nextInt(0,2000).toFloat(),Random.nextInt(0,2000).toFloat(),Random.nextInt(0,2000).toFloat()))
+                val Test = Test(hitBox,Random.nextInt(0,6).toFloat())
+                hitBox.updateEndPoints()
+                hitBoxes.add(hitBox)
+                gravityContainer.add(Test)
+                sap.insertBox(hitBox)
+
+            }
+
+
+
+            val hitBox = HitBox(sap.idCounter)
+            hitBox.translateLocal(Vector3f(1000f,1000f,1000f))
+            hitBox.scaleLocal(50f)
+            val Test = Test(hitBox,200000f )
+            hitBox.updateEndPoints()
+            hitBoxes.add(hitBox)
+            gravityContainer.add(Test)
+            sap.insertBox(hitBox)
+//
+//            val hitBox2 = HitBox(1)
+//            hitBox2.translateLocal(Vector3f(-50f,0f,0f))
+//
+//            val hitBox3 = HitBox(1)
+//            hitBox3.translateLocal(Vector3f(50f,0f,0f))
+//
+//            hitBox.updateEndPoints()
+//            hitBox2.updateEndPoints()
+//            hitBox3.updateEndPoints()
+//
+//            val Test = Test(hitBox,200f )
+//            val Test1 = Test(hitBox2,1f, Vector3f(0f,1f,0f))
+//            val Test2 = Test(hitBox3,1f, Vector3f(0f,0f,1f) )
+//
+//            gravityContainer.add(Test)
+//            gravityContainer.add(Test1)
+//            gravityContainer.add(Test2)
+//
+//            hitBoxes.add(hitBox)
+//            hitBoxes.add(hitBox2)
+//            hitBoxes.add(hitBox3)
+            hitBoxes.updateModelMatrix()
+            sap.sort()
+
+
+
+            /*
             repeat(2000){
                 val x1 = Random.nextInt(0,200).toFloat()
                 val y1 = Random.nextInt(0,200).toFloat()
@@ -239,7 +293,7 @@ class Scene(private val window: GameWindow) {
                 }
             }
             println("updateModelMatrix[${bestJobSize + 1}]: $bestJobTime")
-
+            */
 
              //initial opengl state
              glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
@@ -339,26 +393,23 @@ class Scene(private val window: GameWindow) {
             lastTime = t
     }
 
+
+    var c = 0
+
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun update(dt: Float, t: Float) {
-
-
-
-
-
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 
 //        testGuiElement.globalOnUpdateEvent(dt, t)
         if(gameState == RenderCategory.FirstPerson){
 
-            hitBoxes.hitboxes.forEach {
-                it.setPosition(Vector3f(Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat(),Random.nextInt(0,200).toFloat()))
-                it.updateEndPoints()
-            }
+            gravityContainer.applyGravityParallel(10)
+            gravityContainer.moveObjects()
+
             sap.sort()
-            sap.checkCollisionParallel(14)
-            hitBoxes.updateModelMatrixParallel(2)
+            sap.checkCollisionParallel(10)
+            hitBoxes.updateModelMatrixParallel(4)
 
 //            earth.orbit()
 //            println( measureTimeMillis {sap.checkCollision3(60)})
@@ -471,7 +522,6 @@ class Scene(private val window: GameWindow) {
             gameState = RenderCategory.Gui
             window.setCursorVisible(true)
         }
-
 
 //        if(gameState.contains(RenderCategory.PressToPlay)){
 //

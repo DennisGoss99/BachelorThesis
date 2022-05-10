@@ -10,13 +10,11 @@ class Test(var hitBox: HitBox, override var mass: Float, override var velocity :
     override fun applyObjectForce() {
         velocity.add(deltaVelocity)
         deltaVelocity = Vector3f(0f)
-    }
 
-    override fun getPosition(): Vector3f = hitBox.getPosition()
-    override fun move() {
         hitBox.translateLocal(velocity)
         hitBox.updateEndPoints()
     }
 
+    override fun getPosition(): Vector3f = hitBox.getPosition()
 
 }

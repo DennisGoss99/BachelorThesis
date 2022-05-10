@@ -1,5 +1,6 @@
 package cga.exercise.components.collision
 
+import cga.framework.foreachParallel
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
@@ -102,10 +103,7 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
                 hitBox.collisionChecked.set(true)
             }
         }
-		
-        //println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
-
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun checkCollisionHalfParallel(jobCount : Int){
@@ -115,39 +113,28 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
             it.collisionChecked.set(false)
             it.collidedWith.clear()
         }
-        val jobs = mutableListOf<Job>()
 
-        val chunkSize = endPointsX.size / jobCount
-        val remains = endPointsX.size - (chunkSize * jobCount)
+        endPointsX.foreachParallel(jobCount){ endPoint, index ->
+            if (endPoint.isMin) {
+                var i = index + 1
+                while ( i < endPointsX.size){
+                    val endpointNext = endPointsX[i]
 
-        for(jobIndex in 0 until jobCount){
-            jobs.add(GlobalScope.launch {
-                for(index in jobIndex * chunkSize until (jobIndex + 1) * chunkSize + if(jobIndex != jobCount-1) 0 else remains){
-                    val endpoint = endPointsX[index]
-                    if (endpoint.isMin) {
-                        var i = index + 1
-                        while ( i < endPointsX.size){
-                            val endpointNext = endPointsX[i]
+                    if (endpointNext.isMin){
+                        val collideWith = endpointNext.owner
+                        collideWith.collided.set(true)
+                        collideWith.addCollidedWith(endPoint.owner)
+                        endPoint.owner.collided.set(true)
+                        endPoint.owner.addCollidedWith(collideWith)
 
-                            if (endpointNext.isMin){
-                                val collideWith = endpointNext.owner
-                                collideWith.collided.set(true)
-                                collideWith.addCollidedWith(endpoint.owner)
-                                endpoint.owner.collided.set(true)
-                                endpoint.owner.addCollidedWith(collideWith)
+                    }else
+                        if(endPoint.owner.id == endpointNext.owner.id)
+                            break
 
-                            }else
-                                if(endpoint.owner.id == endpointNext.owner.id)
-                                    break
-
-                            i++
-                        }
-                    }
+                    i++
                 }
-            })
+            }
         }
-
-        jobs.joinAll()
 
         hitBoxes.forEach { hitBox ->
             if(hitBox.collided.get()){
@@ -171,7 +158,6 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
                 hitBox.collisionChecked.set(true)
             }
         }
-//        println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -182,67 +168,50 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
             it.collisionChecked.set(false)
             it.collidedWith.clear()
         }
-        val jobs = mutableListOf<Job>()
 
-        val chunkSize = endPointsX.size / jobCount
-        val remains = endPointsX.size - (chunkSize * jobCount)
+        endPointsX.foreachParallel(jobCount){ endPoint, index ->
+            if (endPoint.isMin) {
+                var i = index + 1
+                while ( i < endPointsX.size){
+                    val endpointNext = endPointsX[i]
 
-        for(jobIndex in 0 until jobCount){
-            jobs.add(GlobalScope.launch {
-                for(index in jobIndex * chunkSize until (jobIndex + 1) * chunkSize + if(jobIndex != jobCount-1) 0 else remains){
-                    val endpoint = endPointsX[index]
-                    if (endpoint.isMin) {
-                        var i = index + 1
-                        while ( i < endPointsX.size){
-                            val endpointNext = endPointsX[i]
+                    if (endpointNext.isMin){
+                        val collideWith = endpointNext.owner
+                        collideWith.collided.set(true)
+                        collideWith.addCollidedWith(endPoint.owner)
+                        endPoint.owner.collided.set(true)
+                        endPoint.owner.addCollidedWith(collideWith)
 
-                            if (endpointNext.isMin){
-                                val collideWith = endpointNext.owner
-                                collideWith.collided.set(true)
-                                collideWith.addCollidedWith(endpoint.owner)
-                                endpoint.owner.collided.set(true)
-                                endpoint.owner.addCollidedWith(collideWith)
+                    }else
+                        if(endPoint.owner.id == endpointNext.owner.id)
+                            break
 
-                            }else
-                                if(endpoint.owner.id == endpointNext.owner.id)
-                                    break
-
-                            i++
-                        }
-                    }
+                    i++
                 }
-            })
+            }
         }
-        jobs.joinAll()
 
-        val jobs2 = mutableListOf<Job>()
-        val chunkSize2 = hitBoxes.size / jobCount
-        val remains2 = hitBoxes.size - (chunkSize2 * jobCount)
 
-        for(jobIndex2 in 0 until jobCount){
-            jobs2.add(GlobalScope.launch {
-			
-                for(index2 in jobIndex2 * chunkSize2 until (jobIndex2 + 1) * chunkSize2 + if(jobIndex2 != jobCount - 1) 0 else remains2){
-                    val hitBox = hitBoxes[index2]
-					
-                    if(hitBox.collided.get()){
-					
-                        hitBox.collidedWith.toList().forEach { collideHitBox : IHitBox ->
-                                if(((hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
-                                   || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value))
-                                ){
-                                    hitBox.removeCollidedWith(collideHitBox)
-                                }
+        hitBoxes.foreachParallel(jobCount){ hitBox, _ ->
+            if(hitBox.collided.get()){
+
+                hitBox.collidedWith.toList().forEach { collideHitBox : IHitBox ->
+                        if(((hitBox.maxEndPoints[1].value < collideHitBox.minEndPoints[1].value || hitBox.minEndPoints[1].value > collideHitBox.maxEndPoints[1].value)
+                           || (hitBox.maxEndPoints[2].value < collideHitBox.minEndPoints[2].value || hitBox.minEndPoints[2].value > collideHitBox.maxEndPoints[2].value))
+                        ){
+                            hitBox.removeCollidedWith(collideHitBox)
                         }
-
-                        if (hitBox.collidedWith.size == 0)
-                            hitBox.collided.set(false)
-                    }
                 }
-            })
+
+                if (hitBox.collidedWith.size == 0)
+                    hitBox.collided.set(false)
+            }
+
+
         }
-        jobs2.joinAll()
 //        println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
+
+    fun collisionCount() = hitBoxes.fold(0){acc, iHitBox -> acc + if (iHitBox.collided.get()) 1 else 0}
 
 }

@@ -3,9 +3,13 @@ package cga.framework
 import kotlinx.coroutines.*
 
 @OptIn(DelicateCoroutinesApi::class)
-suspend fun <T> List<T>.foreachParallel(jobCount : Int, predicate : ((T, Int)->Unit)) {
-    val items = this
+suspend fun <T> List<T>.foreachParallel(jobCount : Int, predicate : ((T)->Unit)) {
+    this.foreachParallelIndexed(jobCount) { t: T, _: Int -> predicate(t) }
+}
 
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun <T> List<T>.foreachParallelIndexed(jobCount : Int, predicate : ((T, index: Int)->Unit)) {
+    val items = this
     val jobs = mutableListOf<Job>()
 
     val chunkSize = items.size / jobCount
@@ -19,5 +23,5 @@ suspend fun <T> List<T>.foreachParallel(jobCount : Int, predicate : ((T, Int)->U
         })
     }
     jobs.joinAll()
-
 }
+

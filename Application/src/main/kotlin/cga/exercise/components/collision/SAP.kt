@@ -1,8 +1,10 @@
 package cga.exercise.components.collision
 
 import cga.framework.foreachParallel
+import cga.framework.foreachParallelIndexed
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
+
 
 class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
 
@@ -41,12 +43,24 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
         endPointsZ.add(hitBox.maxEndPoints[2])
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    fun sortParallel(){
+        GlobalScope.launch {
+            endPointsX.sortBy { it.value }
+        }
+        GlobalScope.launch {
+            endPointsY.sortBy { it.value }
+        }
+        GlobalScope.launch {
+            endPointsZ.sortBy { it.value }
+        }
+    }
+
     fun sort(){
         endPointsX.sortBy { it.value }
         endPointsY.sortBy { it.value }
         endPointsZ.sortBy { it.value }
     }
-
 
     fun checkCollision(){
 
@@ -114,7 +128,7 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
             it.collidedWith.clear()
         }
 
-        endPointsX.foreachParallel(jobCount){ endPoint, index ->
+        endPointsX.foreachParallelIndexed(jobCount){ endPoint, index ->
             if (endPoint.isMin) {
                 var i = index + 1
                 while ( i < endPointsX.size){
@@ -169,7 +183,7 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
             it.collidedWith.clear()
         }
 
-        endPointsX.foreachParallel(jobCount){ endPoint, index ->
+        endPointsX.foreachParallelIndexed(jobCount){ endPoint, index ->
             if (endPoint.isMin) {
                 var i = index + 1
                 while ( i < endPointsX.size){
@@ -192,7 +206,7 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
         }
 
 
-        hitBoxes.foreachParallel(jobCount){ hitBox, _ ->
+        hitBoxes.foreachParallelIndexed(jobCount){ hitBox, _ ->
             if(hitBox.collided.get()){
 
                 hitBox.collidedWith.toList().forEach { collideHitBox : IHitBox ->

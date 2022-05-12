@@ -23,6 +23,7 @@ import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.random.Random
+import kotlin.system.measureNanoTime
 
 class SceneStats{
     companion object{
@@ -34,6 +35,7 @@ class SceneStats{
 
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 class Scene(private val window: GameWindow) {
 
 //    //Shader
@@ -178,47 +180,49 @@ class Scene(private val window: GameWindow) {
     val hitBoxes = HitBoxRenderer()
     val gravityContainer = GravityContainer()
 
+    val mainGravityObject = Test(HitBox(sap.idCounter),4000f)
+
     //scene setup
     init {
 
         runBlocking {
 
+            repeat(3000){
 
-
-//            repeat(1000){
+                val hitBox = HitBox(sap.idCounter)
+                hitBox.translateLocal(Vector3f(Random.nextInt(0,2001).toFloat(),Random.nextInt(0,2001).toFloat(),Random.nextInt(0,2001).toFloat()))
+                val Test = Test(hitBox,Random.nextInt(0,6).toFloat(), Vector3f((Random.nextFloat() -0.5f) * 3,(Random.nextFloat() -0.5f) * 3,(Random.nextFloat() -0.5f) * 3))
+                hitBox.updateEndPoints()
+                hitBoxes.add(hitBox)
+                gravityContainer.add(Test)
+                sap.insertBox(hitBox)
+            }
+            mainGravityObject.hitBox.translateLocal(Vector3f(1000f))
+            mainGravityObject.hitBox.scaleLocal(Vector3f(100f))
+            hitBoxes.add(mainGravityObject.hitBox)
+//            val hitBox = HitBox(1)
+//            hitBox.translateLocal(Vector3f(0f,0f,0f))
 //
-//                val hitBox = HitBox(sap.idCounter)
-//                hitBox.translateLocal(Vector3f(Random.nextInt(0,2000).toFloat(),Random.nextInt(0,2000).toFloat(),Random.nextInt(0,2000).toFloat()))
-//                val Test = Test(hitBox,Random.nextInt(0,6).toFloat())
-//                hitBox.updateEndPoints()
-//                hitBoxes.add(hitBox)
-//                gravityContainer.add(Test)
-//                sap.insertBox(hitBox)
-//            }
-
-            val hitBox = HitBox(1)
-            hitBox.translateLocal(Vector3f(0f,0f,0f))
-
-            val hitBox2 = HitBox(1)
-            hitBox2.translateLocal(Vector3f(-75f,0f,0f))
-
-            val hitBox3 = HitBox(1)
-            hitBox3.translateLocal(Vector3f(50f,0f,0f))
-
-            hitBox.updateEndPoints()
-            hitBox2.updateEndPoints()
-            hitBox3.updateEndPoints()
-
-            val Test = Test(hitBox,4000f)
-            val Test1 = Test(hitBox2,0.1f, Vector3f(0f,4f,0f))//Vector3f(0f,0f,0f))
-            val Test2 = Test(hitBox3,1f, Vector3f(0f,0f,1f))
-
-            gravityContainer.add(Test)
-            gravityContainer.add(Test1)
-//            gravityContainer.add(Test2)
-
-            hitBoxes.add(hitBox)
-            hitBoxes.add(hitBox2)
+//            val hitBox2 = HitBox(1)
+//            hitBox2.translateLocal(Vector3f(-75f,0f,0f))
+//
+//            val hitBox3 = HitBox(1)
+//            hitBox3.translateLocal(Vector3f(50f,0f,0f))
+//
+//            hitBox.updateEndPoints()
+//            hitBox2.updateEndPoints()
+//            hitBox3.updateEndPoints()
+//
+//            val Test = Test(hitBox,4000f)
+//            val Test1 = Test(hitBox2,0.1f, Vector3f(0f,4f,0f))//Vector3f(0f,0f,0f))
+//            val Test2 = Test(hitBox3,1f, Vector3f(0f,0f,1f))
+//
+//            gravityContainer.add(Test)
+//            gravityContainer.add(Test1)
+////            gravityContainer.add(Test2)
+//
+//            hitBoxes.add(hitBox)
+//            hitBoxes.add(hitBox2)
 //            hitBoxes.add(hitBox3)
             hitBoxes.updateModelMatrix()
             sap.sort()
@@ -392,13 +396,24 @@ class Scene(private val window: GameWindow) {
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 
 //        testGuiElement.globalOnUpdateEvent(dt, t)
+
         if(gameState == RenderCategory.FirstPerson){
 
-            gravityContainer.applyGravityParallel(10)
+            println("applyGravityFromAll: ${measureNanoTime {
+                gravityContainer.applyGravityParallelFrom(10, mainGravityObject)
+            }}")
+            println("sort: ${measureNanoTime {
+                sap.sortParallel()
+            }}")
+            println("checkCollision: ${measureNanoTime {
+                sap.checkCollisionParallel(10)
+            }}")
+            println("updateModelMatrix: ${measureNanoTime {
+                hitBoxes.updateModelMatrix()
+            }}")
 
-            sap.sort()
-            sap.checkCollisionParallel(10)
-            hitBoxes.updateModelMatrixParallel(4)
+
+
 
 //            earth.orbit()
 //            println( measureTimeMillis {sap.checkCollision3(60)})
@@ -458,21 +473,12 @@ class Scene(private val window: GameWindow) {
 //
 //
 //
-//        if (window.getKeyState ( GLFW_KEY_T)) {
-//            for(i in 0..3){
-//                movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 3))
-//                spaceship.activateMainThrusters()
-//
-//                spaceship.activateRightTurnThruster()
-//                spaceship.activateLeftTurnThruster()
-//
-//                movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 1.5f))
-//                spaceship.activateRightTurnThruster()
-//                spaceship.activateLeftTurnThruster()
-//            }
-//        }
-//
+
+
         if (gameState == RenderCategory.FirstPerson){
+            if (window.getKeyState ( GLFW_KEY_T))
+                movingObject.translateLocal(Vector3f(0.0f, 0.0f, -translationMultiplier * dt * 15))
+
             if (window.getKeyState ( GLFW_KEY_A))
                 movingObject.rotateLocal(0.0f, 0.0f, rotationMultiplier* dt)
 

@@ -223,7 +223,6 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
 
 
         }
-//        println("c: ${hitBoxes.count(){it.collided.get()}}")
     }
 
     fun collisionCount() = hitBoxes.fold(0){acc, iHitBox -> acc + if (iHitBox.collided.get()) 1 else 0}

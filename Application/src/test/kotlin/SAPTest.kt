@@ -49,17 +49,17 @@ class SAPTest {
         sap.sort()
         sap.checkCollision()
 
-        assertEquals(sap.collisionCount(),5)
+        assertEquals(5, sap.collisionCount())
 
-        assertEquals(sap.hitBoxes[0].collidedWith.map { it.id }.sorted(), listOf<Int>(7))
-        assertEquals(sap.hitBoxes[1].collidedWith.map { it.id }.sorted(), listOf<Int>())
-        assertEquals(sap.hitBoxes[2].collidedWith.map { it.id }.sorted(), listOf<Int>(3))
-        assertEquals(sap.hitBoxes[3].collidedWith.map { it.id }.sorted(), listOf<Int>(2))
-        assertEquals(sap.hitBoxes[4].collidedWith.map { it.id }.sorted(), listOf<Int>(7))
-        assertEquals(sap.hitBoxes[5].collidedWith.map { it.id }.sorted(), listOf<Int>())
-        assertEquals(sap.hitBoxes[6].collidedWith.map { it.id }.sorted(), listOf<Int>())
-        assertEquals(sap.hitBoxes[7].collidedWith.map { it.id }.sorted(), listOf<Int>(0,4))
-        assertEquals(sap.hitBoxes[8].collidedWith.map { it.id }.sorted(), listOf<Int>())
+        assertEquals(listOf<Int>(7),  sap.hitBoxes[0].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(),   sap.hitBoxes[1].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(3),  sap.hitBoxes[2].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(2),  sap.hitBoxes[3].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(7),  sap.hitBoxes[4].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(),   sap.hitBoxes[5].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(),   sap.hitBoxes[6].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0,4),sap.hitBoxes[7].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(),   sap.hitBoxes[8].collidedWith.map { it.id }.sorted())
     }
 
     @Test
@@ -76,15 +76,15 @@ class SAPTest {
         sap.sort()
         sap.checkCollision()
 
-        assertEquals(sap.collisionCount(),6)
+        assertEquals(6, sap.collisionCount())
 
-        assertEquals(sap.hitBoxes[0].collidedWith.map { it.id }.sorted(), listOf<Int>(1, 2, 3, 5))
-        assertEquals(sap.hitBoxes[1].collidedWith.map { it.id }.sorted(), listOf<Int>(0, 4))
-        assertEquals(sap.hitBoxes[2].collidedWith.map { it.id }.sorted(), listOf<Int>(0, 3))
-        assertEquals(sap.hitBoxes[3].collidedWith.map { it.id }.sorted(), listOf<Int>(0, 2, 4))
-        assertEquals(sap.hitBoxes[4].collidedWith.map { it.id }.sorted(), listOf<Int>(1, 3))
-        assertEquals(sap.hitBoxes[5].collidedWith.map { it.id }.sorted(), listOf<Int>(0))
-        assertEquals(sap.hitBoxes[6].collidedWith.map { it.id }.sorted(), listOf<Int>())
+        assertEquals(listOf<Int>(1, 2, 3, 5), sap.hitBoxes[0].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0, 4),       sap.hitBoxes[1].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0, 3),       sap.hitBoxes[2].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0, 2, 4),    sap.hitBoxes[3].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(1, 3),       sap.hitBoxes[4].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0),          sap.hitBoxes[5].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(),           sap.hitBoxes[6].collidedWith.map { it.id }.sorted())
     }
 
     @Test
@@ -101,15 +101,15 @@ class SAPTest {
         sap.sort()
         sap.checkCollision()
 
-        assertEquals(sap.collisionCount(),6)
+        assertEquals(6, sap.collisionCount())
 
-        assertEquals(sap.hitBoxes[0].collidedWith.map { it.id }.sorted(), listOf<Int>(1, 2))
-        assertEquals(sap.hitBoxes[1].collidedWith.map { it.id }.sorted(), listOf<Int>(0, 3))
-        assertEquals(sap.hitBoxes[2].collidedWith.map { it.id }.sorted(), listOf<Int>(0, 3))
-        assertEquals(sap.hitBoxes[3].collidedWith.map { it.id }.sorted(), listOf<Int>(1, 2))
-        assertEquals(sap.hitBoxes[4].collidedWith.map { it.id }.sorted(), listOf<Int>(5))
-        assertEquals(sap.hitBoxes[5].collidedWith.map { it.id }.sorted(), listOf<Int>(4))
-        assertEquals(sap.hitBoxes[6].collidedWith.map { it.id }.sorted(), listOf<Int>())
+        assertEquals(listOf<Int>(1, 2), sap.hitBoxes[0].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0, 3), sap.hitBoxes[1].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(0, 3), sap.hitBoxes[2].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(1, 2), sap.hitBoxes[3].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(5),    sap.hitBoxes[4].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(4),    sap.hitBoxes[5].collidedWith.map { it.id }.sorted())
+        assertEquals(listOf<Int>(),     sap.hitBoxes[6].collidedWith.map { it.id }.sorted())
     }
 
 }

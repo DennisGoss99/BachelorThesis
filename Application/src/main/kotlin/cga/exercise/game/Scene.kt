@@ -9,21 +9,22 @@ import cga.exercise.components.collision.HitBoxRenderer
 import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
-import cga.exercise.components.gravity.GravityContainer
-import cga.exercise.components.gravity.Test
+import cga.exercise.components.gravity.GravityObjectContainer
+import cga.exercise.components.gravity.GravityProperties
+import cga.exercise.components.gravity.GravityHitBox
 import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.framework.GLError
 import cga.framework.GameWindow
+import cga.framework.foldChunkedParallel
 import kotlinx.coroutines.*
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
 import kotlin.random.Random
-import kotlin.system.measureNanoTime
 
 class SceneStats{
     companion object{
@@ -176,149 +177,151 @@ class Scene(private val window: GameWindow) {
         ))
     ))
 
-    val sap = SAP()
-    val hitBoxes = HitBoxRenderer()
-    val gravityContainer = GravityContainer()
-
-    val mainGravityObject = Test(HitBox(sap.idCounter),4000f)
+    private val sap = SAP()
+    private val hitBoxes = HitBoxRenderer()
+    private val gravityContainer = GravityObjectContainer()
 
     //scene setup
     init {
 
-        runBlocking {
-
-            repeat(3000){
-
-                val hitBox = HitBox(sap.idCounter)
-                hitBox.translateLocal(Vector3f(Random.nextInt(0,2001).toFloat(),Random.nextInt(0,2001).toFloat(),Random.nextInt(0,2001).toFloat()))
-                val Test = Test(hitBox,Random.nextInt(0,6).toFloat(), Vector3f((Random.nextFloat() -0.5f) * 3,(Random.nextFloat() -0.5f) * 3,(Random.nextFloat() -0.5f) * 3))
-                hitBox.updateEndPoints()
-                hitBoxes.add(hitBox)
-                gravityContainer.add(Test)
-                sap.insertBox(hitBox)
-            }
-            mainGravityObject.hitBox.translateLocal(Vector3f(1000f))
-            mainGravityObject.hitBox.scaleLocal(Vector3f(100f))
-            hitBoxes.add(mainGravityObject.hitBox)
-//            val hitBox = HitBox(1)
-//            hitBox.translateLocal(Vector3f(0f,0f,0f))
+//        repeat(10){
 //
-//            val hitBox2 = HitBox(1)
-//            hitBox2.translateLocal(Vector3f(-75f,0f,0f))
-//
-//            val hitBox3 = HitBox(1)
-//            hitBox3.translateLocal(Vector3f(50f,0f,0f))
-//
+//            val hitBox = HitBox(sap.idCounter)
+//            hitBox.translateLocal(Vector3f(Random.nextInt(0,21).toFloat(),Random.nextInt(0,21).toFloat(),Random.nextInt(0,21).toFloat()))
+//            val Test = GravityHitBox(hitBox,0.0004f, Vector3f((Random.nextFloat() -0.5f) * 0,(Random.nextFloat() -0.5f) * 0,(Random.nextFloat() -0.5f) * 0))
 //            hitBox.updateEndPoints()
-//            hitBox2.updateEndPoints()
-//            hitBox3.updateEndPoints()
-//
-//            val Test = Test(hitBox,4000f)
-//            val Test1 = Test(hitBox2,0.1f, Vector3f(0f,4f,0f))//Vector3f(0f,0f,0f))
-//            val Test2 = Test(hitBox3,1f, Vector3f(0f,0f,1f))
-//
-//            gravityContainer.add(Test)
-//            gravityContainer.add(Test1)
-////            gravityContainer.add(Test2)
-//
 //            hitBoxes.add(hitBox)
-//            hitBoxes.add(hitBox2)
+//            gravityContainer.add(Test, GravityProperties.sourceAndAdopter)
+//            sap.insertBox(hitBox)
+//        }
+
+//        val mainGravityObject = Test(HitBox(sap.idCounter),4000000f)
+//        mainGravityObject.hitBox.translateLocal(Vector3f(1000f))
+//        mainGravityObject.hitBox.scaleLocal(Vector3f(100f))
+//        gravityContainer.add(mainGravityObject, GravityProperties.source)
+//        hitBoxes.add(mainGravityObject.hitBox)
+
+            val hitBox = HitBox(1)
+            hitBox.translateLocal(Vector3f(0f,0f,0f))
+
+            val hitBox2 = HitBox(1)
+            hitBox2.translateLocal(Vector3f(36f,0f,0f))
+
+//            val hitBox3 = HitBox(1)
+//            hitBox3.translateLocal(Vector3f(100f,0f,0f))
+//
+            hitBox.updateEndPoints()
+            hitBox2.updateEndPoints()
+//            hitBox3.updateEndPoints()
+
+            val Test = GravityHitBox(hitBox,60f, Vector3f(0f,0f,0f))
+            val Test1 = GravityHitBox(hitBox2,0.00000001f, Vector3f(0f, 3.335166f,0f))
+//            val Test2 = GravityHitBox(hitBox3,1f, Vector3f(0f,0f,0f))
+
+            gravityContainer.add(Test, GravityProperties.source)
+            gravityContainer.add(Test1, GravityProperties.adopter)
+//            gravityContainer.add(Test2, GravityProperties.source)
+
+            hitBoxes.add(hitBox)
+            hitBoxes.add(hitBox2)
 //            hitBoxes.add(hitBox3)
+
+
             hitBoxes.updateModelMatrix()
-            sap.sort()
+            sap.sortParallel()
 
 
 
-            /*
-            repeat(2000){
-                val x1 = Random.nextInt(0,200).toFloat()
-                val y1 = Random.nextInt(0,200).toFloat()
-                val z1 = Random.nextInt(0,200).toFloat()
+        /*
+        repeat(2000){
+            val x1 = Random.nextInt(0,200).toFloat()
+            val y1 = Random.nextInt(0,200).toFloat()
+            val z1 = Random.nextInt(0,200).toFloat()
 
-                val hitBox = HitBox(sap.idCounter)
-                hitBox.translateLocal(Vector3f(x1,y1,z1))
+            val hitBox = HitBox(sap.idCounter)
+            hitBox.translateLocal(Vector3f(x1,y1,z1))
 
-                hitBoxes.add(hitBox)
+            hitBoxes.add(hitBox)
+         }
+
+         hitBoxes.hitboxes.forEach {
+             sap.insertBox(it)
+         }
+
+         sap.sort()
+
+         println( measureTimeMillis { sap.checkCollision() })
+
+
+         var bestJobSize = 0
+         var bestJobTime = Long.MAX_VALUE
+
+         repeat(100){
+             val time = measureTimeMillis {sap.checkCollisionHalfParallel(it + 1)}
+             if(bestJobTime > time){
+                 bestJobTime = time
+                 bestJobSize = it
              }
 
-             hitBoxes.hitboxes.forEach {
-                 sap.insertBox(it)
+         }
+         println("1 job[${bestJobSize + 1}]: $bestJobTime")
+
+        bestJobSize = 0
+        bestJobTime = Long.MAX_VALUE
+
+         repeat(100){
+             val time = measureTimeMillis {sap.checkCollisionParallel(it + 1)}
+             if(bestJobTime > time){
+                 bestJobTime = time
+                 bestJobSize = it
              }
-
-             sap.sort()
-
-             println( measureTimeMillis { sap.checkCollision() })
-
-
-             var bestJobSize = 0
-             var bestJobTime = Long.MAX_VALUE
-
-             repeat(100){
-                 val time = measureTimeMillis {sap.checkCollisionHalfParallel(it + 1)}
-                 if(bestJobTime > time){
-                     bestJobTime = time
-                     bestJobSize = it
-                 }
-
-             }
-             println("1 job[${bestJobSize + 1}]: $bestJobTime")
-
-            bestJobSize = 0
-            bestJobTime = Long.MAX_VALUE
-
-             repeat(100){
-                 val time = measureTimeMillis {sap.checkCollisionParallel(it + 1)}
-                 if(bestJobTime > time){
-                     bestJobTime = time
-                     bestJobSize = it
-                 }
-             }
-             println("2 job[${bestJobSize + 1}]: $bestJobTime")
+         }
+         println("2 job[${bestJobSize + 1}]: $bestJobTime")
 
 
 
-            bestJobSize = 0
-            bestJobTime = measureNanoTime {hitBoxes.updateModelMatrix()}
-            repeat(100){
-                val time = measureNanoTime {hitBoxes.updateModelMatrixParallel(it+1)}
-                if(bestJobTime > time){
-                    bestJobTime = time
-                    bestJobSize = it
-                }
+        bestJobSize = 0
+        bestJobTime = measureNanoTime {hitBoxes.updateModelMatrix()}
+        repeat(100){
+            val time = measureNanoTime {hitBoxes.updateModelMatrixParallel(it+1)}
+            if(bestJobTime > time){
+                bestJobTime = time
+                bestJobSize = it
             }
-            println("updateModelMatrix[${bestJobSize + 1}]: $bestJobTime")
-            */
+        }
+        println("updateModelMatrix[${bestJobSize + 1}]: $bestJobTime")
+        */
 
-             //initial opengl state
-             glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
+         //initial opengl state
+         glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
-             glEnable(GL_CULL_FACE); GLError.checkThrow()
-             glFrontFace(GL_CCW); GLError.checkThrow()
-             glCullFace(GL_BACK); GLError.checkThrow()
+         glEnable(GL_CULL_FACE); GLError.checkThrow()
+         glFrontFace(GL_CCW); GLError.checkThrow()
+         glCullFace(GL_BACK); GLError.checkThrow()
 
-             glEnable(GL_DEPTH_TEST); GLError.checkThrow()
-             glDepthFunc(GL_LESS); GLError.checkThrow()
+         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
+         glDepthFunc(GL_LESS); GLError.checkThrow()
 
 //            camera.translateLocal(Vector3f(3f * 20f,0f,60f))
 
 
-             camera.translateLocal(Vector3f(0f,0f,5f))
+         camera.translateLocal(Vector3f(0f,0f,5f))
 
 //            GlobalScope.launch {
 //                delay(1000)
 //                gameState = mutableListOf(RenderCategory.FirstPerson)
 //            }
 
-    //        //configure LoadingBar
-    //        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
-    //        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
+//        //configure LoadingBar
+//        loadingBarGuiElement2.setPosition(Vector2f(0.1f, 0f))
+//        loadingBarGuiElement3.setPosition(Vector2f(0.2f, 0f))
 
 //             testGuiElement.refresh()
 //             fpsGuiElement.refresh()
-             mainMenu.refresh()
-             mainGui.refresh()
-             //window.setCursorVisible(false)
-        }
+         mainMenu.refresh()
+         mainGui.refresh()
+         //window.setCursorVisible(false)
+
     }
 
     private var frameCounter = 0
@@ -399,20 +402,22 @@ class Scene(private val window: GameWindow) {
 
         if(gameState == RenderCategory.FirstPerson){
 
-            println("applyGravityFromAll: ${measureNanoTime {
-                gravityContainer.applyGravityParallelFrom(10, mainGravityObject)
-            }}")
-            println("sort: ${measureNanoTime {
-                sap.sortParallel()
-            }}")
-            println("checkCollision: ${measureNanoTime {
-                sap.checkCollisionParallel(10)
-            }}")
-            println("updateModelMatrix: ${measureNanoTime {
-                hitBoxes.updateModelMatrix()
-            }}")
-
-
+//            println("applyGravityFromAll: ${measureNanoTime {
+//                gravityContainer.applyGravityParallel(10)
+//            }}")
+//            println("sort: ${measureNanoTime {
+//                sap.sortParallel()
+//            }}")
+//            println("checkCollision: ${measureNanoTime {
+//                sap.checkCollisionParallel(10)
+//            }}")
+//            println("updateModelMatrix: ${measureNanoTime {
+//                hitBoxes.updateModelMatrix()
+//            }}")
+            gravityContainer.applyGravityParallel(10)
+            sap.sortParallel()
+            sap.checkCollisionParallel(10)
+            hitBoxes.updateModelMatrix()
 
 
 //            earth.orbit()

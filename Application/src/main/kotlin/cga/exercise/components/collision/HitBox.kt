@@ -27,7 +27,6 @@ class HitBox(override val id : Int) : IHitBox, Transformable(){
         collidedWith.remove(hitBox)
     }
 
-
     override fun updateEndPoints(){
         val mat = getWorldModelMatrix()
         val max = Vector4f(1f,1f,1f, 1f).mul(mat)

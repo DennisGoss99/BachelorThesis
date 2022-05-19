@@ -184,16 +184,16 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
 
-//        repeat(10){
-//
-//            val hitBox = HitBox(sap.idCounter)
-//            hitBox.translateLocal(Vector3f(Random.nextInt(0,21).toFloat(),Random.nextInt(0,21).toFloat(),Random.nextInt(0,21).toFloat()))
-//            val Test = GravityHitBox(hitBox,0.0004f, Vector3f((Random.nextFloat() -0.5f) * 0,(Random.nextFloat() -0.5f) * 0,(Random.nextFloat() -0.5f) * 0))
-//            hitBox.updateEndPoints()
-//            hitBoxes.add(hitBox)
-//            gravityContainer.add(Test, GravityProperties.sourceAndAdopter)
-//            sap.insertBox(hitBox)
-//        }
+        repeat(200){
+
+            val hitBox = HitBox(sap.idCounter)
+            hitBox.translateLocal(Vector3f(Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat()))
+            val Test = GravityHitBox(hitBox,Random.nextInt(1,101).toFloat(), Vector3f(0f))
+            hitBox.updateEndPoints()
+            hitBoxes.add(hitBox)
+            gravityContainer.add(Test, GravityProperties.sourceAndAdopter)
+            sap.insertBox(hitBox)
+        }
 
 //        val mainGravityObject = Test(HitBox(sap.idCounter),4000000f)
 //        mainGravityObject.hitBox.translateLocal(Vector3f(1000f))
@@ -201,31 +201,40 @@ class Scene(private val window: GameWindow) {
 //        gravityContainer.add(mainGravityObject, GravityProperties.source)
 //        hitBoxes.add(mainGravityObject.hitBox)
 
-            val hitBox = HitBox(1)
-            hitBox.translateLocal(Vector3f(0f,0f,0f))
-
-            val hitBox2 = HitBox(1)
-            hitBox2.translateLocal(Vector3f(36f,0f,0f))
-
-//            val hitBox3 = HitBox(1)
-//            hitBox3.translateLocal(Vector3f(100f,0f,0f))
+//        val hitBox = HitBox(0)
+//        hitBox.translateLocal(Vector3f(0f))
+//        hitBox.scaleLocal(2f)
 //
-            hitBox.updateEndPoints()
-            hitBox2.updateEndPoints()
+//        hitBox.updateEndPoints()
+//
+//        val Test = GravityHitBox(hitBox,2f, Vector3f(0f))
+//
+//        gravityContainer.add(Test, GravityProperties.source)
+//        hitBoxes.add(hitBox)
+//
+//
+//
+//        val hitBox2 = HitBox(1)
+//        hitBox2.translateLocal(Vector3f(20f,0f,0f))
+//        hitBox2.scaleLocal(1f)
+//
+//        hitBox2.updateEndPoints()
+//
+//        val Test1 = GravityHitBox(hitBox2,0.1f, Vector3f(0f, 0.81694555f,0f))
+//
+//        gravityContainer.add(Test1, GravityProperties.adopter)
+//        hitBoxes.add(hitBox2)
+
+//            val hitBox3 = HitBox(2)
+//            hitBox3.translateLocal(Vector3f(-100f))
+//            hitBox3.scaleLocal(50f)
+
 //            hitBox3.updateEndPoints()
 
-            val Test = GravityHitBox(hitBox,60f, Vector3f(0f,0f,0f))
-            val Test1 = GravityHitBox(hitBox2,0.00000001f, Vector3f(0f, 3.335166f,0f))
-//            val Test2 = GravityHitBox(hitBox3,1f, Vector3f(0f,0f,0f))
+//            val Test2 = GravityHitBox(hitBox3,100f, Vector3f(0f))
 
-            gravityContainer.add(Test, GravityProperties.source)
-            gravityContainer.add(Test1, GravityProperties.adopter)
 //            gravityContainer.add(Test2, GravityProperties.source)
-
-            hitBoxes.add(hitBox)
-            hitBoxes.add(hitBox2)
 //            hitBoxes.add(hitBox3)
-
 
             hitBoxes.updateModelMatrix()
             sap.sortParallel()
@@ -414,10 +423,10 @@ class Scene(private val window: GameWindow) {
 //            println("updateModelMatrix: ${measureNanoTime {
 //                hitBoxes.updateModelMatrix()
 //            }}")
-            gravityContainer.applyGravityParallel(10)
-            sap.sortParallel()
-            sap.checkCollisionParallel(10)
-            hitBoxes.updateModelMatrix()
+//            gravityContainer.applyGravityParallel(10)
+//            sap.sortParallel()
+//            sap.checkCollisionParallel(10)
+//            hitBoxes.updateModelMatrix()
 
 
 //            earth.orbit()
@@ -434,10 +443,12 @@ class Scene(private val window: GameWindow) {
 //                solarSystem.update(dt,t)
 //            }
 //        }
-//        if(window.getKeyState(GLFW_KEY_SPACE)){
-//            for(i in 0..15)
-//                solarSystem.update(dt,t)
-//        }
+        if(window.getKeyState(GLFW_KEY_SPACE)){
+            gravityContainer.applyGravityParallel(10)
+            sap.sortParallel()
+            sap.checkCollisionParallel(10)
+            hitBoxes.updateModelMatrix()
+        }
 //
 //
 //        spaceship.updateThrusters(dt,t)

@@ -42,9 +42,9 @@ class GravityObjectContainer{
             val direction = ob2Pos.sub(ob1Pos)
 
             if (distance > 0) {
-                val forceMagnitude = gravitationalConstant * (ob1.mass * ob2.mass) / distance.pow(2)
+                val forceMagnitude = gravitationalConstant * ( /* ob1.mass * */ ob2.mass) / distance.pow(2)
 
-                ob1.acceleration.add(direction.normalize().mul(forceMagnitude).div(ob1.mass).min(Vector3f(1f)))
+                ob1.acceleration.add(direction.normalize().mul(forceMagnitude)/*.div(ob1.mass)*/.min(Vector3f(1f)))
             }
         }
     }
@@ -67,9 +67,8 @@ class GravityObjectContainer{
             }
         }
 
-        gravityObjectsApply.forEach { ob1 ->
+        for (ob1 in gravityObjectsApply)
             ob1.applyObjectForce()
-        }
     }
 
 

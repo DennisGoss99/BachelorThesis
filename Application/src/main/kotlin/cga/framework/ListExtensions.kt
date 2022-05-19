@@ -28,14 +28,14 @@ suspend fun <T> List<T>.foreachParallelIndexed(jobCount : Int, predicate : ((T, 
 }
 
 @OptIn(DelicateCoroutinesApi::class)
-suspend fun <T, R> List<T>.foldChunkedParallel(jobCount : Int, initialChunk : (()-> R), operation : ((acc : R, T)->R)) : Array<R> {
+suspend inline fun <T, reified R> List<T>.foldChunkedParallel(jobCount : Int, crossinline initialChunk : (()-> R), crossinline operation : ((acc : R, T)->R)) : Array<R> {
     val items = this
     val jobs = Array<Job?>(jobCount){null}
 
     val chunkSize = items.size / jobCount
     val remains = items.size - (chunkSize * jobCount)
 
-    val accumulatorResults = Array<Any>(jobCount){}
+    val accumulatorResults = Array<R>(jobCount){initialChunk()}
 
     for(jobIndex in 0 until jobCount){
         jobs[jobIndex] = GlobalScope.launch(){
@@ -50,8 +50,7 @@ suspend fun <T, R> List<T>.foldChunkedParallel(jobCount : Int, initialChunk : ((
     }
     jobs.joinAll()
 
-    @Suppress("UNCHECKED_CAST")
-    return accumulatorResults as Array<R>
+    return accumulatorResults
 }
 
 

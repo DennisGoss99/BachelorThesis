@@ -73,6 +73,12 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
             false
     }
 
+    fun checkOnHoverOrChildHover(){
+        val elementPosition = getWorldPixelPosition()
+        val mousePosition = SceneStats.mousePosition
+        isHovering = elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y
+    }
+
     fun checkPressed(){
         if (!SceneStats.mouseKeyPressed.first)
             isPressed = false
@@ -118,7 +124,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
     open fun afterRender(shaderProgram: ShaderProgram){}
 
-    open fun afterChildrenRender(fontShaderProgram: ShaderProgram) {}
+    open fun afterChildrenRender(shaderProgram: ShaderProgram) {}
 
     open fun cleanup(){
         children.forEach { it.cleanup() }

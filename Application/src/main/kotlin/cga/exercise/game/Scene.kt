@@ -31,6 +31,7 @@ class SceneStats{
         var windowHeight : Int = 0
         var mousePosition : Vector2f = Vector2f()
         var mouseKeyPressed : Pair<Boolean,Boolean> = false to false
+        var mouseScroll : Int = 0
     }
 
 }
@@ -152,7 +153,7 @@ class Scene(private val window: GameWindow) {
     private val mainMenu = LayoutBox(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
         //Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
 
-        Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(),
+        Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(), true, true,
             innerElement = LayoutBox(Relative(1f), Relative(2f), Center(), PixelTop(0), children = listOf(
                 Box(Relative(0.1f), AspectRatio(), Center(), Center(), color = Color.midnight),
                 Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), Relative(0.4f)),
@@ -520,6 +521,7 @@ class Scene(private val window: GameWindow) {
 //            }
 //        }
 
+        SceneStats.mouseScroll = 0
     }
 
     private var lastCameraMode = gameState
@@ -647,6 +649,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
+        SceneStats.mouseScroll += yoffset.toInt()
     }
 
     fun onWindowSize(width: Int, height: Int) {

@@ -10,40 +10,106 @@ class Scrollbar (widthConstraint : IScaleConstraint,
                  heightConstraint : IScaleConstraint,
                  translateXConstraint : ITranslateConstraint,
                  translateYConstraint : ITranslateConstraint,
+                 private var verticalScrollBarVisibility : Boolean,
+                 private var horizontalScrollBarVisibility : Boolean,
                  override var color: Vector4f = Color.red,
                  var cornerRadius : Int = 0,
                  public override var onClick: ((Int, Int) -> Unit)? = null,
                  override val onFocus: (() -> Unit)? = null,
                  var innerElement : GuiElement) : GuiElement(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, listOf()){
 
-    private var sliderPercentage : Float = 0f
+    private var verticalSliderPercentage : Float = 0f
+        set(value) { field = value.coerceIn(0f, 1f)}
 
-    private val sliderKnob = Box(PixelWidth(20), Relative(0.5f), PixelRight(0), PixelTop(0))
-    private val slider = listOf(
-        Box(PixelWidth(20), Relative(1f), PixelRight(0), Center(), Color.grey),
-        sliderKnob
-    )
+    private val verticalSliderKnob = Box(PixelWidth(20), Relative(0.5f), PixelRight(0), PixelTop(0))
+    private val verticalSlider = Box(PixelWidth(20), Relative(1f), PixelRight(0), Center(), Color.grey)
+
+    private var horizontalSliderPercentage : Float = 0f
+        set(value) { field = value.coerceIn(0f, 1f)}
+
+    private val horizontalSliderKnob = Box(Relative(0.5f), PixelHeight(20), Center(), PixelBottom(0))
+    private val horizontalSlider = Box(Relative(1f), PixelHeight(20), Center(), PixelBottom(0), Color.grey)
 
     init {
-        this.children = listOf(innerElement).plus(slider)
-        sliderKnob.onClick = {_,_->}
+
+        val tempChildren = mutableListOf(innerElement)
+
+        if(horizontalScrollBarVisibility){
+            tempChildren.add(horizontalSlider)
+            tempChildren.add(horizontalSliderKnob)
+
+            horizontalSliderKnob.onClick = {_,_->}
+        }
+        if(verticalScrollBarVisibility){
+            tempChildren.add(verticalSlider)
+            tempChildren.add(verticalSliderKnob)
+
+            verticalSliderKnob.onClick = {_,_->}
+        }
+
+        this.children = tempChildren
     }
 
     override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
             dt: Float, t: Float ->
-        sliderKnob.checkOnHover()
-        sliderKnob.checkPressed()
 
-        if(sliderKnob.isPressed){
-            sliderPercentage = ((-SceneStats.mousePosition.y - (sliderKnob.getHeight() * 0.5f) + getWorldPixelPosition().y) / (getHeight() - sliderKnob.getHeight())).coerceIn(0f,1f)
-            this.refresh()
+        if(verticalScrollBarVisibility){
+            this.checkOnHoverOrChildHover()
+            verticalSliderKnob.checkOnHover()
+            verticalSliderKnob.checkPressed()
+
+
+            if(verticalSliderKnob.isPressed){
+                verticalSliderPercentage = ((-SceneStats.mousePosition.y - (verticalSliderKnob.getHeight() * 0.5f) + getWorldPixelPosition().y) / (getHeight() - verticalSliderKnob.getHeight()))
+
+                val sliderNobMaxMovement = this.getHeight() - verticalSliderKnob.getHeight()
+                verticalSliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * verticalSliderPercentage).toInt())
+                innerElement.translateYConstraint = PixelTop(-(innerElement.getHeight() / 2f * verticalSliderPercentage).toInt())
+
+                refresh()
+            }
+
+            verticalSliderKnob.color = if(verticalSliderKnob.isPressed || verticalSliderKnob.isHovering)
+                StaticResources.highlightColor
+            else
+                Color.withe
+
+
+            if(isHovering && SceneStats.mouseScroll != 0){
+                verticalSliderPercentage -= SceneStats.mouseScroll * 0.1f
+
+                val sliderNobMaxMovement = this.getHeight() - verticalSliderKnob.getHeight()
+                verticalSliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * verticalSliderPercentage).toInt())
+                innerElement.translateYConstraint = PixelTop(-(innerElement.getHeight() / 2f * verticalSliderPercentage).toInt())
+
+                refresh()
+            }
         }
 
-        sliderKnob.color = if(sliderKnob.isPressed || sliderKnob.isHovering)
-            StaticResources.highlightColor
-        else
-            Color.withe
+        if(horizontalScrollBarVisibility){
+            horizontalSliderKnob.checkOnHover()
+            horizontalSliderKnob.checkPressed()
+
+            if(horizontalSliderKnob.isPressed){
+                horizontalSliderPercentage = ((SceneStats.mousePosition.x - (horizontalSliderKnob.getWidth() * 0.5f) - getWorldPixelPosition().x) / (getWidth() - horizontalSliderKnob.getWidth()))
+
+
+                val sliderNobMaxMovement = this.getWidth() - horizontalSliderKnob.getWidth()
+                horizontalSliderKnob.translateXConstraint = PixelLeft((sliderNobMaxMovement * horizontalSliderPercentage).toInt())
+                innerElement.translateXConstraint = PixelLeft(-(innerElement.getWidth() / 2f * horizontalSliderPercentage).toInt())
+
+                refresh()
+            }
+
+            horizontalSliderKnob.color = if(horizontalSliderKnob.isPressed || horizontalSliderKnob.isHovering)
+                StaticResources.highlightColor
+            else
+                Color.withe
+        }
+
     }
+
+
 
     override fun bind(shaderProgram: ShaderProgram) {
         shaderProgram.setUniform("limitRenderArea",1)
@@ -54,14 +120,6 @@ class Scrollbar (widthConstraint : IScaleConstraint,
     override fun afterChildrenRender(shaderProgram: ShaderProgram) {
         super.afterRender(shaderProgram)
         shaderProgram.setUniform("limitRenderArea",0)
-    }
-
-    override fun refresh() {
-        val sliderNobMaxMovement = this.getHeight() - sliderKnob.getHeight()
-        sliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * sliderPercentage).toInt())
-        innerElement.translateYConstraint = PixelTop(-(innerElement.getHeight() / 2f * sliderPercentage).toInt())
-
-        super.refresh()
     }
 
 }

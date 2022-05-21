@@ -6,58 +6,82 @@ in vec4 gl_FragCoord;
 out vec4 color;
 
 uniform sampler2D texture2D;
-uniform bool useImage;
 uniform vec4 elementColor;
 
-uniform vec4 elementCorners;
-uniform int cornerRadius;
+// 0 GUI-Element ; 1 Text
+uniform int elementType;
 
-// used for scrollbars
-uniform bool limitRenderArea;
+// Gui Element Variables
 
+    uniform bool useImage;
+    uniform vec4 elementCorners;
+    uniform int cornerRadius;
 
-const float smoothness = 0.7;
+    // used for scrollbars
+    uniform bool limitRenderArea;
 
-float renderCornerPixel(){
-    if(gl_FragCoord.x < elementCorners.x + cornerRadius)
-    {
-        //upper left
-        if(gl_FragCoord.y > elementCorners.y - cornerRadius){
-            return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
-        //lower left
-        }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
-            return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
+    const float smoothness = 0.7;
+
+    float renderCornerPixel(){
+        if(gl_FragCoord.x < elementCorners.x + cornerRadius)
+        {
+            //upper left
+            if(gl_FragCoord.y > elementCorners.y - cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
+            //lower left
+            }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
+            }
+        }else if(gl_FragCoord.x > elementCorners.z - cornerRadius){
+            //upper right
+            if(gl_FragCoord.y > elementCorners.y - cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
+            //lower right
+            }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
+            }
         }
-    }else if(gl_FragCoord.x > elementCorners.z - cornerRadius){
-        //upper right
-        if(gl_FragCoord.y > elementCorners.y - cornerRadius){
-            return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
-        //lower right
-        }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
-            return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
-        }
+        return 1.0;
     }
-    return 1.0;
-}
+
+// Font Variables
+
+    const float width = 0.5;
+    const float edge = 0.1;
 
 void main(void){
-
-    float alphaValue = 1.0;
-
-    //BorderAlgorithm
-    if(cornerRadius > 0)
-        alphaValue = renderCornerPixel();
 
     // Outside of scrollBox
     if(limitRenderArea)
         if(elementCorners.x > gl_FragCoord.x || gl_FragCoord.x > elementCorners.z  || elementCorners.y < gl_FragCoord.y || gl_FragCoord.y < elementCorners.w)
             return;
 
-    if(useImage){
-        vec4 imgColor = texture(texture2D, textureCoords);
-        imgColor.a *= alphaValue;
-        color = (imgColor * imgColor.a) + (elementColor * (1 - imgColor.a));
-    }
-    else
+
+    if(elementType == 0){
+        //GUI
+
+        float alphaValue = 1.0;
+
+        //BorderAlgorithm
+        if(cornerRadius > 0)
+        alphaValue = renderCornerPixel();
+
+
+
+        if(useImage){
+            vec4 imgColor = texture(texture2D, textureCoords);
+            imgColor.a *= alphaValue;
+            color = (imgColor * imgColor.a) + (elementColor * (1 - imgColor.a));
+        }
+        else
         color = vec4(elementColor.rgb, elementColor.a * alphaValue);
+
+    }else{
+        //Text
+
+        float distance = 1 - texture(texture2D, textureCoords).a;
+        float alpha = 1 - smoothstep(width, width + edge, distance);
+
+        color = vec4(elementColor.xyz, alpha);
+    }
 }

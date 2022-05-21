@@ -1,7 +1,6 @@
 package cga.exercise.components.gui
 
 import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.gui.TextComponents.TextCursor
 import cga.exercise.components.shader.ShaderProgram
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP
@@ -10,10 +9,8 @@ import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
 import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30
-import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
 
-class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontShaderProgram: ShaderProgram) {
+class GuiRenderer(private val shaderProgram: ShaderProgram) {
 
     private var vao = 0
     private var vbo = 0
@@ -49,38 +46,38 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
     private var lastElement = -1
     private fun doRender(guiElement: GuiElement, dt: Float, t: Float) {
         if(guiElement.isVisible){
+
+
             when(guiElement){
                 is Text -> {
-                    if(lastElement != 1)
-                        fontShaderProgram.use()
-                    guiElement.bind(fontShaderProgram)
-                    guiElement.render(fontShaderProgram)
-                    guiElement.afterRender(fontShaderProgram)
-                    lastElement = 1
+                    if(lastElement != 1) {
+                        shaderProgram.setUniform("elementType", 1)
+                        lastElement = 1
+                    }
 
-                    guiElement.children.forEach { doRender(it,dt,t)}
-                    guiElement.afterChildrenRender(fontShaderProgram)
+                    guiElement.bind(shaderProgram)
+                    guiElement.render(shaderProgram)
                 }
                 is LayoutBox -> {
-                    guiElement.children.forEach { doRender(it,dt,t)}
                 }
                 else -> {
                     if(lastElement != 0) {
-                        guiShaderProgram.use()
                         GL30.glBindVertexArray(vao)
                         GL20.glEnableVertexAttribArray(0)
+                        shaderProgram.setUniform("elementType", 0)
+                        lastElement = 0
                     }
-                    guiElement.bind(guiShaderProgram)
-                    guiElement.render(guiShaderProgram)
-                    GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
-                    guiElement.afterRender(guiShaderProgram)
-                    lastElement = 0
 
-                    guiElement.children.forEach { doRender(it,dt,t)}
-                    guiElement.afterChildrenRender(guiShaderProgram)
+                    guiElement.bind(shaderProgram)
+                    guiElement.render(shaderProgram)
+                    GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
                 }
             }
 
+            guiElement.afterRender(shaderProgram)
+
+            guiElement.children.forEach { doRender(it,dt,t)}
+            guiElement.afterChildrenRender(shaderProgram)
 
         }
     }
@@ -90,6 +87,8 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
         GL30.glEnable(GL11.GL_BLEND)
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
         GL11.glDisable(GL11.GL_DEPTH_TEST)
+
+        shaderProgram.use()
     }
 
     fun render(guiElement: GuiElement, dt: Float, t: Float) {

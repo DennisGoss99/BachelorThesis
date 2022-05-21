@@ -18,7 +18,6 @@ import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.framework.GLError
 import cga.framework.GameWindow
-import cga.framework.foldChunkedParallel
 import kotlinx.coroutines.*
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -47,8 +46,6 @@ class Scene(private val window: GameWindow) {
     private val spaceObjectShader : ShaderProgram = ShaderProgram("assets/shaders/spaceObject_vert.glsl", "assets/shaders/spaceObject_frag.glsl")
 
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
-    private val fontShader: ShaderProgram = ShaderProgram("assets/shaders/font_vert.glsl", "assets/shaders/font_frag.glsl")
-
     private var gameState = RenderCategory.Gui
 
 
@@ -109,7 +106,7 @@ class Scene(private val window: GameWindow) {
 //        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
 //        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
-    private val guiRenderer = GuiRenderer(guiShader, fontShader)
+    private val guiRenderer = GuiRenderer(guiShader)
 
 //    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
@@ -158,6 +155,7 @@ class Scene(private val window: GameWindow) {
         Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(),
             innerElement = LayoutBox(Relative(1f), Relative(2f), Center(), PixelTop(0), children = listOf(
                 Box(Relative(0.1f), AspectRatio(), Center(), Center(), color = Color.midnight),
+                Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), Relative(0.4f)),
                 Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(0), color = Color.midnight),
                 Box(Relative(0.1f), AspectRatio(), Center(), PixelBottom(0), color = Color.midnight)
 
@@ -668,7 +666,6 @@ class Scene(private val window: GameWindow) {
 
 
         guiRenderer.cleanup()
-        fontShader.cleanup()
         mainShader.cleanup()
         guiShader.cleanup()
         skyBoxShader.cleanup()

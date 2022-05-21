@@ -154,11 +154,21 @@ class Scene(private val window: GameWindow) {
 
     private val mainMenu = LayoutBox(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
         //Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
-        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
-        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
-        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
-        textBoxCount,
-        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
+
+        Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(),
+            innerElement = LayoutBox(Relative(1f), Relative(2f), Center(), PixelTop(0), children = listOf(
+                Box(Relative(0.1f), AspectRatio(), Center(), Center(), color = Color.midnight),
+                Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(0), color = Color.midnight),
+                Box(Relative(0.1f), AspectRatio(), Center(), PixelBottom(0), color = Color.midnight)
+
+        )))
+
+
+//        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
+//        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
+//        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
+//        textBoxCount,
+//        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
     ))
 
     private val fpsGuiElement : Text = Text("",4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
@@ -399,9 +409,6 @@ class Scene(private val window: GameWindow) {
             lastTime = t
     }
 
-
-    var c = 0
-
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun update(dt: Float, t: Float) {
 
@@ -449,6 +456,7 @@ class Scene(private val window: GameWindow) {
             sap.checkCollisionParallel(10)
             hitBoxes.updateModelMatrix()
         }
+
 //
 //
 //        spaceship.updateThrusters(dt,t)
@@ -533,6 +541,7 @@ class Scene(private val window: GameWindow) {
             gameState = RenderCategory.Gui
             window.setCursorVisible(true)
         }
+
 
 //        if(gameState.contains(RenderCategory.PressToPlay)){
 //

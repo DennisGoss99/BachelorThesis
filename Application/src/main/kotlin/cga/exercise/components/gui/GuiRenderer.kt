@@ -57,8 +57,13 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                     guiElement.render(fontShaderProgram)
                     guiElement.afterRender(fontShaderProgram)
                     lastElement = 1
+
+                    guiElement.children.forEach { doRender(it,dt,t)}
+                    guiElement.afterChildrenRender(fontShaderProgram)
                 }
-                is LayoutBox -> {}
+                is LayoutBox -> {
+                    guiElement.children.forEach { doRender(it,dt,t)}
+                }
                 else -> {
                     if(lastElement != 0) {
                         guiShaderProgram.use()
@@ -70,10 +75,13 @@ class GuiRenderer(private val guiShaderProgram: ShaderProgram,private val fontSh
                     GL11.glDrawArrays(GL_TRIANGLE_STRIP ,0, 4)
                     guiElement.afterRender(guiShaderProgram)
                     lastElement = 0
+
+                    guiElement.children.forEach { doRender(it,dt,t)}
+                    guiElement.afterChildrenRender(guiShaderProgram)
                 }
             }
 
-            guiElement.children.forEach { doRender(it,dt,t)}
+
         }
     }
 

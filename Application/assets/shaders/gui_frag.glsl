@@ -8,9 +8,13 @@ out vec4 color;
 uniform sampler2D texture2D;
 uniform bool useImage;
 uniform vec4 elementColor;
-//only gets set if (elementCorners != 0)
+
 uniform vec4 elementCorners;
 uniform int cornerRadius;
+
+// used for scrollbars
+uniform bool limitRenderArea;
+
 
 const float smoothness = 0.7;
 
@@ -43,6 +47,11 @@ void main(void){
     //BorderAlgorithm
     if(cornerRadius > 0)
         alphaValue = renderCornerPixel();
+
+    // Outside of scrollBox
+    if(limitRenderArea)
+        if(elementCorners.x > gl_FragCoord.x || gl_FragCoord.x > elementCorners.z  || elementCorners.y < gl_FragCoord.y || gl_FragCoord.y < elementCorners.w)
+            return;
 
     if(useImage){
         vec4 imgColor = texture(texture2D, textureCoords);

@@ -118,6 +118,8 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
     open fun afterRender(shaderProgram: ShaderProgram){}
 
+    open fun afterChildrenRender(fontShaderProgram: ShaderProgram) {}
+
     open fun cleanup(){
         children.forEach { it.cleanup() }
     }
@@ -134,5 +136,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         refresh()
         children.forEach { it.updateVariables() }
     }
+
+
 
 }

@@ -6,6 +6,7 @@ import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
+import cga.exercise.game.StaticResources
 import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.opengl.GL11
@@ -19,7 +20,7 @@ open class Text(text : String,
                 var multiline : Boolean = false,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                override var color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
+                override var color: Vector4f = StaticResources.fontColor) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
 
     var fontSize : Float = 0.0f
         set(value) {
@@ -289,9 +290,6 @@ open class Text(text : String,
     }
 
     override fun getHeight(): Float {
-        println(fontSize * 0.01f)
-        println(heightText)
-//        return (fontSize * 0.01f)  + heightText * (lineCount -1)//- (fontSize * -0.005f * (lineCount))
         return fontSize * 0.01f + (lineHeight * (lineCount -1))
     }
 

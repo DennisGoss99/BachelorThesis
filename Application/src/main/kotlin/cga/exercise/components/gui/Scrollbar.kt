@@ -109,8 +109,6 @@ class Scrollbar (widthConstraint : IScaleConstraint,
 
     }
 
-
-
     override fun bind(shaderProgram: ShaderProgram) {
         shaderProgram.setUniform("limitRenderArea",1)
         shaderProgram.setUniform("elementCorners", getWorldPixelPosition())

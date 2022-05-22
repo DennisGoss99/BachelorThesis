@@ -66,6 +66,10 @@ class Color : Vector4f {
         w = a / 255f
     }
 
+    fun getCopy(adder : Float) : Vector4f{
+        return Vector4f(x + adder / 255f,y + adder / 255f,z + adder / 255f, w)
+    }
+
     fun toVector3f() : Vector3f = Vector3f(x, y, z)
 
 }

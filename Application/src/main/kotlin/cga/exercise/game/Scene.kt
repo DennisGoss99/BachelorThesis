@@ -152,40 +152,39 @@ class Scene(private val window: GameWindow) {
     val textBoxCount : Textbox = Textbox("100", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(120), multiLine = false)
 
 
-    private val mainMenu = LayoutBox(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
-        //Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
+    private val mainMenu = //Scrollbar(Relative(1f), Relative(1f), Center(), Center(), false, false, Color.red, innerElement =
+        Box(Relative(1f), Relative(1f), Center(), Center(), Color.red, children = listOf(
+            UIList(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
+                Text("Settings:", 5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(30)),
 
-//        Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(), true, true,
-//            innerElement = LayoutBox(Relative(1f), Relative(2f), Center(), PixelTop(0), children = listOf(
-//                Box(Relative(0.1f), AspectRatio(), Center(), Center(), color = Color.midnight),
-//                Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), Relative(0.4f)),
-//                Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(0), color = Color.midnight),
-//                Box(Relative(0.1f), AspectRatio(), Center(), PixelBottom(0), color = Color.midnight)
-//
-//        )))
+                Text("Test1:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                    ToggleButton(true, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
+                )),
 
-//        UIList(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
-//
-//            Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(5), color = Color.red),
-//            Box(Relative(0.1f), AspectRatio(), Relative(0.01f), PixelTop(5), color = Color.grey),
-//            Box(Relative(0.1f), AspectRatio(), Relative(0.01f), PixelTop(5), color = Color.grey),
-//            Box(Relative(0.1f), AspectRatio(), Relative(0.01f), PixelTop(5), color = Color.grey)
-//        ))
-
-        UIList(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
-            Text("Hallo", 20f, StaticResources.arial,30f,TextMode.Center, true, Center(), PixelTop(0)),
-            Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(5), color = Color.red),
-            Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), PixelTop(0)),
-            Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(5), color = Color.red),
-        ))
-
+                Text("Test2:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                    ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
+                )),
+                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                    ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
+                )),
+                Text("Test3:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                    Slider(0f,PixelWidth(213), PixelHeight(25), PixelRight(60), Center())
+                )),
+            ))
 
 //        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
 //        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
 //        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
 //        textBoxCount,
 //        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
-    ))
+    ))//)
 
     private val fpsGuiElement : Text = Text("",4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
     private val countText = Text(textBoxCount.text,4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))

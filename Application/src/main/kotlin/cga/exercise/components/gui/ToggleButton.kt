@@ -14,23 +14,28 @@ class ToggleButton(
 )
     : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, StaticResources.componentColor, 0){
 
+    private var colorBackground : Color = StaticResources.componentColor
 
     init {
         children = listOf(
-            Box(AspectRatio(), Relative(1f), PixelLeft(0), Center() , color = StaticResources.componentColor2, cornerRadius)
+            Box(AspectRatio(), Relative(0.9f), PixelLeft(2), Center() , color = StaticResources.componentColor2, cornerRadius)
         )
         statusChanged(value)
     }
 
+
+
     private fun statusChanged(v : Boolean){
         if(value){
-            children[0].translateXConstraint = PixelRight(0)
-            children[0].color = StaticResources.activeColor
-            color = StaticResources.active2Color
+            children[0].translateXConstraint = PixelRight(2)
+            children[0].color = StaticResources.componentColor4
+            color = StaticResources.activeColor
+            colorBackground = StaticResources.activeColor
         }else{
-            children[0].translateXConstraint = PixelLeft(0)
-            children[0].color = StaticResources.componentColor2
-            color = StaticResources.componentColor
+            children[0].translateXConstraint = PixelLeft(2)
+            children[0].color = StaticResources.componentColor4
+            color = StaticResources.activeColor2
+            colorBackground = StaticResources.activeColor2
         }
         refresh()
     }
@@ -48,6 +53,11 @@ class ToggleButton(
 
         if(isHovering)
             MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)
+
+        if(isHovering)
+            color = colorBackground.getCopy(20f)
+        else
+            color = colorBackground
     }
 
     override fun refresh() {

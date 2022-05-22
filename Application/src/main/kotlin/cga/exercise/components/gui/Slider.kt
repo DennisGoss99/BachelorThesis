@@ -5,16 +5,15 @@ import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
 
 class Slider(
+    var value : Float,
     widthConstraint: IScaleConstraint,
     heightConstraint: IScaleConstraint,
     translateXConstraint: ITranslateConstraint,
     translateYConstraint: ITranslateConstraint
-) : GuiElement(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint) {
+) : LayoutBox(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint) {
 
-    var sliderPercentage = 0f
-
-    private val lineWidth = 10
-    private val sliderKnob = Box(PixelWidth(lineWidth), Relative(1f), Relative(-1f), Center(), StaticResources.componentColor2)
+    private val lineWidth = 4
+    private val sliderKnob = Box(PixelWidth(lineWidth), Relative(1f), Relative(-1f), Center(), StaticResources.componentColor4, cornerRadius = 2)
 
     init {
         children = listOf(
@@ -31,15 +30,15 @@ class Slider(
         sliderKnob.checkPressed()
 
         if(sliderKnob.isPressed){
-            sliderPercentage = ((SceneStats.mousePosition.x - getWorldPixelPosition().x - 2) / getPixelWidth()).coerceIn(0f,1f)
-            sliderKnob.translateXConstraint = Relative(sliderPercentage * 2f - 1f)
+            value = ((SceneStats.mousePosition.x - getWorldPixelPosition().x - 2) / getPixelWidth()).coerceIn(0f,1f)
+            sliderKnob.translateXConstraint = Relative(value * 2f - 1f)
             this.refresh()
         }
 
         sliderKnob.color = if(sliderKnob.isPressed || sliderKnob.isHovering)
             StaticResources.highlightColor
         else
-            StaticResources.componentColor2
+            StaticResources.componentColor4
 
         if(sliderKnob.isHovering)
             MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)

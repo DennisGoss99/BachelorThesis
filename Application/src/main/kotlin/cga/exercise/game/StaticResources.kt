@@ -1,7 +1,6 @@
 package cga.exercise.game
 
 import cga.exercise.components.gui.Color
-import cga.exercise.components.gui.MouseCursor
 import cga.exercise.components.gui.MouseCursor.*
 import cga.exercise.components.text.FontType
 import org.lwjgl.glfw.GLFW.*
@@ -13,15 +12,16 @@ class StaticResources {
             FontType("assets/fonts/Arial.fnt"),
             FontType("assets/fonts/Calibri.fnt"),
             FontType("assets/fonts/Comic Sans MS.fnt"),
-            FontType("assets/fonts/Times New Roman.fnt")
+            FontType("assets/fonts/Times New Roman.fnt"),
+            FontType("assets/fonts/Proxima Nova Light.fnt")
         )
 
-        val standardFont = fonts[1]
+        val standardFont = fonts[4]
         val arial = fonts[0]
         val calibri = fonts[1]
         val comicSans = fonts[2]
         val timesNewRoman = fonts[3]
-
+        val ProximaNova = fonts[4]
 
         fun keyToCharGERLayout(keyCode : Int, mode : Int) : Char?{
             return when(keyCode){
@@ -96,15 +96,17 @@ class StaticResources {
 
         }
 
-        val backGroundColor = Color.withe
+        val backGroundColor = Color(18,18,18)
         val highlightColor = Color.blue
         val disableColor = Color.silver
-        val activeColor = Color.green
-        val active2Color = Color(50, 255, 126)
-        val componentColor = Color.lightGrey
-        val componentColor2 = Color.grey
-        val componentColor3 = Color(87, 91, 96)
-        val fontColor = Color(25, 32, 34)
+        val activeColor = Color(29, 184, 83)
+        val activeColor2 = Color(80, 80, 80)
+        val componentColor = Color(51, 51, 51)
+        val componentColor2 = Color(34, 34, 34)
+        val componentColor3 = Color(80, 80, 80)
+        val componentColor4 = Color(246, 246, 246)
+        val fontColor = Color(255, 255, 255)
+        val fontColor1 = Color(156, 156, 156)
 
         val systemCursors = mapOf<CursorStyle, Long?>(
             CursorStyle.Arrow to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR),

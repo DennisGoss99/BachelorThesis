@@ -20,7 +20,7 @@ class Button (text : String,
     init {
         children = listOf(
             Box(Relative(0.984375f),Relative(0.96875f), PixelLeft(0), PixelTop(0) , color = StaticResources.componentColor, cornerRadius),
-            Text(text,5f, fontType, 10f, TextMode.Center, true, Center(), Center(), color = StaticResources.fontColor))
+            Text(text,3.5f, fontType, 10f, TextMode.Center, true, Center(), Center(), color = StaticResources.fontColor))
     }
 
     override val onUpdate: ((dt: Float, t: Float) -> Unit) = {

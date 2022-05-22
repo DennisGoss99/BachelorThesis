@@ -21,16 +21,18 @@ class Scrollbar (widthConstraint : IScaleConstraint,
     private var verticalSliderPercentage : Float = 0f
         set(value) { field = value.coerceIn(0f, 1f)}
 
-    private val verticalSliderKnob = Box(PixelWidth(20), Relative(0.5f), PixelRight(0), PixelTop(0))
-    private val verticalSlider = Box(PixelWidth(20), Relative(1f), PixelRight(0), Center(), Color.grey)
+    private val verticalSliderKnob = Box(PixelWidth(10), Relative(1/innerElement.heightConstraint.getScale(innerElement)), PixelRight(2), PixelTop(0), StaticResources.componentColor4, 5)
+    private val verticalSlider = Box(PixelWidth(14), Relative(1f), PixelRight(0), Center(), Color(20,20,20,40))
 
     private var horizontalSliderPercentage : Float = 0f
         set(value) { field = value.coerceIn(0f, 1f)}
 
-    private val horizontalSliderKnob = Box(Relative(0.5f), PixelHeight(20), Center(), PixelBottom(0))
-    private val horizontalSlider = Box(Relative(1f), PixelHeight(20), Center(), PixelBottom(0), Color.grey)
+    private val horizontalSliderKnob = Box(Relative(1/innerElement.widthConstraint.getScale(innerElement)), PixelHeight(10), PixelLeft(0), PixelBottom(2), StaticResources.componentColor, 5)
+    private val horizontalSlider = Box(Relative(1f), PixelHeight(14), Center(), PixelBottom(0), Color(20,20,20,40))
 
     init {
+        innerElement.translateYConstraint = PixelTop(0)
+        innerElement.translateXConstraint = PixelLeft(0)
 
         val tempChildren = mutableListOf(innerElement)
 
@@ -58,29 +60,23 @@ class Scrollbar (widthConstraint : IScaleConstraint,
             verticalSliderKnob.checkOnHover()
             verticalSliderKnob.checkPressed()
 
-
-            if(verticalSliderKnob.isPressed){
-                verticalSliderPercentage = ((-SceneStats.mousePosition.y - (verticalSliderKnob.getPixelHeight() * 0.5f) + getWorldPixelPosition().y) / (getPixelHeight() - verticalSliderKnob.getPixelHeight()))
-
-                val sliderNobMaxMovement = this.getPixelHeight() - verticalSliderKnob.getPixelHeight()
-                verticalSliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * verticalSliderPercentage).toInt())
-                innerElement.translateYConstraint = PixelTop(-(innerElement.getPixelHeight() / 2f * verticalSliderPercentage).toInt())
-
-                refresh()
-            }
-
             verticalSliderKnob.color = if(verticalSliderKnob.isPressed || verticalSliderKnob.isHovering)
                 StaticResources.highlightColor
             else
-                Color.withe
+                StaticResources.componentColor
 
+            if ((isHovering && SceneStats.mouseScroll != 0) || verticalSliderKnob.isPressed) {
 
-            if(isHovering && SceneStats.mouseScroll != 0){
-                verticalSliderPercentage -= SceneStats.mouseScroll * 0.1f
+                if (verticalSliderKnob.isPressed)
+                    verticalSliderPercentage = ((-SceneStats.mousePosition.y - (verticalSliderKnob.getPixelHeight() * 0.5f) + getWorldPixelPosition().y) / (getPixelHeight() - verticalSliderKnob.getPixelHeight()))
+
+                if (isHovering && SceneStats.mouseScroll != 0)
+                    verticalSliderPercentage -= SceneStats.mouseScroll * 0.1f
+
 
                 val sliderNobMaxMovement = this.getPixelHeight() - verticalSliderKnob.getPixelHeight()
                 verticalSliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * verticalSliderPercentage).toInt())
-                innerElement.translateYConstraint = PixelTop(-(innerElement.getPixelHeight() / 2f * verticalSliderPercentage).toInt())
+                innerElement.translateYConstraint = PixelTop(-(innerElement.getPixelHeight() * verticalSliderPercentage * (1f - 1f / innerElement.heightConstraint.getScale(innerElement))).toInt())
 
                 refresh()
             }
@@ -96,7 +92,7 @@ class Scrollbar (widthConstraint : IScaleConstraint,
 
                 val sliderNobMaxMovement = this.getPixelWidth() - horizontalSliderKnob.getPixelWidth()
                 horizontalSliderKnob.translateXConstraint = PixelLeft((sliderNobMaxMovement * horizontalSliderPercentage).toInt())
-                innerElement.translateXConstraint = PixelLeft(-(innerElement.getPixelWidth() / 2f * horizontalSliderPercentage).toInt())
+                innerElement.translateXConstraint = PixelLeft(-(innerElement.getPixelWidth() * horizontalSliderPercentage * (1f - 1f / innerElement.widthConstraint.getScale(innerElement))).toInt())
 
                 refresh()
             }
@@ -104,7 +100,7 @@ class Scrollbar (widthConstraint : IScaleConstraint,
             horizontalSliderKnob.color = if(horizontalSliderKnob.isPressed || horizontalSliderKnob.isHovering)
                 StaticResources.highlightColor
             else
-                Color.withe
+                StaticResources.componentColor
         }
 
     }

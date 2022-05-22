@@ -153,33 +153,33 @@ class Scene(private val window: GameWindow) {
 
 
     private val mainMenu = Scrollbar(Relative(1f), Relative(1f), Center(), Center(), true, false, StaticResources.backGroundColor, innerElement =
-        Box(Relative(1f), Relative(1.5f), Center(), PixelTop(0), color= Color.red, children = listOf(
+        LayoutBox(Relative(1f), Relative(1.5f), Center(), PixelTop(0), children = listOf(
             UIList(Relative(1f), Relative(0.75f), Center(), PixelTop(0), children = listOf(
                 Text("Settings:", 5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(30)),
 
                 Text("Test1:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                     Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                     ToggleButton(true, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
                 )),
 
                 Text("Test2:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                     Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                     ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
                 )),
-                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                     Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                     ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
                 )),
                 Text("Test3:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                LayoutBox(Relative(0.9f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                     Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                     Slider(0f,PixelWidth(213), PixelHeight(25), PixelRight(60), Center())
                 )),
             )),
 
-            Button("Start", PixelWidth(200), PixelHeight(80), PixelRight(50), PixelBottom(0), onClick = startButtonOnClick)
+            Button("Start", PixelWidth(160), PixelHeight(60), PixelRight(55), PixelBottom(40), onClick = startButtonOnClick)
 //        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
 //        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
 //        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
@@ -554,10 +554,6 @@ class Scene(private val window: GameWindow) {
         if(gameState == RenderCategory.Gui && (action == 1 || action == 2))
             mainMenu.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
 
-        if(GLFW_KEY_TAB == key && action == 0){
-            gameState = RenderCategory.Gui
-            window.setCursorVisible(true)
-        }
 
 
 //        if(gameState.contains(RenderCategory.PressToPlay)){
@@ -617,6 +613,21 @@ class Scene(private val window: GameWindow) {
 //        if(GLFW_KEY_TAB == key && action == 0){
 //            speedMarker.addToState()
 //        }
+
+
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+
+            when(gameState){
+                RenderCategory.Gui -> window.quit()
+                RenderCategory.FirstPerson -> {
+                    gameState = RenderCategory.Gui
+                    window.setCursorVisible(true)
+                }
+            }
+
+        }
+
+
 
     }
 

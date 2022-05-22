@@ -142,7 +142,6 @@ abstract class GameWindow(
         }
 
         GLFW.glfwSetKeyCallback(m_window) { _, key, scancode, action, mods ->
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) quit()
             onKey(key, scancode, action, mods)
         }
 
@@ -180,7 +179,7 @@ abstract class GameWindow(
      * Tells the application to quit.
      * shutdown() is called after the last simulation step has completed.
      */
-    protected fun quit() {
+    fun quit() {
         GLFW.glfwSetWindowShouldClose(m_window, true)
     }
 

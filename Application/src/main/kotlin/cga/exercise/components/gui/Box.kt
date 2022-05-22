@@ -27,7 +27,7 @@ open class Box (widthConstraint : IScaleConstraint,
 
         if (cornerRadius != 0) {
             shaderProgram.setUniform("cornerRadius", cornerRadius)
-            shaderProgram.setUniform("elementCorners", getWorldPixelPosition())
+            shaderProgram.setUniform("roundedElementCorners", getWorldPixelPosition())
         }
     }
 

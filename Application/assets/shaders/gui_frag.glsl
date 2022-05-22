@@ -14,31 +14,33 @@ uniform int elementType;
 // Gui Element Variables
 
     uniform bool useImage;
-    uniform vec4 elementCorners;
+
     uniform int cornerRadius;
 
     // used for scrollbars
     uniform bool limitRenderArea;
+    uniform vec4 elementCorners;
 
+    // used for rounded Elements
     const float smoothness = 0.7;
-
+    uniform vec4 roundedElementCorners;
     float renderCornerPixel(){
-        if(gl_FragCoord.x < elementCorners.x + cornerRadius)
+        if(gl_FragCoord.x < roundedElementCorners.x + cornerRadius)
         {
             //upper left
-            if(gl_FragCoord.y > elementCorners.y - cornerRadius){
-                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
+            if(gl_FragCoord.y > roundedElementCorners.y - cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(roundedElementCorners.x + cornerRadius - gl_FragCoord.x, roundedElementCorners.y - cornerRadius - gl_FragCoord.y)));
             //lower left
-            }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
-                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.x + cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
+            }else if(gl_FragCoord.y < roundedElementCorners.w + cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(roundedElementCorners.x + cornerRadius - gl_FragCoord.x, roundedElementCorners.w + cornerRadius - gl_FragCoord.y)));
             }
-        }else if(gl_FragCoord.x > elementCorners.z - cornerRadius){
+        }else if(gl_FragCoord.x > roundedElementCorners.z - cornerRadius){
             //upper right
-            if(gl_FragCoord.y > elementCorners.y - cornerRadius){
-                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.y - cornerRadius - gl_FragCoord.y)));
+            if(gl_FragCoord.y > roundedElementCorners.y - cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(roundedElementCorners.z - cornerRadius - gl_FragCoord.x, roundedElementCorners.y - cornerRadius - gl_FragCoord.y)));
             //lower right
-            }else if(gl_FragCoord.y < elementCorners.w + cornerRadius){
-                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(elementCorners.z - cornerRadius - gl_FragCoord.x, elementCorners.w + cornerRadius - gl_FragCoord.y)));
+            }else if(gl_FragCoord.y < roundedElementCorners.w + cornerRadius){
+                return 1.0 - smoothstep(cornerRadius - smoothness, cornerRadius + smoothness, length(vec2(roundedElementCorners.z - cornerRadius - gl_FragCoord.x, roundedElementCorners.w + cornerRadius - gl_FragCoord.y)));
             }
         }
         return 1.0;

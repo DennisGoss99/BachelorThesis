@@ -152,9 +152,9 @@ class Scene(private val window: GameWindow) {
     val textBoxCount : Textbox = Textbox("100", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(120), multiLine = false)
 
 
-    private val mainMenu = //Scrollbar(Relative(1f), Relative(1f), Center(), Center(), false, false, Color.red, innerElement =
-        Box(Relative(1f), Relative(1f), Center(), Center(), Color.red, children = listOf(
-            UIList(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
+    private val mainMenu = Scrollbar(Relative(1f), Relative(1f), Center(), Center(), true, false, StaticResources.backGroundColor, innerElement =
+        Box(Relative(1f), Relative(1.5f), Center(), PixelTop(0), color= Color.red, children = listOf(
+            UIList(Relative(1f), Relative(0.75f), Center(), PixelTop(0), children = listOf(
                 Text("Settings:", 5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(30)),
 
                 Text("Test1:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
@@ -177,14 +177,15 @@ class Scene(private val window: GameWindow) {
                     Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                     Slider(0f,PixelWidth(213), PixelHeight(25), PixelRight(60), Center())
                 )),
-            ))
+            )),
 
+            Button("Start", PixelWidth(200), PixelHeight(80), PixelRight(50), PixelBottom(0), onClick = startButtonOnClick)
 //        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
 //        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
 //        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
 //        textBoxCount,
 //        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
-    ))//)
+    )))
 
     private val fpsGuiElement : Text = Text("",4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
     private val countText = Text(textBoxCount.text,4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))

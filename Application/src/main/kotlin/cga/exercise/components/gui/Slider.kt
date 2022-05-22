@@ -31,7 +31,7 @@ class Slider(
         sliderKnob.checkPressed()
 
         if(sliderKnob.isPressed){
-            sliderPercentage = ((SceneStats.mousePosition.x - getWorldPixelPosition().x - 2) / getWidth()).coerceIn(0f,1f)
+            sliderPercentage = ((SceneStats.mousePosition.x - getWorldPixelPosition().x - 2) / getPixelWidth()).coerceIn(0f,1f)
             sliderKnob.translateXConstraint = Relative(sliderPercentage * 2f - 1f)
             this.refresh()
         }

@@ -6,10 +6,10 @@ import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.game.StaticResources
 import org.joml.Vector4f
 
-class LayoutBox (widthConstraint : IScaleConstraint,
-                 heightConstraint : IScaleConstraint,
-                 translateXConstraint : ITranslateConstraint,
-                 translateYConstraint : ITranslateConstraint,
-                 children: List<GuiElement> = listOf()) : GuiElement(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, children){
+open class LayoutBox (widthConstraint : IScaleConstraint,
+                      heightConstraint : IScaleConstraint,
+                      translateXConstraint : ITranslateConstraint,
+                      translateYConstraint : ITranslateConstraint,
+                      children: List<GuiElement> = listOf()) : GuiElement(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, children){
 
 }

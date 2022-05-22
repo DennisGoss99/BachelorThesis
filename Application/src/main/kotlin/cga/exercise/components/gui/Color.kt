@@ -18,7 +18,7 @@ class Color : Vector4f {
         val yellow = Color(241, 196, 15)
         val carrot = Color(230, 126, 34)
         val red = Color(231, 76, 60)
-        val withe = Color(236, 240, 241)
+        val withe2 = Color(236, 240, 241)
         val lightGrey = Color(210, 214, 209)
         val orange = Color(243, 156, 18)
         val pumpkin = Color(211, 84, 0)
@@ -26,6 +26,9 @@ class Color : Vector4f {
         val silver = Color(189, 195, 199)
         val grey = Color(97, 101, 106)
         val darkGrey = Color(45, 52, 54)
+
+        val black = Color(0,0,0)
+        val withe = Color(255,255,255)
     }
 
     constructor(hex : String){

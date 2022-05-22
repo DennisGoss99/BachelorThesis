@@ -143,6 +143,4 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         children.forEach { it.updateVariables() }
     }
 
-
-
 }

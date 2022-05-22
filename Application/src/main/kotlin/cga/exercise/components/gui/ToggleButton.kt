@@ -1,9 +1,7 @@
 package cga.exercise.components.gui
 
 import cga.exercise.components.gui.constraints.*
-import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
-import kotlin.math.round
 import kotlin.math.roundToInt
 
 class ToggleButton(
@@ -55,8 +53,8 @@ class ToggleButton(
     override fun refresh() {
         super.refresh()
         if(rounded) {
-            cornerRadius = (getHeight() / 2).roundToInt()
-            (children[0] as Box).cornerRadius = (getHeight() / 2).roundToInt()
+            cornerRadius = (getPixelHeight() / 2).roundToInt()
+            (children[0] as Box).cornerRadius = (getPixelHeight() / 2).roundToInt()
         }
     }
 

@@ -58,6 +58,8 @@ open class Text(text : String,
 
     protected var lineHeight = 0f
 
+    private var lineCount = 0
+
     private val vao = arrayOf(
         VertexAttribute(2, GL11.GL_FLOAT, 16, 0),
         VertexAttribute(2, GL11.GL_FLOAT, 16, 8)
@@ -105,7 +107,6 @@ open class Text(text : String,
         }
     }
 
-    private var rowCount = 0
     private fun setLetter(fontTypeChar: cga.exercise.components.text.Char) {
 
         val x = cursorX + fontTypeChar.xOffset * fontSize
@@ -129,7 +130,7 @@ open class Text(text : String,
         )
 
         cursorX += fontTypeChar.xAdvance * fontSize
-        textChars[rowCount].add(fontTypeChar)
+        textChars[lineCount].add(fontTypeChar)
     }
 
     private fun addVertices(x: Float,y: Float,maxX: Float,maxY: Float,texx: Float, texy: Float, texmaxX: Float, texmaxY: Float) {
@@ -156,8 +157,12 @@ open class Text(text : String,
         length = getMaxLength()
         var lineLength: Float
 
-        cursorY = 0f
-        rowCount = 0
+        cursorY = when(translateYConstraint){
+            is Center -> 0f
+            else -> fontSize * -0.005f
+        }
+
+        lineCount = 0
 
         val cpyTextChars = textChars.toList()
 
@@ -180,7 +185,7 @@ open class Text(text : String,
             cursorX = 0f
             cursorY += lineHeight
             heightText += lineHeight
-            rowCount++
+            lineCount++
         }
 
         mesh = SimpleMesh(vertexData.toFloatArray(), vao, font.fontImageMaterial)
@@ -281,6 +286,13 @@ open class Text(text : String,
     override fun cleanup() {
         super.cleanup()
         mesh?.cleanup()
+    }
+
+    override fun getHeight(): Float {
+        println(fontSize * 0.01f)
+        println(heightText)
+//        return (fontSize * 0.01f)  + heightText * (lineCount -1)//- (fontSize * -0.005f * (lineCount))
+        return fontSize * 0.01f + (lineHeight * (lineCount -1))
     }
 
 }

@@ -94,9 +94,11 @@ open class Transformable2D (var modelMatrix : Matrix4f = Matrix4f(), var parent:
         return Vector4f(scaleX2 + transX, scaleY1 + transY, scaleX1 + transX, scaleY2 + transY)
     }
 
-    fun getWidth() : Float = SceneStats.windowWidth * getWorldScale().x
+    fun getWidth() : Float = getWorldScale().x
+    fun getPixelWidth() : Float = SceneStats.windowWidth * getWorldScale().x
 
-    fun getHeight() : Float = SceneStats.windowHeight * getWorldScale().y
+    open fun getHeight() : Float = getWorldScale().y
+    fun getPixelHeight() : Float = SceneStats.windowHeight * getWorldScale().y
 
     fun clearTransformation(){
         modelMatrix = Matrix4f()

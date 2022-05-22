@@ -60,11 +60,11 @@ class Scrollbar (widthConstraint : IScaleConstraint,
 
 
             if(verticalSliderKnob.isPressed){
-                verticalSliderPercentage = ((-SceneStats.mousePosition.y - (verticalSliderKnob.getHeight() * 0.5f) + getWorldPixelPosition().y) / (getHeight() - verticalSliderKnob.getHeight()))
+                verticalSliderPercentage = ((-SceneStats.mousePosition.y - (verticalSliderKnob.getPixelHeight() * 0.5f) + getWorldPixelPosition().y) / (getPixelHeight() - verticalSliderKnob.getPixelHeight()))
 
-                val sliderNobMaxMovement = this.getHeight() - verticalSliderKnob.getHeight()
+                val sliderNobMaxMovement = this.getPixelHeight() - verticalSliderKnob.getPixelHeight()
                 verticalSliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * verticalSliderPercentage).toInt())
-                innerElement.translateYConstraint = PixelTop(-(innerElement.getHeight() / 2f * verticalSliderPercentage).toInt())
+                innerElement.translateYConstraint = PixelTop(-(innerElement.getPixelHeight() / 2f * verticalSliderPercentage).toInt())
 
                 refresh()
             }
@@ -78,9 +78,9 @@ class Scrollbar (widthConstraint : IScaleConstraint,
             if(isHovering && SceneStats.mouseScroll != 0){
                 verticalSliderPercentage -= SceneStats.mouseScroll * 0.1f
 
-                val sliderNobMaxMovement = this.getHeight() - verticalSliderKnob.getHeight()
+                val sliderNobMaxMovement = this.getPixelHeight() - verticalSliderKnob.getPixelHeight()
                 verticalSliderKnob.translateYConstraint = PixelTop((sliderNobMaxMovement * verticalSliderPercentage).toInt())
-                innerElement.translateYConstraint = PixelTop(-(innerElement.getHeight() / 2f * verticalSliderPercentage).toInt())
+                innerElement.translateYConstraint = PixelTop(-(innerElement.getPixelHeight() / 2f * verticalSliderPercentage).toInt())
 
                 refresh()
             }
@@ -91,12 +91,12 @@ class Scrollbar (widthConstraint : IScaleConstraint,
             horizontalSliderKnob.checkPressed()
 
             if(horizontalSliderKnob.isPressed){
-                horizontalSliderPercentage = ((SceneStats.mousePosition.x - (horizontalSliderKnob.getWidth() * 0.5f) - getWorldPixelPosition().x) / (getWidth() - horizontalSliderKnob.getWidth()))
+                horizontalSliderPercentage = ((SceneStats.mousePosition.x - (horizontalSliderKnob.getPixelWidth() * 0.5f) - getWorldPixelPosition().x) / (getPixelWidth() - horizontalSliderKnob.getPixelWidth()))
 
 
-                val sliderNobMaxMovement = this.getWidth() - horizontalSliderKnob.getWidth()
+                val sliderNobMaxMovement = this.getPixelWidth() - horizontalSliderKnob.getPixelWidth()
                 horizontalSliderKnob.translateXConstraint = PixelLeft((sliderNobMaxMovement * horizontalSliderPercentage).toInt())
-                innerElement.translateXConstraint = PixelLeft(-(innerElement.getWidth() / 2f * horizontalSliderPercentage).toInt())
+                innerElement.translateXConstraint = PixelLeft(-(innerElement.getPixelWidth() / 2f * horizontalSliderPercentage).toInt())
 
                 refresh()
             }

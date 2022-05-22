@@ -131,7 +131,8 @@ class Scene(private val window: GameWindow) {
 //        )
 //    )
 
-//    val testGuiElement = Box(Relative(0.7f), Relative(0.9f), PixelLeft(20), Center(),onFocus = {->} , children = listOf(
+//    private val mainMenu = Box(Relative(1f), Relative(1f), Center(), Center(), Color.black ,onFocus = {->} , children = listOf(
+//
 //        Box(Relative(0.5f), Relative(0.7f), PixelLeft(50), PixelTop(50), Color(255,128,0), cornerRadius = 10, onFocus = {->} ,
 //            children = listOf(
 //                Textbox("Center\nHallo", PixelWidth(200), PixelHeight(80), Center(), PixelTop(20)),
@@ -139,6 +140,7 @@ class Scene(private val window: GameWindow) {
 //                Textbox("Left", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), textMode = TextMode.Left),
 //            )
 //        )
+////        Text("HABCDEFGHIJKLMNOPQRSTUVWXYZ", 5f, StaticResources.arial,30f,TextMode.Center, true, PixelLeft(0), PixelTop(0)),
 //    ))
     val startButtonOnClick :((Int,Int) -> Unit)= {_,_ ->
         gameState = RenderCategory.FirstPerson
@@ -153,14 +155,29 @@ class Scene(private val window: GameWindow) {
     private val mainMenu = LayoutBox(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
         //Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
 
-        Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(), true, true,
-            innerElement = LayoutBox(Relative(1f), Relative(2f), Center(), PixelTop(0), children = listOf(
-                Box(Relative(0.1f), AspectRatio(), Center(), Center(), color = Color.midnight),
-                Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), Relative(0.4f)),
-                Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(0), color = Color.midnight),
-                Box(Relative(0.1f), AspectRatio(), Center(), PixelBottom(0), color = Color.midnight)
+//        Scrollbar(Relative(0.5f), Relative(0.5f), Center(), Center(), true, true,
+//            innerElement = LayoutBox(Relative(1f), Relative(2f), Center(), PixelTop(0), children = listOf(
+//                Box(Relative(0.1f), AspectRatio(), Center(), Center(), color = Color.midnight),
+//                Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), Relative(0.4f)),
+//                Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(0), color = Color.midnight),
+//                Box(Relative(0.1f), AspectRatio(), Center(), PixelBottom(0), color = Color.midnight)
+//
+//        )))
 
-        )))
+//        UIList(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
+//
+//            Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(5), color = Color.red),
+//            Box(Relative(0.1f), AspectRatio(), Relative(0.01f), PixelTop(5), color = Color.grey),
+//            Box(Relative(0.1f), AspectRatio(), Relative(0.01f), PixelTop(5), color = Color.grey),
+//            Box(Relative(0.1f), AspectRatio(), Relative(0.01f), PixelTop(5), color = Color.grey)
+//        ))
+
+        UIList(Relative(1f), Relative(1f), Center(), Center(), children = listOf(
+            Text("Hallo", 20f, StaticResources.arial,30f,TextMode.Center, true, Center(), PixelTop(0)),
+            Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(5), color = Color.red),
+            Text("Hallo", 10f, StaticResources.arial,30f,TextMode.Center, true, Center(), PixelTop(0)),
+            Box(Relative(0.1f), AspectRatio(), Center(), PixelTop(5), color = Color.red),
+        ))
 
 
 //        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),

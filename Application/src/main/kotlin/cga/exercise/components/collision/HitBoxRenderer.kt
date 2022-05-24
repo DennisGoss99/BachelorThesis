@@ -114,6 +114,12 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
         vertexDataMat = FloatArray(count * 17)
     }
 
+    fun clear(){
+        hitboxes.clear()
+        count = 0
+        vertexDataMat = FloatArray(0)
+    }
+
     fun updateModelMatrix(){
 
         glBindBuffer(GL_ARRAY_BUFFER, vboMat)

@@ -6,6 +6,12 @@ import cga.exercise.components.collision.SAP
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.collision.HitBox
 import cga.exercise.components.collision.HitBoxRenderer
+import cga.exercise.components.geometry.atmosphere.Atmosphere
+import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial
+import cga.exercise.components.geometry.atmosphere.atmospherePerspective
+import cga.exercise.components.geometry.material.Material
+import cga.exercise.components.geometry.material.OverlayMaterial
+import cga.exercise.components.geometry.mesh.Renderable
 import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
@@ -16,8 +22,14 @@ import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.spaceObjects.Moon
+import cga.exercise.components.spaceObjects.Planet
+import cga.exercise.components.texture.Texture2D
+import cga.exercise.game.Pages.MainGuiPage
+import cga.exercise.game.Pages.MainMenuPage
 import cga.framework.GLError
 import cga.framework.GameWindow
+import cga.framework.ModelLoader
 import kotlinx.coroutines.*
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -69,46 +81,33 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-//    private val animatedGuiElement = LoopAnimatedGuiElement(Animator(0.4f, listOf(Vector2f(0.0f, -0.4f),Vector2f(0.0f, -0.5f))),"assets/textures/gui/PressKeyToPlay.png", 1, listOf(RenderCategory.PressToPlay), Vector2f(0.4f,0.4f))
-//
-//    private val loadingBarGuiElement = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 2, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
-//    private val loadingBarGuiElement2 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 3, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
-//    private val loadingBarGuiElement3 = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f(0.0f, 0.0f) to 0.1f, Vector2f(0.8f, 0.0f) to 99f )),"assets/textures/gui/LoadingBar.png", 4, listOf(RenderCategory.Loading), Vector2f(1f), parent = loadingGuiElement)
-//
-//    private val animatedHelpScreen = AdvancedAnimatedGuiElement(AdvancedAnimator(listOf(Vector2f( 0.6f, 1.5f) to 1.5f ,Vector2f(0.6f) to 0f)),"assets/textures/gui/HelpScreen.png", 2, renderHelpScreen, Vector2f(0.4f))
 
-//    private val speedDisplay = GuiElement("assets/textures/gui/SpeedSymbols.png" , 1, renderMainGame, Vector2f(0.1f,0.1f),Vector2f(-0.85f,0.9f))
-//    private val speedMarker = SpeedMarker(0,"assets/textures/gui/SpeedMarker.png",0, renderMainGame, Vector2f(1f,1f), parent = speedDisplay)
+    val moonMaterial = Material(
+        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        32f
+    )
 
-//    val f1 = {_: Int, _: Int -> println("Button 1") }
-//    val f2 = {_: Int, _: Int -> println("Button 2") }
+    val earthMaterial = OverlayMaterial(
+        Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
+        64f
+    )
 
-//    val moonMaterial = Material(
-//        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        32f
-//    )
-//
-//    val earthMaterial = OverlayMaterial(
-//        Texture2D("assets/textures/planets/earth_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        Texture2D("assets/textures/planets/earth_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        Texture2D("assets/textures/planets/earth_spec.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        Texture2D("assets/textures/planets/earth_clouds.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
-//        64f
-//    )
+    private val earth = Planet(
+        "earth",
+        30f, Vector3f(2500f),0f,5.00f, Vector3f(2f,40f,0f),
+        earthMaterial,
+        Atmosphere( 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
+        null,
+        listOf(Moon(0.27f,Vector3f(500f,0f,0f),0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
+        Renderable( ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
-//    private val earth = Planet(
-//        "earth",
-//        1f,3f,0f,0.00f, Vector3f(2f,20f,0f),
-//        earthMaterial,
-//        Atmosphere(renderAlways, 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
-//        null,
-//        listOf(Moon(0.27f,8f,0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
-//        Renderable( renderAlways ,ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
 
-    private val guiRenderer = GuiRenderer(guiShader)
-
+/*
 //    val testGuiElement = Box(AspectRatio(),Relative(1f), Center(), Center(), cornerRadius = 10,
 //        children = listOf(
 //            Slider(Relative(0.9f),PixelHeight(30), Center(), Relative(-0.5f)),
@@ -142,66 +141,42 @@ class Scene(private val window: GameWindow) {
 //        )
 ////        Text("HABCDEFGHIJKLMNOPQRSTUVWXYZ", 5f, StaticResources.arial,30f,TextMode.Center, true, PixelLeft(0), PixelTop(0)),
 //    ))
-    val startButtonOnClick :((Int,Int) -> Unit)= {_,_ ->
+*/
+
+    private val guiRenderer = GuiRenderer(guiShader)
+
+    private val startButtonOnClick :((Int, Int) -> Unit)= { _, _ ->
+        mainGui.setValues(mainMenu.objectCount.toString())
+
+        sap.clear()
+        hitBoxes.clear()
+        gravityContainer.clear()
+
+        repeat(mainMenu.objectCount){
+            val hitBox = HitBox(sap.idCounter)
+            hitBox.translateLocal(Vector3f(Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat()))
+            val Test = GravityHitBox(hitBox,1f, Vector3f(Random.nextInt(0,3).toFloat(),Random.nextInt(0,3).toFloat(),Random.nextInt(0,3).toFloat()))
+            hitBox.updateEndPoints()
+            hitBoxes.add(hitBox)
+            gravityContainer.add(Test, GravityProperties.adopter)
+            sap.insertBox(hitBox)
+        }
+
+        val mainGravityObject = GravityHitBox(HitBox(sap.idCounter),4000f)
+        mainGravityObject.hitBox.translateLocal(Vector3f(2500f))
+        mainGravityObject.hitBox.scaleLocal(Vector3f(500f))
+        gravityContainer.add(mainGravityObject, GravityProperties.source)
+        hitBoxes.add(mainGravityObject.hitBox)
+
+        hitBoxes.updateModelMatrix()
+        sap.sort()
+
         gameState = RenderCategory.FirstPerson
         window.setCursorVisible(false)
-        countText.text = textBoxCount.text
-        mainGui.updateVariables()
     }
 
-    val textBoxCount : Textbox = Textbox("100", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(120), multiLine = false)
-
-
-    private val mainMenu = Scrollbar(Relative(1f), Relative(1f), Center(), Center(), true, false, StaticResources.backGroundColor, innerElement =
-        LayoutBox(Relative(1f), Relative(1.5f), Center(), PixelTop(0), children = listOf(
-            UIList(Relative(1f), Relative(0.75f), Center(), PixelTop(0), children = listOf(
-                Text("Settings:", 5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(30)),
-
-                Text("Test1:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                    ToggleButton(true, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
-                )),
-
-                Text("Test2:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                    ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
-                )),
-                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                    ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
-                )),
-                Text("Test3:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                    Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                    Slider(0f,PixelWidth(213), PixelHeight(25), PixelRight(60), Center())
-                )),
-            )),
-
-            Button("Start", PixelWidth(160), PixelHeight(60), PixelRight(55), PixelBottom(40), onClick = startButtonOnClick)
-//        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
-//        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
-//        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
-//        textBoxCount,
-//        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
-    )))
-
-    private val fpsGuiElement : Text = Text("",4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
-    private val countText = Text(textBoxCount.text,4f, StaticResources.standardFont,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
-
-    private var mainGui = Box(Relative(1f),Relative(0.05f),Center(), PixelTop(0), color = Color(40,40,40), children = listOf(
-        LayoutBox(Relative(0.08f), Relative(0.75f),PixelLeft(10),Center(), children = listOf(
-            Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
-            Text("FPS:",4f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
-            fpsGuiElement
-        )),
-        LayoutBox(Relative(0.13f), Relative(0.75f),PixelRight(10),Center(), children = listOf(
-            Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
-            Text("Anzahl:",4f, StaticResources.standardFont,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
-            countText
-        ))
-    ))
+    private val mainMenu = MainMenuPage(startButtonOnClick)
+    private val mainGui = MainGuiPage()
 
     private val sap = SAP()
     private val hitBoxes = HitBoxRenderer()
@@ -210,16 +185,16 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
 
-        repeat(200){
-
-            val hitBox = HitBox(sap.idCounter)
-            hitBox.translateLocal(Vector3f(Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat()))
-            val Test = GravityHitBox(hitBox,Random.nextInt(1,101).toFloat(), Vector3f(0f))
-            hitBox.updateEndPoints()
-            hitBoxes.add(hitBox)
-            gravityContainer.add(Test, GravityProperties.sourceAndAdopter)
-            sap.insertBox(hitBox)
-        }
+//        repeat(200){
+//
+//            val hitBox = HitBox(sap.idCounter)
+//            hitBox.translateLocal(Vector3f(Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat()))
+//            val Test = GravityHitBox(hitBox,Random.nextInt(1,101).toFloat(), Vector3f(0f))
+//            hitBox.updateEndPoints()
+//            hitBoxes.add(hitBox)
+//            gravityContainer.add(Test, GravityProperties.sourceAndAdopter)
+//            sap.insertBox(hitBox)
+//        }
 
 //        val mainGravityObject = Test(HitBox(sap.idCounter),4000000f)
 //        mainGravityObject.hitBox.translateLocal(Vector3f(1000f))
@@ -263,7 +238,7 @@ class Scene(private val window: GameWindow) {
 //            hitBoxes.add(hitBox3)
 
             hitBoxes.updateModelMatrix()
-            sap.sortParallel()
+            sap.sort()
 
 
 
@@ -371,24 +346,22 @@ class Scene(private val window: GameWindow) {
         if (t - lastT  > 0.5f){
             lastT = t
             frameCounter *= 2
-            fpsGuiElement.text = "$frameCounter"
-            fpsGuiElement.textHasChanged()
-            fpsGuiElement.refresh()
+            mainGui.setFPS(frameCounter.toString())
             frameCounter = 0
         }
         frameCounter ++
 
         if(gameState == RenderCategory.FirstPerson) {
 
-//            mainShader.use()
-//
-//            if (t - lastTime > 0.01f)
-//                mainShader.setUniform("time", t)
+            mainShader.use()
+
+            if (t - lastTime > 0.01f)
+                mainShader.setUniform("time", t)
 
 
 
-//            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//            earth.render(mainShader)
+            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+            earth.render(mainShader)
 
 
             camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
@@ -400,24 +373,20 @@ class Scene(private val window: GameWindow) {
             //--
 
             //-- AtmosphereShader
-//            atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//                earth.atmosphere?.render(atmosphereShader)
+            atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+                earth.atmosphere?.render(atmosphereShader)
             //--
         }
 
         guiRenderer.beforeGUIRender()
 
         //-- GuiRenderer
-//            guiRenderer.render(testGuiElement, dt, t)
         if(gameState == RenderCategory.FirstPerson)
             guiRenderer.render(mainGui, dt, t)
         else
             guiRenderer.render(mainMenu, dt, t)
         //--
 
-        //-- FPS Count
-//            guiRenderer.render(fpsGuiElement, dt, t)
-        //--
 
         guiRenderer.afterGUIRender()
 
@@ -446,16 +415,19 @@ class Scene(private val window: GameWindow) {
 //            println("updateModelMatrix: ${measureNanoTime {
 //                hitBoxes.updateModelMatrix()
 //            }}")
-//            gravityContainer.applyGravityParallel(10)
-//            sap.sortParallel()
-//            sap.checkCollisionParallel(10)
-//            hitBoxes.updateModelMatrix()
+            if(mainMenu.executeParallel){
+                gravityContainer.applyGravityParallel(30)
+                sap.sortParallel()
+                sap.checkCollisionParallel(30)
+                hitBoxes.updateModelMatrix()
+            }else{
+                gravityContainer.applyGravity()
+                sap.sort()
+                sap.checkCollision()
+                hitBoxes.updateModelMatrix()
+            }
 
-
-//            earth.orbit()
-//            println( measureTimeMillis {sap.checkCollision3(60)})
-        }else{
-            mainMenu.globalOnUpdateEvent(dt, t)
+            earth.orbit()
         }
 
 //        when(speedMarker.state){
@@ -466,12 +438,6 @@ class Scene(private val window: GameWindow) {
 //                solarSystem.update(dt,t)
 //            }
 //        }
-        if(window.getKeyState(GLFW_KEY_SPACE)){
-            gravityContainer.applyGravityParallel(10)
-            sap.sortParallel()
-            sap.checkCollisionParallel(10)
-            hitBoxes.updateModelMatrix()
-        }
 
 //
 //
@@ -484,8 +450,14 @@ class Scene(private val window: GameWindow) {
 //        loadingBarGuiElement.update(dt,t)
 //        loadingBarGuiElement2.update(dt,t)
 //        loadingBarGuiElement3.update(dt,t)
-//
-//
+
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun updateUI(dt: Float, t: Float) {
+        if(gameState == RenderCategory.Gui)
+            mainMenu.globalOnUpdateEvent(dt, t)
+
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
 //
@@ -616,7 +588,6 @@ class Scene(private val window: GameWindow) {
 
 
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-
             when(gameState){
                 RenderCategory.Gui -> window.quit()
                 RenderCategory.FirstPerson -> {
@@ -624,11 +595,7 @@ class Scene(private val window: GameWindow) {
                     window.setCursorVisible(true)
                 }
             }
-
         }
-
-
-
     }
 
     fun onMouseButton(button: Int, action: Int, mode: Int) {

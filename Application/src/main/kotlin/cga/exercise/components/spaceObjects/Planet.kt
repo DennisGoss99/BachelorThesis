@@ -9,7 +9,7 @@ import org.joml.Vector3f
 
 class Planet(val name: String,
              size: Float,
-             distanceToParent : Float,
+             distanceToParent : Vector3f,
              speed : Float,
              rotationAngle : Float,
              selfRotation : Vector3f,
@@ -28,8 +28,13 @@ class Planet(val name: String,
     }
 
     override fun render(shaderProgram: ShaderProgram) {
+        super.bind(shaderProgram)
         super.render(shaderProgram)
-        moons.forEach { it.render(shaderProgram) }
+
+        moons.forEach {
+            it.bind(shaderProgram)
+            it.render(shaderProgram)
+        }
         ring?.render(shaderProgram)
     }
 

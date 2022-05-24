@@ -6,6 +6,7 @@ class Color : Vector4f {
 
     companion object{
 
+
         val turquoise = Color(26, 188, 156)
         val emerald = Color(46, 204, 113)
         val lightBlue = Color(52, 152, 219)
@@ -29,6 +30,7 @@ class Color : Vector4f {
 
         val black = Color(0,0,0)
         val withe = Color(255,255,255)
+        val nothing = Color(0,0,0,0)
     }
 
     constructor(hex : String){

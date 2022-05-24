@@ -15,7 +15,8 @@ open class RenderableBase(var meshes: MutableList<Mesh>, modelMatrix: Matrix4f =
     }
 
     override fun render(shaderProgram: ShaderProgram) {
-        meshes.forEach { m -> m.render(shaderProgram) }
+        meshes.forEach { m ->
+            m.render(shaderProgram) }
     }
 
     override fun cleanup() {

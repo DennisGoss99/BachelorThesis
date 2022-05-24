@@ -6,7 +6,7 @@ import cga.exercise.components.geometry.transformable.Transformable
 import org.joml.Vector3f
 
 abstract class SpaceObject(val size: Float,
-                           val distanceToParent: Float,
+                           val distanceToParent: Vector3f,
                            var speed : Float,
                            var rotationAngle : Float,
                            var selfRotation : Vector3f,
@@ -18,7 +18,7 @@ init {
     if(material != null)
         meshes.forEach { it.material = material }
 
-    translateLocal(Vector3f(distanceToParent * 20f,0f,0f))
+    translateLocal(distanceToParent)
     scaleLocal(Vector3f(size))
 
     selfRotation.mul(0.001f)

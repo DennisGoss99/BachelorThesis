@@ -44,16 +44,21 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    fun sortParallel(){
-        GlobalScope.launch {
+    suspend fun sortParallel(){
+
+        val jx = GlobalScope.launch {
             endPointsX.sortBy { it.value }
         }
-        GlobalScope.launch {
+        val jy = GlobalScope.launch {
             endPointsY.sortBy { it.value }
         }
-        GlobalScope.launch {
+        val jz = GlobalScope.launch {
             endPointsZ.sortBy { it.value }
         }
+
+        jx.join()
+        jy.join()
+        jz.join()
     }
 
     fun sort(){

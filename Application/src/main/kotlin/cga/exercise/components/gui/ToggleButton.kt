@@ -10,7 +10,8 @@ class ToggleButton(
     heightConstraint: IScaleConstraint,
     translateXConstraint: ITranslateConstraint,
     translateYConstraint: ITranslateConstraint,
-    val rounded : Boolean = false
+    val rounded : Boolean = false,
+    private val OnValueChanged : ((Boolean) -> Unit)? = null
 )
     : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, StaticResources.componentColor, 0){
 
@@ -44,7 +45,7 @@ class ToggleButton(
         _,_ ->
         value = !value
         statusChanged(value)
-
+        OnValueChanged?.invoke(value)
     }
 
     override val onUpdate: ((dt: Float, t: Float) -> Unit) = {

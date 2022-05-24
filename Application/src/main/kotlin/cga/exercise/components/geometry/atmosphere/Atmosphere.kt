@@ -12,8 +12,7 @@ import org.joml.Vector3f
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 
-class Atmosphere ( val shouldRender : List<RenderCategory>,
-                   scale : Float = 1f,
+class Atmosphere ( scale : Float = 1f,
                    simpleMaterial: SimpleMaterial
                 ) : RenderableBase((ModelLoader.loadModel("assets/models/atmosphereSphere.obj",0f,0f,0f) ?: throw Exception("Couldn't find Object: 'atmosphereSphere.obj'")).meshes)
 {

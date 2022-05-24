@@ -12,7 +12,7 @@ class Game(width: Int,
            vsync: Boolean = false,
            title: String = "OuterSpace",
            GLVersionMajor: Int = 3,
-           GLVersionMinor: Int = 3) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 4, 60f) {
+           GLVersionMinor: Int = 3) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 4, 30f, 60f) {
 
     private val scene: Scene
     init {
@@ -24,6 +24,10 @@ class Game(width: Int,
 
     override suspend fun update(dt: Float, t: Float) {
         scene.update(dt, t)
+    }
+
+    override suspend fun updateUI(dt: Float, t: Float) {
+        scene.updateUI(dt, t)
         MouseCursor.afterUpdate()
     }
 

@@ -8,6 +8,7 @@ import cga.exercise.components.gui.constraints.ITranslateConstraint
 import cga.exercise.components.gui.constraints.Relative
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.text.FontType
+import cga.exercise.game.StaticResources
 import org.joml.Vector4f
 
 class EditText (text : String,
@@ -18,7 +19,8 @@ class EditText (text : String,
                 multiline : Boolean = false,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                color: Vector4f = Vector4f(1f, 1f, 1f, 1f)) : Text(text, fontSize, font, maxLineLength, textMode, multiline, translateXConstraint, translateYConstraint, color) {
+                fontColor : Vector4f = StaticResources.fontColor,
+                cursorColor : Vector4f) : Text(text, fontSize, font, maxLineLength, textMode, multiline, translateXConstraint, translateYConstraint, fontColor) {
 
     var realCursorX = 0f
         private set
@@ -30,7 +32,7 @@ class EditText (text : String,
 
     init {
         children = listOf(
-            TextCursor(Relative(0.0005f * fontSize), Relative(0.009f * fontSize), Center(), Center(), color = Color(0,0,0)))
+            TextCursor(Relative(0.0005f * fontSize), Relative(0.009f * fontSize), Center(), Center(), color = cursorColor))
     }
 
     override fun bind(shaderProgram: ShaderProgram) {
@@ -109,6 +111,13 @@ class EditText (text : String,
     }
 
     private fun refreshCursor(){
+
+        if(textChars.size < cursorPosY || textChars[cursorPosY].size < cursorPosX){
+            cursorPosY = 0
+            cursorPosX = 0
+        }
+
+
         when(textMode){
             TextMode.Center -> {
                 realCursorX = textChars[cursorPosY].subList(0,cursorPosX).fold(0f){acc, char -> acc + char.xAdvance * fontSize }

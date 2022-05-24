@@ -6,7 +6,7 @@ import cga.exercise.components.geometry.transformable.Transformable
 import org.joml.*
 
 class Moon(size: Float,
-           distanceToParent : Float,
+           distanceToParent : Vector3f,
            speed : Float,
            rotationAngle : Float,
            selfRotation : Vector3f,

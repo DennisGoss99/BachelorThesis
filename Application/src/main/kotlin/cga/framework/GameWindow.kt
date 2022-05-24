@@ -3,6 +3,7 @@ package cga.framework
 import cga.exercise.components.gui.MouseCursor
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources.Companion.systemCursors
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.*
@@ -39,6 +40,7 @@ abstract class GameWindow(
     title: String,
     msaasamples: Int,
     updatefrequency: Float,
+    updatefrequencyUI: Float,
 ) {
     //inner types
     /**
@@ -65,6 +67,7 @@ abstract class GameWindow(
     private val m_title: String
     private val m_msaasamples: Int
     private val m_updatefrequency: Float
+    private val m_updatefrequencyUI: Float
     private val m_cvmaj: Int
     private val m_cvmin: Int
     //GLFW callbacks
@@ -102,6 +105,7 @@ abstract class GameWindow(
         m_title = title
         m_msaasamples = msaasamples
         m_updatefrequency = updatefrequency
+        m_updatefrequencyUI = updatefrequencyUI
 
         check(GLFW.glfwInit()) { "GLFW initialization failed." }
 
@@ -245,6 +249,19 @@ abstract class GameWindow(
     protected open suspend fun update(dt: Float, t: Float) {}
 
     /**
+     * Is called for every game state update.
+     * The method is called in fixed time steps if possible.
+     * Make sure that one update call takes no longer than 1/updatefrequency seconds, otherwise the
+     * game slows down.
+     *
+     * This method should be used for physics simulations, where explicit solvers need small and constant
+     * time steps to stay stable.
+     *
+     * @param dt Time delta to advance the game state simulation. dt is 1/updatefrequency seconds, constant.
+     */
+    protected open suspend fun updateUI(dt: Float, t: Float) {}
+
+    /**
      * Is called for each frame to be rendered.
      *
      * @param dt Time in seconds the last frame needed to complete
@@ -311,10 +328,12 @@ abstract class GameWindow(
         start()
 
         val timedelta = (1.0 / m_updatefrequency * 1000000000.0).toLong()
+        val timedeltaUI = (1.0 / m_updatefrequencyUI * 1000000000.0).toLong()
         var currenttime: Long = 0
         var frametime: Long = 0
         var newtime: Long = 0
         var accum: Long = 0
+        var accumUI: Long = 0
         m_currentTime = 0
         currenttime = System.nanoTime()
 
@@ -326,11 +345,24 @@ abstract class GameWindow(
                 m_currentTime += frametime
                 currenttime = newtime
                 accum += frametime
+                accumUI += frametime
                 GLFW.glfwPollEvents()
+
+
                 while (accum >= timedelta) {
                     update((timedelta * 1e-9f), (m_currentTime * 1e-9f))
                     accum -= timedelta
                 }
+
+                if (accumUI >= timedeltaUI){
+                    updateUI((timedeltaUI * 1e-9f), (m_currentTime * 1e-9f))
+
+                    do {
+                        accumUI -= timedeltaUI
+                    } while (accumUI >= timedeltaUI)
+                }
+
+
                 render((frametime * 1e-9f), (m_currentTime * 1e-9f))
                 GLFW.glfwSwapBuffers(m_window)
             }

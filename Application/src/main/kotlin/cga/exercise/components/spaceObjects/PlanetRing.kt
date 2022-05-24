@@ -7,7 +7,7 @@ import org.joml.Vector3f
 
 class PlanetRing(
              size: Float,
-             distanceToParent : Float,
+             distanceToParent : Vector3f,
              speed : Float,
              rotationAngle : Float,
              selfRotation : Vector3f,

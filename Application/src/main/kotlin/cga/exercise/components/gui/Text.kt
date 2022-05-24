@@ -35,6 +35,8 @@ open class Text(text : String,
             value.forEach { c ->
                 addTextChat(convertChar(c))
             }
+            textHasChanged()
+            refresh()
         }
 
     var cursorX = 0f

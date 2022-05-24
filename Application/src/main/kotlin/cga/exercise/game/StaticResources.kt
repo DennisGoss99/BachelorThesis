@@ -3,6 +3,7 @@ package cga.exercise.game
 import cga.exercise.components.gui.Color
 import cga.exercise.components.gui.MouseCursor.*
 import cga.exercise.components.text.FontType
+import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFW.*
 
 class StaticResources {
@@ -94,6 +95,51 @@ class StaticResources {
                 else -> null
             }
 
+        }
+
+        fun keyIsDigit(keyCode : Int, mode : Int) : Boolean{
+            return when(keyCode) {
+                GLFW_KEY_1,
+                GLFW_KEY_2,
+                GLFW_KEY_3,
+                GLFW_KEY_4,
+                GLFW_KEY_5,
+                GLFW_KEY_6,
+                GLFW_KEY_7,
+                GLFW_KEY_8,
+                GLFW_KEY_9,
+                GLFW_KEY_0 -> mode == 0
+
+                //Numpad
+                GLFW_KEY_KP_0,
+                GLFW_KEY_KP_1,
+                GLFW_KEY_KP_2,
+                GLFW_KEY_KP_3,
+                GLFW_KEY_KP_4,
+                GLFW_KEY_KP_5,
+                GLFW_KEY_KP_6,
+                GLFW_KEY_KP_7,
+                GLFW_KEY_KP_8,
+                GLFW_KEY_KP_9 -> true
+
+                else -> false
+            }
+        }
+
+        fun keyIsInstruction(keyCode : Int, mode : Int) : Boolean{
+            return when(keyCode){
+                GLFW_KEY_DELETE,
+                GLFW_KEY_END,
+                GLFW_KEY_HOME,
+                GLFW_KEY_RIGHT,
+                GLFW_KEY_LEFT,
+                GLFW_KEY_DOWN,
+                GLFW_KEY_UP,
+                GLFW_KEY_SPACE,
+                GLFW_KEY_BACKSPACE,
+                GLFW_KEY_ENTER -> true
+                else -> false
+            }
         }
 
         val backGroundColor = Color(18,18,18)

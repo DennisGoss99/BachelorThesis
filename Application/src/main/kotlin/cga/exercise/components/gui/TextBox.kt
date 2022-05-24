@@ -3,29 +3,29 @@ package cga.exercise.components.gui
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
 import cga.exercise.components.text.FontType
-import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
 import cga.exercise.game.StaticResources.Companion.keyToCharGERLayout
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 
-class Textbox(text : String ,
-              widthConstraint : IScaleConstraint,
-              heightConstraint : IScaleConstraint,
-              translateXConstraint : ITranslateConstraint,
-              translateYConstraint : ITranslateConstraint,
-              color: Vector4f = StaticResources.componentColor,
-              textMode: TextMode = TextMode.Center,
-              multiLine : Boolean = true,
-              cornerRadius : Int = 0,
-              fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
+open class TextBox(text : String,
+                   widthConstraint : IScaleConstraint,
+                   heightConstraint : IScaleConstraint,
+                   translateXConstraint : ITranslateConstraint,
+                   translateYConstraint : ITranslateConstraint,
+                   backgroundColor: Vector4f = StaticResources.componentColor,
+                   fontColor: Vector4f = StaticResources.fontColor,
+                   textMode: TextMode = TextMode.Center,
+                   multiLine : Boolean = true,
+                   cornerRadius : Int = 0,
+                   fontSize : Float = 4f,
+                   fontType: FontType = StaticResources.standardFont,
+                   cursorColor : Vector4f = Color(20,20,20),
+                   private val OnValueChanged : ((String) -> Unit)? = null) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, backgroundColor, cornerRadius)
 {
-    var text : String
+    open var text : String = ""
+        set(value) {field = value; (children.getOrNull(0) as Text?)?.text = value}
         get() = (children[0] as Text).text
-
-    init {
-        this.text = text
-    }
 
     override var onClick: ((Int, Int) -> Unit)? = null
 
@@ -65,8 +65,10 @@ class Textbox(text : String ,
         }
 
 
-        if(textHasChanged)
+        if(textHasChanged) {
             textGuiElement.textHasChanged()
+            OnValueChanged?.invoke(textGuiElement.text)
+        }
 
         textGuiElement.refresh()
     }
@@ -82,11 +84,12 @@ class Textbox(text : String ,
     init {
         children = listOf(
             when(textMode){
-                TextMode.Center -> EditText(text,4f, fontType, 10f, TextMode.Center, multiLine, Center(), Center(), color = Color(20,20,20))
-                TextMode.Left -> EditText(text,4f, fontType, 10f, TextMode.Left, multiLine, PixelLeft(5), Center(), color = Color(20,20,20))
-                TextMode.Right -> EditText(text,4f, fontType, 10f, TextMode.Right, multiLine, PixelRight(5), Center(), color = Color(20,20,20))
+                TextMode.Center -> EditText(text,fontSize, fontType, 10f, TextMode.Center, multiLine, Center(), Center(), fontColor, cursorColor)
+                TextMode.Left -> EditText(text,fontSize, fontType, 10f, TextMode.Left, multiLine, PixelLeft(5), Center(), fontColor, cursorColor)
+                TextMode.Right -> EditText(text,fontSize, fontType, 10f, TextMode.Right, multiLine, PixelRight(5), Center(), fontColor, cursorColor)
             }
         )
+        this.text = text
     }
 
 }

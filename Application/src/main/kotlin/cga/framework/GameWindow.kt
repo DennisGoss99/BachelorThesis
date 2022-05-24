@@ -56,6 +56,18 @@ abstract class GameWindow(
      */
     var framebufferWidth: Int
         private set
+
+    var m_updatefrequency: Float = updatefrequency
+        set(value) {
+            if (value <= 0)
+                return
+
+            field = value
+            timedelta = (1.0 / value * 1000000000.0).toLong()
+        }
+
+    private var timedelta = (1.0 / updatefrequency * 1000000000.0).toLong()
+
     /**
      * Returns the current height of the default frame buffer
      * @return height of the default frame buffer
@@ -66,7 +78,6 @@ abstract class GameWindow(
     private val m_vsync: Boolean
     private val m_title: String
     private val m_msaasamples: Int
-    private val m_updatefrequency: Float
     private val m_updatefrequencyUI: Float
     private val m_cvmaj: Int
     private val m_cvmin: Int
@@ -104,7 +115,7 @@ abstract class GameWindow(
         m_cvmin = cvmin
         m_title = title
         m_msaasamples = msaasamples
-        m_updatefrequency = updatefrequency
+//        m_updatefrequency = updatefrequency
         m_updatefrequencyUI = updatefrequencyUI
 
         check(GLFW.glfwInit()) { "GLFW initialization failed." }
@@ -320,6 +331,7 @@ abstract class GameWindow(
         SceneStats.windowWidth = width
         SceneStats.windowHeight = height
     }
+
     //public methods
     /**
      * Enters the game loop and loops until an error occurs or quit() is called
@@ -327,7 +339,6 @@ abstract class GameWindow(
     fun run() {
         start()
 
-        val timedelta = (1.0 / m_updatefrequency * 1000000000.0).toLong()
         val timedeltaUI = (1.0 / m_updatefrequencyUI * 1000000000.0).toLong()
         var currenttime: Long = 0
         var frametime: Long = 0

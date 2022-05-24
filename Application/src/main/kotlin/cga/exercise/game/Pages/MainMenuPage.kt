@@ -8,6 +8,10 @@ import cga.exercise.game.StaticResources
 class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relative(1f), Relative(1f), Center(), Center()) {
 
 
+    var updateFrequency = 60f
+    private val sliderUpdateFrequencyOnValueChanged = { f : Float -> updateFrequency = f * 599f + 1; updateFrequencyText.text = "$updateFrequency per sec" }
+
+    private val updateFrequencyText = Text("$updateFrequency per sec", 2.5f, StaticResources.standardFont,30f,TextMode.Right, false, PixelRight(60 + 213 + 10), Center(), StaticResources.fontColor1)
 
     private val sliderObjectCountOnValueChanged = { f : Float -> updateObjectCount(0, (f * countMultiplier).toInt()) }
     private val textBoxObjectCountOnValueChanged = {
@@ -49,6 +53,12 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
                             ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
                         )),
                         Text("Test3:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                        LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                            Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                            updateFrequencyText,
+                            Slider(((updateFrequency -1f) / 599f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderUpdateFrequencyOnValueChanged)
+                        )),
+                        Text("Test4:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
                         LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                             Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                             sliderText,

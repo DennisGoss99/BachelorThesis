@@ -147,6 +147,8 @@ class Scene(private val window: GameWindow) {
 
     private val startButtonOnClick :((Int, Int) -> Unit)= { _, _ ->
         mainGui.setValues(mainMenu.objectCount.toString())
+        window.m_updatefrequency = mainMenu.updateFrequency
+
 
         sap.clear()
         hitBoxes.clear()

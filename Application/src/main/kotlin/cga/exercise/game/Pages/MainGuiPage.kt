@@ -32,7 +32,8 @@ class MainGuiPage : GuiElement(Relative(1f), Relative(0.05f), Center(), PixelTop
     private val parallelIcon = Texture2D("assets/textures/gui/parallelIcon.png", true)
     private val parallelFalseIcon = Texture2D("assets/textures/gui/parallelFalseIcon.png", true)
 
-    private val fpsGuiElement : Text = Text("",4f, StaticResources.arial,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
+    val fpsGuiElement : Text = Text("",4f, StaticResources.arial,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
+    val upsGuiElement : Text = Text("",4f, StaticResources.arial,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
     private val countText = Text("",4f, StaticResources.arial,30f, TextMode.Right,false, PixelRight(5), Center(), color = Color(255f,255f,255f))
     private val parallelImageElement = Image( parallelIcon,Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30))
 
@@ -43,7 +44,12 @@ class MainGuiPage : GuiElement(Relative(1f), Relative(0.05f), Center(), PixelTop
                 Text("FPS:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
                 fpsGuiElement
             )),
-            LayoutBox(AspectRatio(), Relative(0.75f), Relative(-0.75f), Center(), children = listOf(
+            LayoutBox(Relative(0.1f), Relative(0.75f), PixelLeft(200),Center(), children = listOf(
+                Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
+                Text("UPS:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
+                upsGuiElement
+            )),
+            LayoutBox(AspectRatio(), Relative(0.75f), PixelLeft(400), Center(), children = listOf(
                 parallelImageElement
             )),
             LayoutBox(Relative(0.13f), Relative(0.75f), PixelRight(10),Center(), children = listOf(
@@ -55,12 +61,4 @@ class MainGuiPage : GuiElement(Relative(1f), Relative(0.05f), Center(), PixelTop
         )
 
     }
-
-    fun setFPS(FPSCount : String){
-        fpsGuiElement.text = FPSCount
-        fpsGuiElement.textHasChanged()
-        fpsGuiElement.refresh()
-    }
-
-
 }

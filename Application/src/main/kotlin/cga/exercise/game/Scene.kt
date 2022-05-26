@@ -392,12 +392,10 @@ class Scene(private val window: GameWindow) {
         if (t - lastT  > 0.5f){
             lastT = t
             frameCounter *= 2
-            mainGui.setFPS(frameCounter.toString())
+            mainGui.fpsGuiElement.text = frameCounter.toString()
             frameCounter = 0
-
-            println(sap.hitBoxes.count())
         }
-        frameCounter ++
+        frameCounter++
 
         if(gameState == RenderCategory.FirstPerson) {
 
@@ -442,8 +440,20 @@ class Scene(private val window: GameWindow) {
             lastTime = t
     }
 
+
+    private var updateCounter = 0
+    private var updateLastT = 0f
+
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun update(dt: Float, t: Float) {
+        if (t - updateLastT  >= 0.5f){
+            updateLastT = t
+            updateCounter *= 2
+            mainGui.upsGuiElement.text = updateCounter.toString()
+            updateCounter = 0
+        }
+        updateCounter++
+
 
 //        SceneStats.setWindowCursor(SystemCursor.Arrow)
 

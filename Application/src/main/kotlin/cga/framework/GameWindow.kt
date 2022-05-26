@@ -360,14 +360,22 @@ abstract class GameWindow(
                 GLFW.glfwPollEvents()
 
 
-                while (accum >= timedelta) {
-                    update((timedelta * 1e-9f), (m_currentTime * 1e-9f))
-                    accum -= timedelta
+//                while (accum >= timedelta) {
+//
+//                    update((timedelta * 1e-9f), (m_currentTime * 1e-9f))
+//                    accum -= timedelta
+//                }
+
+                if (accum >= timedelta){
+                    update((accum * 1e-9f), (m_currentTime * 1e-9f))
+                    do {
+                        accum -= timedelta
+                    } while (accum >= timedelta)
                 }
 
                 if (accumUI >= timedeltaUI){
-                    updateUI((timedeltaUI * 1e-9f), (m_currentTime * 1e-9f))
 
+                      updateUI((accumUI * 1e-9f), (m_currentTime * 1e-9f))
                     do {
                         accumUI -= timedeltaUI
                     } while (accumUI >= timedeltaUI)

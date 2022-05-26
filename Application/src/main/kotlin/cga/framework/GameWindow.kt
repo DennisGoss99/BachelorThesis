@@ -368,17 +368,12 @@ abstract class GameWindow(
 
                 if (accum >= timedelta){
                     update((accum * 1e-9f), (m_currentTime * 1e-9f))
-                    do {
-                        accum -= timedelta
-                    } while (accum >= timedelta)
+                    accum -= timedelta *  (accum / timedelta)
                 }
 
                 if (accumUI >= timedeltaUI){
-
-                      updateUI((accumUI * 1e-9f), (m_currentTime * 1e-9f))
-                    do {
-                        accumUI -= timedeltaUI
-                    } while (accumUI >= timedeltaUI)
+                    updateUI((accumUI * 1e-9f), (m_currentTime * 1e-9f))
+                    accumUI -= timedeltaUI *  (accumUI / timedeltaUI)
                 }
 
 

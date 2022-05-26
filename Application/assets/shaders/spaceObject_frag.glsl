@@ -1,6 +1,6 @@
 #version 330 core
 
-flat in uint collision;
+in float collision;
 
 out vec4 color;
 

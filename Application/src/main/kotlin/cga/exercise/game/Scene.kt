@@ -167,52 +167,34 @@ class Scene(private val window: GameWindow) {
         hitBoxes.add(mainGravityObject.hitBox)
         sap.insertBox(mainGravityObject.hitBox)
 
-        val w1 = HitBox(sap.idCounter)
-        w1.translateLocal(Vector3f(2500f + 10101f,2500f,2500f))
-        w1.scaleLocal(Vector3f(100f,10000f,10000f))
-        hitBoxes.add(w1)
-        sap.insertBox(w1)
+        var file = File("assets/sampleData/sample1.txt")
+        var counter = 0
+        file.forEachLine{
+            counter++
+            if (counter < mainMenu.objectCount) {
 
-        val w2 = HitBox(sap.idCounter)
-        w2.translateLocal(Vector3f(2500f - 10101f,2500f,2500f))
-        w2.scaleLocal(Vector3f(100f,10000f,10000f))
-        hitBoxes.add(w2)
-        sap.insertBox(w2)
+                var data = it.split(", ").map { it.toFloat() }
 
-        val w3 = HitBox(sap.idCounter)
-        w3.translateLocal(Vector3f(2500f ,2500f - 10101f,2500f))
-        w3.scaleLocal(Vector3f(10000f,100f,10000f))
-        hitBoxes.add(w3)
-        sap.insertBox(w3)
-
-        val w4 = HitBox(sap.idCounter)
-        w4.translateLocal(Vector3f(2500f ,2500f + 10101f,2500f))
-        w4.scaleLocal(Vector3f(10000f,100f,10000f))
-        hitBoxes.add(w4)
-        sap.insertBox(w4)
-
-        val w5 = HitBox(sap.idCounter)
-        w5.translateLocal(Vector3f(2500f,2500f ,2500f - 10101f))
-        w5.scaleLocal(Vector3f(10000f,10000f,100f))
-        hitBoxes.add(w5)
-        sap.insertBox(w5)
-
-        val w6 = HitBox(sap.idCounter)
-        w6.translateLocal(Vector3f(2500f,2500f ,2500f + 10101f))
-        w6.scaleLocal(Vector3f(10000f,10000f,100f))
-        hitBoxes.add(w6)
-        sap.insertBox(w6)
-
-        repeat(mainMenu.objectCount){
-            val hitBox = HitBox(sap.idCounter)
-            hitBox.translateLocal(Vector3f(Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat()))
-
-            val Test = GravityHitBox(hitBox,1f, Vector3f((Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10))
-            hitBox.updateEndPoints()
-            hitBoxes.add(hitBox)
-            gravityContainer.add(Test, GravityProperties.adopter)
-            sap.insertBox(hitBox)
+                val hitBox = HitBox(sap.idCounter)
+                hitBox.translateLocal(Vector3f(data[0], data[1], data[2]))
+                val Test = GravityHitBox(hitBox, 1f, Vector3f(data[3], data[4], data[5]))
+                hitBox.updateEndPoints()
+                hitBoxes.add(hitBox)
+                gravityContainer.add(Test, GravityProperties.adopter)
+                sap.insertBox(hitBox)
+            }
         }
+
+//        repeat(mainMenu.objectCount){
+//            val hitBox = HitBox(sap.idCounter)
+//            hitBox.translateLocal(Vector3f(Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat()))
+//
+//            val Test = GravityHitBox(hitBox,1f, Vector3f((Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10))
+//            hitBox.updateEndPoints()
+//            hitBoxes.add(hitBox)
+//            gravityContainer.add(Test, GravityProperties.adopter)
+//            sap.insertBox(hitBox)
+//        }
 
         hitBoxes.updateModelMatrix()
         sap.sort()
@@ -486,15 +468,15 @@ class Scene(private val window: GameWindow) {
                 sap.checkCollision()
             }
 
-            sap.hitBoxes.toList().forEach { hitbox ->
-                if(hitbox.collided.get()){
-                    if(hitbox.collidedWith[0].id <= 6 && hitbox.id > 6){
-                        sap.remove(hitbox)
-                        hitBoxes.removeHitBoxID(hitbox.id)
-                        gravityContainer.removeID(hitbox.id)
-                    }
-                }
-            }
+//            sap.hitBoxes.toList().forEach { hitbox ->
+//                if(hitbox.collided.get()){
+//                    if(hitbox.collidedWith[0].id <= 6 && hitbox.id > 6){
+//                        sap.remove(hitbox)
+//                        hitBoxes.removeHitBoxID(hitbox.id)
+//                        gravityContainer.removeID(hitbox.id)
+//                    }
+//                }
+//            }
 
             earth.orbit()
         }
@@ -731,7 +713,9 @@ class Scene(private val window: GameWindow) {
     }
 
     fun onWindowSize(width: Int, height: Int) {
-//        testGuiElement.refresh()
+        if (width == 0 || height == 0)
+            return
+
         mainMenu.refresh()
         mainGui.refresh()
     }

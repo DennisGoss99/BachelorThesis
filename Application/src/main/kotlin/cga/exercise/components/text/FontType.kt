@@ -125,7 +125,7 @@ class FontType(val path : String) {
             }
         }
 
-        fontImageMaterial = SimpleMaterial(Texture2D.invoke(path.substringBeforeLast('/') + "/" + fontPath,false).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR))
+        fontImageMaterial = SimpleMaterial(Texture2D.invoke(path.substringBeforeLast('/') + "/" + fontPath,true).setTexParams(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR))
     }
 
     private fun getSubLine(line: String): List<String> {

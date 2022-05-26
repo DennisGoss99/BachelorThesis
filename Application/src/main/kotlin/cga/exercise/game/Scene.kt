@@ -167,34 +167,37 @@ class Scene(private val window: GameWindow) {
         hitBoxes.add(mainGravityObject.hitBox)
         sap.insertBox(mainGravityObject.hitBox)
 
-        var file = File("assets/sampleData/sample1.txt")
-        var counter = 0
-        file.forEachLine{
-            counter++
-            if (counter < mainMenu.objectCount) {
+        if(mainMenu.useSampleData){
+            var file = File("assets/sampleData/sampleData.txt")
+            var counter = 0
+            file.forEachLine{
+                counter++
+                if (counter < mainMenu.objectCount) {
 
-                var data = it.split(", ").map { it.toFloat() }
+                    var data = it.split(", ").map { it.toFloat() }
 
+                    val hitBox = HitBox(sap.idCounter)
+                    hitBox.translateLocal(Vector3f(data[0], data[1], data[2]))
+                    val Test = GravityHitBox(hitBox, 1f, Vector3f(data[3], data[4], data[5]))
+                    hitBox.updateEndPoints()
+                    hitBoxes.add(hitBox)
+                    gravityContainer.add(Test, GravityProperties.adopter)
+                    sap.insertBox(hitBox)
+                }
+            }
+        }
+        else {
+            repeat(mainMenu.objectCount){
                 val hitBox = HitBox(sap.idCounter)
-                hitBox.translateLocal(Vector3f(data[0], data[1], data[2]))
-                val Test = GravityHitBox(hitBox, 1f, Vector3f(data[3], data[4], data[5]))
+                hitBox.translateLocal(Vector3f(Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat()))
+
+                val Test = GravityHitBox(hitBox,1f, Vector3f((Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10))
                 hitBox.updateEndPoints()
                 hitBoxes.add(hitBox)
                 gravityContainer.add(Test, GravityProperties.adopter)
                 sap.insertBox(hitBox)
             }
         }
-
-//        repeat(mainMenu.objectCount){
-//            val hitBox = HitBox(sap.idCounter)
-//            hitBox.translateLocal(Vector3f(Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat()))
-//
-//            val Test = GravityHitBox(hitBox,1f, Vector3f((Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10))
-//            hitBox.updateEndPoints()
-//            hitBoxes.add(hitBox)
-//            gravityContainer.add(Test, GravityProperties.adopter)
-//            sap.insertBox(hitBox)
-//        }
 
         hitBoxes.updateModelMatrix()
         sap.sort()

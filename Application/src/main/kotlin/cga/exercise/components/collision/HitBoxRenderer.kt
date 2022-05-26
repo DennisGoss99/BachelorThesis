@@ -114,6 +114,11 @@ class HitBoxRenderer(var hitboxes : MutableList<HitBox> = mutableListOf()) {
         vertexDataMat = FloatArray(count * 17)
     }
 
+    fun removeHitBoxID(id : Int){
+        hitboxes.removeAll{it.id == id}
+        count--
+    }
+
     fun clear(){
         hitboxes.clear()
         count = 0

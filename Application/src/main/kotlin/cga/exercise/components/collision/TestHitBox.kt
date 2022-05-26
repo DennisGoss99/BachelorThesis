@@ -50,4 +50,5 @@ class TestHitBox : IHitBox {
 
     override fun updateEndPoints() {
     }
+
 }

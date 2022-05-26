@@ -7,7 +7,7 @@ import kotlin.math.pow
 
 class GravityObjectContainer{
 
-    private var gravityObjectsApply : MutableList<IGravity> = mutableListOf()
+    var gravityObjectsApply : MutableList<IGravity> = mutableListOf()
     private var gravityObjectsGetFrom : MutableList<IGravity> = mutableListOf()
 
     private val gravitationalConstant = 6.674f
@@ -25,6 +25,11 @@ class GravityObjectContainer{
             }
         }
 
+    }
+
+    fun removeID(id : Int){
+        gravityObjectsApply.removeAll { it.id == id }
+        gravityObjectsGetFrom.removeAll { it.id == id }
     }
 
     fun clear(){

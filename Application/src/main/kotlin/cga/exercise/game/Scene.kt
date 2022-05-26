@@ -35,7 +35,9 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
+import java.io.File
 import kotlin.random.Random
+import kotlin.system.measureNanoTime
 
 class SceneStats{
     companion object{
@@ -104,7 +106,8 @@ class Scene(private val window: GameWindow) {
         Atmosphere( 1.3f, AtmosphereMaterial(Texture2D("assets/textures/planets/atmosphere_basic.png",true), Color(70,105,208, 50))),
         null,
         listOf(Moon(0.27f,Vector3f(500f,0f,0f),0.001f,0.0001f,Vector3f(45.0f, 0f,0f), moonMaterial, Renderable( ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))),
-        Renderable( ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!))
+        Renderable( ModelLoader.loadModel("assets/models/sphere.obj",0f,0f,0f)!!)
+    )
 
 
 /*
@@ -146,29 +149,70 @@ class Scene(private val window: GameWindow) {
     private val guiRenderer = GuiRenderer(guiShader)
 
     private val startButtonOnClick :((Int, Int) -> Unit)= { _, _ ->
-        mainGui.setValues(mainMenu.objectCount.toString())
-        window.m_updatefrequency = mainMenu.updateFrequency
+        mainGui.objectCount = mainMenu.objectCount
+        mainGui.executeParallel = mainMenu.executeParallel
+
+
+        window.m_updatefrequency = mainMenu.updateFrequency.toFloat()
 
 
         sap.clear()
         hitBoxes.clear()
         gravityContainer.clear()
 
+        val mainGravityObject = GravityHitBox(HitBox(sap.idCounter),4000f)
+        mainGravityObject.hitBox.translateLocal(Vector3f(2500f))
+        mainGravityObject.hitBox.scaleLocal(Vector3f(430f))
+        gravityContainer.add(mainGravityObject, GravityProperties.source)
+        hitBoxes.add(mainGravityObject.hitBox)
+        sap.insertBox(mainGravityObject.hitBox)
+
+        val w1 = HitBox(sap.idCounter)
+        w1.translateLocal(Vector3f(2500f + 10101f,2500f,2500f))
+        w1.scaleLocal(Vector3f(100f,10000f,10000f))
+        hitBoxes.add(w1)
+        sap.insertBox(w1)
+
+        val w2 = HitBox(sap.idCounter)
+        w2.translateLocal(Vector3f(2500f - 10101f,2500f,2500f))
+        w2.scaleLocal(Vector3f(100f,10000f,10000f))
+        hitBoxes.add(w2)
+        sap.insertBox(w2)
+
+        val w3 = HitBox(sap.idCounter)
+        w3.translateLocal(Vector3f(2500f ,2500f - 10101f,2500f))
+        w3.scaleLocal(Vector3f(10000f,100f,10000f))
+        hitBoxes.add(w3)
+        sap.insertBox(w3)
+
+        val w4 = HitBox(sap.idCounter)
+        w4.translateLocal(Vector3f(2500f ,2500f + 10101f,2500f))
+        w4.scaleLocal(Vector3f(10000f,100f,10000f))
+        hitBoxes.add(w4)
+        sap.insertBox(w4)
+
+        val w5 = HitBox(sap.idCounter)
+        w5.translateLocal(Vector3f(2500f,2500f ,2500f - 10101f))
+        w5.scaleLocal(Vector3f(10000f,10000f,100f))
+        hitBoxes.add(w5)
+        sap.insertBox(w5)
+
+        val w6 = HitBox(sap.idCounter)
+        w6.translateLocal(Vector3f(2500f,2500f ,2500f + 10101f))
+        w6.scaleLocal(Vector3f(10000f,10000f,100f))
+        hitBoxes.add(w6)
+        sap.insertBox(w6)
+
         repeat(mainMenu.objectCount){
             val hitBox = HitBox(sap.idCounter)
             hitBox.translateLocal(Vector3f(Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat(),Random.nextInt(1,5001).toFloat()))
-            val Test = GravityHitBox(hitBox,1f, Vector3f(Random.nextInt(0,3).toFloat(),Random.nextInt(0,3).toFloat(),Random.nextInt(0,3).toFloat()))
+
+            val Test = GravityHitBox(hitBox,1f, Vector3f((Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10))
             hitBox.updateEndPoints()
             hitBoxes.add(hitBox)
             gravityContainer.add(Test, GravityProperties.adopter)
             sap.insertBox(hitBox)
         }
-
-        val mainGravityObject = GravityHitBox(HitBox(sap.idCounter),4000f)
-        mainGravityObject.hitBox.translateLocal(Vector3f(2500f))
-        mainGravityObject.hitBox.scaleLocal(Vector3f(500f))
-        gravityContainer.add(mainGravityObject, GravityProperties.source)
-        hitBoxes.add(mainGravityObject.hitBox)
 
         hitBoxes.updateModelMatrix()
         sap.sort()
@@ -350,6 +394,8 @@ class Scene(private val window: GameWindow) {
             frameCounter *= 2
             mainGui.setFPS(frameCounter.toString())
             frameCounter = 0
+
+            println(sap.hitBoxes.count())
         }
         frameCounter ++
 
@@ -418,15 +464,26 @@ class Scene(private val window: GameWindow) {
 //                hitBoxes.updateModelMatrix()
 //            }}")
             if(mainMenu.executeParallel){
-                gravityContainer.applyGravityParallel(30)
-                sap.sortParallel()
-                sap.checkCollisionParallel(30)
+                gravityContainer.applyGravityParallel(4)
                 hitBoxes.updateModelMatrix()
+                sap.sortParallel()
+                sap.checkCollisionParallel(4)
+
             }else{
                 gravityContainer.applyGravity()
+                hitBoxes.updateModelMatrix()
                 sap.sort()
                 sap.checkCollision()
-                hitBoxes.updateModelMatrix()
+            }
+
+            sap.hitBoxes.toList().forEach { hitbox ->
+                if(hitbox.collided.get()){
+                    if(hitbox.collidedWith[0].id <= 6 && hitbox.id > 6){
+                        sap.remove(hitbox)
+                        hitBoxes.removeHitBoxID(hitbox.id)
+                        gravityContainer.removeID(hitbox.id)
+                    }
+                }
             }
 
             earth.orbit()
@@ -487,6 +544,7 @@ class Scene(private val window: GameWindow) {
 //
 //
 //
+
 
 
         if (gameState == RenderCategory.FirstPerson){
@@ -587,6 +645,19 @@ class Scene(private val window: GameWindow) {
 //        if(GLFW_KEY_TAB == key && action == 0){
 //            speedMarker.addToState()
 //        }
+
+        if(GLFW_KEY_P == key && action == 0){
+            val file = File("print/obj ${System.currentTimeMillis()}.txt")
+
+            var text = ""
+
+            gravityContainer.gravityObjectsApply.forEach {
+                it as GravityHitBox
+                text += "GravityHitBox(HitBox(sap.idCounter, Vector3f(${it.startPos.x}f, ${it.startPos.y}f, ${it.startPos.z}f)), 1f, Vector3f( ${it.startV.x}f, ${it.startV.y}f, ${it.startV.z}f))\n"
+            }
+
+            file.writeText(text)
+        }
 
 
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){

@@ -4,6 +4,8 @@ import org.joml.Vector3f
 
 interface IGravity {
 
+    val id : Int
+
     var mass : Float
     var velocity : Vector3f
     var acceleration : Vector3f

@@ -5,6 +5,11 @@ import org.joml.Vector3f
 
 class GravityHitBox(var hitBox: HitBox, override var mass: Float, override var velocity : Vector3f = Vector3f(0f, 0f, 0f)) : IGravity{
 
+    override val id : Int = hitBox.id
+
+    var startV = Vector3f(velocity)
+    var startPos = Vector3f(hitBox.getPosition())
+
     override var acceleration : Vector3f = Vector3f(0f, 0f, 0f)
 
     override fun applyObjectForce() {

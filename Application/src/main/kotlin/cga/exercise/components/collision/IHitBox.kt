@@ -17,6 +17,5 @@ interface IHitBox {
     fun addCollidedWith(hitBox : IHitBox)
     fun removeCollidedWith(hitBox : IHitBox)
 
-
     fun updateEndPoints()
 }

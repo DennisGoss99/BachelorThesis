@@ -4,11 +4,12 @@ import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.shader.ShaderProgram
+import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.atomic.AtomicBoolean
 
-class HitBox(override val id : Int) : IHitBox, Transformable(){
+class HitBox(override val id : Int, pos : Vector3f = Vector3f(0f)) : IHitBox, Transformable(){
     override val minEndPoints = arrayOf(EndPoint(this,-1f,true),EndPoint(this,-1f,true),EndPoint(this,-1f,true))
     override val maxEndPoints = arrayOf(EndPoint(this,-1f,false),EndPoint(this,-1f,false),EndPoint(this,-1f,false))
 
@@ -16,6 +17,10 @@ class HitBox(override val id : Int) : IHitBox, Transformable(){
 
     override var collided = AtomicBoolean(false)
     override var collidedWith  = mutableListOf<IHitBox>()
+
+    init {
+        translateLocal(pos)
+    }
 
     @Synchronized
     override fun addCollidedWith(hitBox: IHitBox) {

@@ -7,7 +7,7 @@ import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
 import org.joml.Vector4f
 
-class Image (private val texture: Texture2D,
+class Image (var texture: Texture2D,
              widthConstraint : IScaleConstraint,
              heightConstraint : IScaleConstraint,
              translateXConstraint : ITranslateConstraint,

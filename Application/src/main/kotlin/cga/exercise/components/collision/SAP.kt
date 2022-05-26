@@ -43,6 +43,13 @@ class SAP(boxes : MutableList<IHitBox> = mutableListOf()) {
         endPointsZ.add(hitBox.maxEndPoints[2])
     }
 
+    fun remove(hitBox : IHitBox){
+        hitBoxes.remove(hitBox)
+        endPointsX.removeAll{ it.owner.id == hitBox.id }
+        endPointsY.removeAll{ it.owner.id == hitBox.id }
+        endPointsZ.removeAll{ it.owner.id == hitBox.id }
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun sortParallel(){
 

@@ -39,26 +39,27 @@ class MainGuiPage : GuiElement(Relative(1f), Relative(0.05f), Center(), PixelTop
 
     init {
         children = listOf(
-            LayoutBox(Relative(0.1f), Relative(0.75f), PixelLeft(10),Center(), children = listOf(
-                Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
-                Text("FPS:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
-                fpsGuiElement
+            UIList(Relative(1f),Relative(1f), Center(), Center(), false, children = listOf(
+                LayoutBox(Relative(0.1f), Relative(0.75f), PixelLeft(10),Center(), children = listOf(
+                    Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
+                    Text("FPS:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
+                    fpsGuiElement
+                )),
+                LayoutBox(Relative(0.085f), Relative(0.75f), PixelLeft(10),Center(), children = listOf(
+                    Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
+                    Text("UPS:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
+                    upsGuiElement
+                )),
+                LayoutBox(AspectRatio(), Relative(0.75f), PixelLeft(10), Center(), children = listOf(
+                    parallelImageElement
+                )),
             )),
-            LayoutBox(Relative(0.1f), Relative(0.75f), PixelLeft(200),Center(), children = listOf(
-                Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
-                Text("UPS:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
-                upsGuiElement
-            )),
-            LayoutBox(AspectRatio(), Relative(0.75f), PixelLeft(400), Center(), children = listOf(
-                parallelImageElement
-            )),
+
             LayoutBox(Relative(0.13f), Relative(0.75f), PixelRight(10),Center(), children = listOf(
                 Box(Relative(1f), Relative(1f),Center(),Center(), Color(30,30,30)),
                 Text("Anzahl:",4f, StaticResources.arial,30f, TextMode.Left,false, PixelLeft(5), Center(), color = Color(255f,255f,255f)),
                 countText
             ))
-
         )
-
     }
 }

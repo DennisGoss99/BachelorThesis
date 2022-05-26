@@ -34,7 +34,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
         children = listOf(
             Scrollbar(Relative(1f), Relative(1f), Center(), Center(), true, false, StaticResources.backGroundColor, innerElement =
                 LayoutBox(Relative(1f), Relative(1.5f), Center(), PixelTop(0), children = listOf(
-                    UIList(Relative(1f), Relative(0.75f), Center(), PixelTop(0), children = listOf(
+                    UIList(Relative(1f), Relative(0.75f), Center(), PixelTop(0), true, children = listOf(
                         Text("Settings:", 5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(30)),
 
                         Text("Execute Parallel:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),

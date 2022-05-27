@@ -52,7 +52,7 @@ class Scrollbar (widthConstraint : IScaleConstraint,
         this.children = tempChildren
     }
 
-    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+    override var onUpdate: ((dt: Float, t: Float) -> Unit)? = {
             dt: Float, t: Float ->
 
         if(verticalScrollBarVisibility){

@@ -14,7 +14,7 @@ import java.util.*
 
 open class Text(text : String,
                 fontSize : Float,
-                private val font : FontType,
+                val font : FontType,
                 val maxLineLength : Float,
                 var textMode : TextMode,
                 var multiline : Boolean = false,

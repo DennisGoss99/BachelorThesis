@@ -23,7 +23,7 @@ class Button (text : String,
             Text(text,3.5f, fontType, 10f, TextMode.Center, true, Center(), Center(), color = StaticResources.fontColor))
     }
 
-    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+    override var onUpdate: ((dt: Float, t: Float) -> Unit)? = {
         dt: Float, t: Float ->
         checkOnHover()
         checkPressed()

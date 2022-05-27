@@ -20,7 +20,7 @@ class TextCursor (widthConstraint : IScaleConstraint,
     var lastRender = 0f
 
 
-    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+    override var onUpdate: ((dt: Float, t: Float) -> Unit)? = {
         dt, t ->
 
         isVisible = hasFocus && (t - lastRender).toInt() <= 0.5

@@ -73,7 +73,7 @@ open class TextBox(text : String,
         textGuiElement.refresh()
     }
 
-    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+    override var onUpdate: ((dt: Float, t: Float) -> Unit)? = {
             dt: Float, t: Float ->
         checkOnHover()
 

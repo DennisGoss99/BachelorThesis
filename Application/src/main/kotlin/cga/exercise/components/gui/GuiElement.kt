@@ -47,10 +47,10 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
         this.children = children
     }
 
-    protected open val onClick : ((Int, Int) -> Unit)? = null
+    open var onClick : ((Int, Int) -> Unit)? = null
     protected open val onFocus : (() -> Unit)? = null
     open val onHover : (() -> Unit)? = null
-    open val onUpdate : ((dt: Float, t: Float) -> Unit)? = null
+    open var onUpdate : ((dt: Float, t: Float) -> Unit)? = null
     open val onKeyDown : ((Int, Int, Int) -> Unit)? = null
 
     private fun getMasterParent() : GuiElement{
@@ -67,7 +67,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     fun checkOnHover(){
         val elementPosition = getWorldPixelPosition()
         val mousePosition = SceneStats.mousePosition
-        isHovering = if(elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y){
+        isHovering = if(isVisible && elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y){
             !children.any{ it.isHovering }
         }else
             false
@@ -76,7 +76,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     fun checkOnHoverOrChildHover(){
         val elementPosition = getWorldPixelPosition()
         val mousePosition = SceneStats.mousePosition
-        isHovering = elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y
+        isHovering = isVisible && elementPosition.x <= mousePosition.x && elementPosition.z >= mousePosition.x && elementPosition.y >= mousePosition.y && elementPosition.w <= mousePosition.y
     }
 
     fun checkPressed(){
@@ -98,7 +98,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
             if(!childrenFocus){
                 when{
-                    onFocus == null && onClick == null -> return false
+                    !isVisible || (onFocus == null && onClick == null) -> return false
                     onFocus != null -> {
                         focusedElement = this
                         hasFocus = true

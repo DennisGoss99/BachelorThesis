@@ -33,7 +33,7 @@ class Slider(
 
     private var pressLastFrame = false
 
-    override val onUpdate: ((dt: Float, t: Float) -> Unit) = {
+    override var onUpdate : ((dt: Float, t: Float) -> Unit)? = {
             dt: Float, t: Float ->
         sliderKnob.checkOnHover()
         sliderKnob.checkPressed()

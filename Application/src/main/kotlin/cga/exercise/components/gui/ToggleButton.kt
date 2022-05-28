@@ -56,7 +56,7 @@ class ToggleButton(
             MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)
 
         if(isHovering)
-            color = colorBackground.getCopy(20f)
+            color = colorBackground.getCopy{ it + 20f}
         else
             color = colorBackground
     }

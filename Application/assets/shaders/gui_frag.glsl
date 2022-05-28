@@ -84,6 +84,6 @@ void main(void){
         float distance = 1 - texture(texture2D, textureCoords).a;
         float alpha = 1 - smoothstep(width, width + edge, distance);
 
-        color = vec4(elementColor.xyz, alpha);
+        color = vec4(elementColor.xyz, alpha * elementColor.a);
     }
 }

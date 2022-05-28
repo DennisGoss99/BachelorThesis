@@ -33,6 +33,35 @@ class Color : Vector4f {
         val nothing = Color(0,0,0,0)
     }
 
+
+    var r
+        get() = x * 255f
+        set(value) {x = value/255f}
+    var g
+        get() = y * 255f
+        set(value) {y = value/255f}
+    var b
+        get() = z * 255f
+        set(value) {z = value/255f}
+    var a
+        get() = w * 255f
+        set(value) {w = value/255f}
+
+
+    constructor(color : Vector4f){
+        x = color.x
+        y = color.y
+        z = color.z
+        w = color.w
+    }
+
+    constructor(color : Color){
+        r = color.r
+        g = color.g
+        b = color.b
+        a = color.a
+    }
+
     constructor(hex : String){
         var curser = 0
 
@@ -68,8 +97,8 @@ class Color : Vector4f {
         w = a / 255f
     }
 
-    fun getCopy(adder : Float) : Vector4f{
-        return Vector4f(x + adder / 255f,y + adder / 255f,z + adder / 255f, w)
+    fun getCopy(changedValue : ((Float) -> Float) = {v -> v}) : Color{
+        return Color(changedValue(r), changedValue(g), changedValue(b), a)
     }
 
     fun toVector3f() : Vector3f = Vector3f(x, y, z)

@@ -35,5 +35,11 @@ class Image (var texture: Texture2D,
         super.cleanup()
         texture.cleanup()
     }
+
+    override fun disable(b: Boolean) {
+        isDisabled = b
+        children.forEach { it.disable(b) }
+    }
+
 }
 

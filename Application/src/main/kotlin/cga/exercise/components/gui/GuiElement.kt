@@ -7,7 +7,6 @@ import cga.exercise.components.gui.constraints.Relative
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.game.SceneStats
 import cga.exercise.game.StaticResources
-import cga.framework.GameWindow
 import org.joml.Vector2f
 import org.joml.Vector4f
 
@@ -29,11 +28,15 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     }
 
     var isVisible = true
+    var isDisabled = false
+        protected set
     var hasFocus = false
     var isHovering = false
     var isPressed = true
 
     open var color : Vector4f = StaticResources.backGroundColor
+    private var storeColor = color
+
 
     var children: List<GuiElement> = listOf()
         set(value) {
@@ -58,6 +61,9 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     }
 
     fun globalOnUpdateEvent(dt: Float, t: Float){
+        if (!isVisible || isDisabled)
+            return
+
         onUpdate?.invoke(dt, t)
         children.forEach {
             it.globalOnUpdateEvent(dt, t)
@@ -98,7 +104,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
             if(!childrenFocus){
                 when{
-                    !isVisible || (onFocus == null && onClick == null) -> return false
+                    !isVisible || isDisabled || (onFocus == null && onClick == null) -> return false
                     onFocus != null -> {
                         focusedElement = this
                         hasFocus = true
@@ -141,6 +147,22 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     open fun updateVariables(){
         refresh()
         children.forEach { it.updateVariables() }
+    }
+
+    open fun disable(b : Boolean){
+        if(!isDisabled && b)
+            storeColor = color
+
+        color = if(b) {
+            val c = Color(color).getCopy()
+            c.a = 50f
+            c
+        }
+        else
+            storeColor
+
+        isDisabled = b
+        children.forEach { it.disable(b) }
     }
 
 }

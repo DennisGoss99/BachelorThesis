@@ -153,6 +153,7 @@ class StaticResources {
         val componentColor4 = Color(246, 246, 246)
         val fontColor = Color(255, 255, 255)
         val fontColor1 = Color(156, 156, 156)
+        val fontColorDisabled = Color(200, 200, 200)
 
         val systemCursors = mapOf<CursorStyle, Long?>(
             CursorStyle.Arrow to org.lwjgl.glfw.GLFW.glfwCreateStandardCursor(org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR),

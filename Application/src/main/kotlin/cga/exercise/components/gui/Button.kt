@@ -17,6 +17,7 @@ class Button (text : String,
               override var onClick: ((Int, Int) -> Unit)? = null,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)
 {
+
     init {
         children = listOf(
             Box(Relative(0.984375f),Relative(0.96875f), PixelLeft(0), PixelTop(0) , color = StaticResources.componentColor, cornerRadius),
@@ -39,6 +40,5 @@ class Button (text : String,
         if(isHovering)
             MouseCursor.setWindowCursor(MouseCursor.CursorStyle.Hand)
     }
-
 
 }

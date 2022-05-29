@@ -19,8 +19,8 @@ class EditText (text : String,
                 multiline : Boolean = false,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                fontColor : Vector4f = StaticResources.fontColor,
-                cursorColor : Vector4f) : Text(text, fontSize, font, maxLineLength, textMode, multiline, translateXConstraint, translateYConstraint, fontColor) {
+                fontColor : Color = StaticResources.fontColor,
+                cursorColor : Color) : Text(text, fontSize, font, maxLineLength, textMode, multiline, translateXConstraint, translateYConstraint, fontColor) {
 
     var realCursorX = 0f
         private set

@@ -9,7 +9,7 @@ import org.joml.Vector4f
 class Circle(diameterConstraint : IScaleConstraint,
              translateXConstraint : ITranslateConstraint,
              translateYConstraint : ITranslateConstraint,
-             color: Vector4f = Vector4f(1f,1f,1f,1f),
+             color : Color = Color(255,255,255),
              override var onClick: ((Int, Int) -> Unit)? = null,
              override val onFocus: (() -> Unit)? = null,
              children: List<GuiElement> = listOf()) : Box(diameterConstraint, AspectRatio(), translateXConstraint, translateYConstraint, color, children = children){

@@ -27,7 +27,7 @@ class MainGuiPage : GuiElement(Relative(1f), Relative(0.05f), Center(), PixelTop
         }
 
 
-    override var color: Vector4f = Color(40,40,40)
+    override var color : Color = Color(40,40,40)
 
     private val parallelIcon = Texture2D("assets/textures/gui/parallelIcon.png", true)
     private val parallelFalseIcon = Texture2D("assets/textures/gui/parallelFalseIcon.png", true)

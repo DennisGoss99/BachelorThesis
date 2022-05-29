@@ -12,7 +12,7 @@ class Image (var texture: Texture2D,
              heightConstraint : IScaleConstraint,
              translateXConstraint : ITranslateConstraint,
              translateYConstraint : ITranslateConstraint,
-             color : Vector4f = Vector4f(0f,0f,0f,0f),
+             color : Color = Color(0,0,0,0),
              cornerRadius : Int = 0,
              children: List<GuiElement> = listOf()) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius, children = children) {
 

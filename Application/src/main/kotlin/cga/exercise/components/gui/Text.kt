@@ -20,7 +20,7 @@ open class Text(text : String,
                 var multiline : Boolean = false,
                 translateXConstraint : ITranslateConstraint,
                 translateYConstraint : ITranslateConstraint,
-                override var color: Vector4f = StaticResources.fontColor) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
+                override var color : Color = StaticResources.fontColor) : GuiElement(TextScaleConstrain(),TextScaleConstrain(), translateXConstraint, translateYConstraint, children = listOf()) {
 
     var fontSize : Float = 0.0f
         set(value) {

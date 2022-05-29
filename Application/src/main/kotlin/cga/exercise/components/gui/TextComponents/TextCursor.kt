@@ -14,7 +14,7 @@ class TextCursor (widthConstraint : IScaleConstraint,
                   heightConstraint : IScaleConstraint,
                   translateXConstraint : ITranslateConstraint,
                   translateYConstraint : ITranslateConstraint,
-                  override var color : Vector4f = Vector4f(0f,0f,0f,0f)) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color) {
+                  override var color : Color = Color(0,0,0,0)) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color) {
 
     val offsetX = 0.004f
 

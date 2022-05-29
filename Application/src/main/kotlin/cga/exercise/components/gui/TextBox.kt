@@ -13,14 +13,14 @@ open class TextBox(text : String,
                    heightConstraint : IScaleConstraint,
                    translateXConstraint : ITranslateConstraint,
                    translateYConstraint : ITranslateConstraint,
-                   backgroundColor: Vector4f = StaticResources.componentColor,
-                   fontColor: Vector4f = StaticResources.fontColor,
+                   backgroundColor: Color = StaticResources.componentColor,
+                   fontColor: Color = StaticResources.fontColor,
                    textMode: TextMode = TextMode.Center,
                    multiLine : Boolean = true,
                    cornerRadius : Int = 0,
                    fontSize : Float = 4f,
                    fontType: FontType = StaticResources.standardFont,
-                   cursorColor : Vector4f = Color(20,20,20),
+                   cursorColor : Color = Color(20,20,20),
                    private val OnValueChanged : ((String) -> Unit)? = null) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, backgroundColor, cornerRadius)
 {
     open var text : String = ""

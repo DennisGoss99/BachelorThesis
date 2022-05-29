@@ -10,7 +10,15 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
 
 
     var executeParallel = true
-    private val parallelToggleButtonOnValueChanged = { b : Boolean -> executeParallel = b }
+    private val parallelToggleButtonOnValueChanged = { b : Boolean -> executeParallel = b; jobCountTextBox.disable(!b) }
+
+    var jobCount = 4
+    private val jobCountOnValueChanged = { s : String -> jobCount = (s).toIntOrNull() ?: 1 }
+
+    private val jobCountTextBox = LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+        Text("How many jobs will be used.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+        NumberBox(jobCount.toString(), PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), textMode = TextMode.Center, fontSize = 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = jobCountOnValueChanged)
+    ))
 
     var updateFrequency = 60
     private val sliderUpdateFrequencyOnValueChanged = { f : Float -> updateFrequency = (f * 599f + 1).toInt(); updateFrequencyText.text = "$updateFrequency per sec" }
@@ -18,11 +26,9 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
     private val updateFrequencyText = Text("$updateFrequency per sec", 2.5f, StaticResources.standardFont,30f,TextMode.Right, false, PixelRight(60 + 213 + 10), Center(), StaticResources.fontColor1)
 
     private val sliderObjectCountOnValueChanged = { f : Float -> updateObjectCount(0, (f * countMultiplier).toInt()) }
-    private val textBoxObjectCountOnValueChanged = {
-            s : String -> updateObjectCount(1, (s).toIntOrNull() ?: 0)
-    }
+    private val textBoxObjectCountOnValueChanged = { s : String -> updateObjectCount(1, (s).toIntOrNull() ?: 0) }
 
-    private val countMultiplier = 10000
+    private val countMultiplier = 16500
     var objectCount = 0
 
 
@@ -59,6 +65,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
                             Text("The collision detection and gravity system are executed parallel.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                             ToggleButton(executeParallel, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, parallelToggleButtonOnValueChanged)
                         )),
+                        jobCountTextBox,
 
                         Text("Test2:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
                         LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(

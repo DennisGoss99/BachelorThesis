@@ -1,17 +1,13 @@
-import cga.exercise.components.collision.SAP
-import cga.exercise.components.collision.TestHitBox
 import cga.exercise.components.gravity.GravityObjectContainer
 import cga.exercise.components.gravity.GravityProperties
 import cga.exercise.components.gravity.IGravity
 import cga.exercise.components.gravity.TestGravityObject
-import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.joml.Vector3f
 import org.junit.Test
 import kotlin.math.roundToInt
 import kotlin.random.Random
-import kotlin.random.nextInt
 import kotlin.system.measureNanoTime
 
 class GravitySystemTest {

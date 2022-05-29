@@ -34,8 +34,8 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     var isHovering = false
     var isPressed = true
 
-    open var color : Vector4f = StaticResources.backGroundColor
-    private var storeColor = color
+    open var color : Color = StaticResources.backGroundColor
+    private var storeColor : Color? = color
 
 
     var children: List<GuiElement> = listOf()
@@ -159,7 +159,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
             c
         }
         else
-            storeColor
+            storeColor ?: color
 
         isDisabled = b
         children.forEach { it.disable(b) }

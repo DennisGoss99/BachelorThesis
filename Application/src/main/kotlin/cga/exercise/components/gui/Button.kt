@@ -12,7 +12,7 @@ class Button (text : String,
               heightConstraint : IScaleConstraint,
               translateXConstraint : ITranslateConstraint,
               translateYConstraint : ITranslateConstraint,
-              override var color: Vector4f = StaticResources.componentColor2,
+              override var color : Color = StaticResources.componentColor2,
               cornerRadius : Int = 0,
               override var onClick: ((Int, Int) -> Unit)? = null,
               fontType: FontType = StaticResources.standardFont) : Box(widthConstraint, heightConstraint, translateXConstraint, translateYConstraint, color, cornerRadius)

@@ -20,7 +20,11 @@ class Game(width: Int,
         scene = Scene(this)
     }
 
-    override fun shutdown() = scene.cleanup()
+    override fun shutdown(){
+        super.shutdown()
+        scene.cleanup()
+        scene.shutdown()
+    }
 
     override suspend fun update(dt: Float, t: Float) {
         scene.update(dt, t)

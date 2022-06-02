@@ -1,56 +1,55 @@
 package cga.exercise.game.Pages
 
+
 import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
-import cga.exercise.components.texture.Texture2D
+import cga.exercise.game.Settings
 import cga.exercise.game.StaticResources
+import cga.exercise.game.Tester
 
-class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relative(1f), Relative(1f), Center(), Center()) {
+class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relative(1f), Relative(1f), Center(), Center()) {
 
+    var settings : Settings = Settings.loadSettings()
 
-    var executeParallel = true
-    private val parallelToggleButtonOnValueChanged = { b : Boolean -> executeParallel = b; jobCountTextBox.disable(!b) }
+    var testScript : Tester? = Tester.loadTester()
 
-    var jobCount = 4
-    private val jobCountOnValueChanged = { s : String -> jobCount = (s).toIntOrNull() ?: 1 }
+    private val parallelToggleButtonOnValueChanged = { b : Boolean -> settings.executeParallel = b; jobCountTextBox.disable(!b) }
+
+    private val jobCountOnValueChanged = { s : String -> settings.jobCount = (s).toIntOrNull() ?: 1 }
 
     private val jobCountTextBox = LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-        Text("How many jobs will be used.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-        NumberBox(jobCount.toString(), PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), textMode = TextMode.Center, fontSize = 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = jobCountOnValueChanged)
+        Text("How many jobs will be used. (Default: number of System Cores [${Runtime.getRuntime().availableProcessors()}] )", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+        NumberBox(settings.jobCount.toString(), PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), textMode = TextMode.Center, fontSize = 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = jobCountOnValueChanged)
     ))
 
-    var updateFrequency = 60
-    private val sliderUpdateFrequencyOnValueChanged = { f : Float -> updateFrequency = (f * 599f + 1).toInt(); updateFrequencyText.text = "$updateFrequency per sec" }
+    private val sliderUpdateFrequencyOnValueChanged = { f : Float -> settings.updateFrequency = (f * 599f + 1).toInt(); updateFrequencyText.text = "${settings.updateFrequency} per sec" }
 
-    private val updateFrequencyText = Text("$updateFrequency per sec", 2.5f, StaticResources.standardFont,30f,TextMode.Right, false, PixelRight(60 + 213 + 10), Center(), StaticResources.fontColor1)
+    private val updateFrequencyText = Text("${settings.updateFrequency} per sec", 2.5f, StaticResources.standardFont,30f,TextMode.Right, false, PixelRight(60 + 213 + 10), Center(), StaticResources.fontColor1)
 
     private val sliderObjectCountOnValueChanged = { f : Float -> updateObjectCount(0, (f * countMultiplier).toInt()) }
     private val textBoxObjectCountOnValueChanged = { s : String -> updateObjectCount(1, (s).toIntOrNull() ?: 0) }
 
     private val countMultiplier = 16500
-    var objectCount = 0
 
+    private val sliderText = NumberBox(settings.objectCount.toString(), PixelWidth(60),PixelHeight(25), PixelRight(60 + 213 + 10), Center(), Color.nothing, StaticResources.fontColor1, TextMode.Right,false, 0, 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = textBoxObjectCountOnValueChanged)
+    private val slider = Slider((settings.objectCount / countMultiplier.toFloat()).coerceIn(0f,1f), PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderObjectCountOnValueChanged)
 
-    private val sliderText = NumberBox("0", PixelWidth(60),PixelHeight(25), PixelRight(60 + 213 + 10), Center(), Color.nothing, StaticResources.fontColor1, TextMode.Right,false, 0, 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = textBoxObjectCountOnValueChanged)
-    private val slider = Slider(0f,PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderObjectCountOnValueChanged)
+    private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> settings.useSampleData = b }
 
-    var useSampleData = true
-    private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> useSampleData = b }
+    private val testResultOutputToggleButtonOnValueChanged = { b : Boolean -> settings.shouldTestResultOutput = b; testResultOutput.forEach { it.disable(!b) } }
 
-
-    var shouldTestResultOutput = true
-    private val testResultOutputToggleButtonOnValueChanged = { b : Boolean -> shouldTestResultOutput = b; testResultOutput.forEach { it.disable(!b) } }
+    //private val texResultPathOnValueChanged = { s : String -> settings.testResultPath = s }
 
     val testResultOutput = listOf(
         LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
             Text("How many update cycles will be executed.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
             NumberBox("1000", PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), fontSize = 2.5f, cursorColor = StaticResources.highlightColor)
         )),
-        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-            Text("Sets the output path.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-            TextBox("out/result.txt", PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), textMode = TextMode.Left, fontSize = 2.5f, cursorColor = StaticResources.highlightColor)
-        ))
+//        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+//            Text("Sets the output path.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+//            //TextBox(settings.testResultPath, PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), textMode = TextMode.Left, fontSize = 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = texResultPathOnValueChanged)
+//        ))
     )
 
     init {
@@ -63,7 +62,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
                         Text("Execute Parallel:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(35)),
                         LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
                             Text("The collision detection and gravity system are executed parallel.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(executeParallel, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, parallelToggleButtonOnValueChanged)
+                            ToggleButton(settings.executeParallel, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, parallelToggleButtonOnValueChanged)
                         )),
                         jobCountTextBox,
 
@@ -80,12 +79,12 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
                         LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                             Text("This setting is used to limit how many updates per Second \ncan occur. (The minimum amount of updates per Frame is one)", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                             updateFrequencyText,
-                            Slider(((updateFrequency -1f) / 599f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderUpdateFrequencyOnValueChanged)
+                            Slider(((settings.updateFrequency -1f) / 599f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderUpdateFrequencyOnValueChanged)
                         )),
                         Text("Objects:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
                         LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                             Text("If true, predetermined sample data will be used to spawn \nthe selected amount of Objects.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(useSampleData, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, useSampleDataToggleButtonOnValueChanged)
+                            ToggleButton(settings.useSampleData, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, useSampleDataToggleButtonOnValueChanged)
                         )),
                         LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
                             Text("How many Objects will be generated.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
@@ -95,20 +94,20 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
                         Text("Test Result Output:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
                         LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
                             Text("Should tests be executed.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(shouldTestResultOutput, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, testResultOutputToggleButtonOnValueChanged)
+                            ToggleButton(settings.shouldTestResultOutput, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, testResultOutputToggleButtonOnValueChanged)
                         )),
                         testResultOutput[0],
-                        testResultOutput[1],
+//                        testResultOutput[1],
                     )),
 
+                    Button("AutoTester", PixelWidth(160), PixelHeight(60), PixelRight(55 + 160 + 10), PixelBottom(40), onClick = autoTesterButtonOnClick),
                     Button("Start", PixelWidth(160), PixelHeight(60), PixelRight(55), PixelBottom(40), onClick = startButtonOnClick)
-    //        Text("Paralles Verarbeiten:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(360), color = Color(255f,255f,255f)),
-    //        ToggleButton(false,PixelWidth(80), PixelHeight(40), Center(), PixelBottom(320), true),
-    //        Text("Anzahl Himmelskörper:",4f, StaticResources.standardFont,30f, TextMode.Left,false, Center(), PixelBottom(220), color = Color(255f,255f,255f)),
-    //        textBoxCount,
-    //        Button("Start", PixelWidth(200), PixelHeight(80), Center(), PixelBottom(20), onClick = startButtonOnClick),
             )))
         )
+
+
+        jobCountTextBox.disable(!settings.executeParallel)
+        testResultOutput.forEach { it.disable(!settings.shouldTestResultOutput) }
 
     }
 
@@ -120,15 +119,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relativ
         if(sender == 1)
             slider.value = (value / countMultiplier.toFloat()).coerceIn(0f,1f)
 
-
-        objectCount = value
+        settings.objectCount = value
     }
-
-
-
-
-
-
-
 
 }

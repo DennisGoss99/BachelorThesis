@@ -60,7 +60,6 @@ class ParallelSAP : AbstractSAP() {
             }
         }
 
-
         hitBoxes.foreachParallelIndexed(jobCount){ hitBox, _ ->
             if(hitBox.collided.get()){
 

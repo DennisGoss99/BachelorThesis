@@ -32,6 +32,44 @@ class SAPTest {
     }
 
     @Test
+    fun checkSetAllBoxes(){
+        runBlocking {
+            val sap = SAP()
+            val sap2 = ParallelSAP()
+
+
+            val posList = MutableList<Vector3f>(1000){
+                Vector3f(Random.nextInt(-1000, 1000).toFloat(),Random.nextInt(-1000, 1000).toFloat(),Random.nextInt(-1000, 1000).toFloat())
+            }
+
+            sap.setAllBoxes(MutableList(1000){
+                val tH = TestHitBox(it, posList[it])
+                tH.updateEndPoints()
+                tH
+            })
+
+            repeat(1000) {
+                val testBox = TestHitBox(it, posList[it])
+                sap2.insertBox(testBox)
+            }
+
+            sap.sort()
+            sap2.sort()
+
+            for (i in 0 until 1000)
+            {
+                assertEquals(sap.hitBoxes[i].minEndPoints[0].value, sap2.hitBoxes[i].minEndPoints[0].value)
+                assertEquals(sap.hitBoxes[i].minEndPoints[1].value, sap2.hitBoxes[i].minEndPoints[1].value)
+                assertEquals(sap.hitBoxes[i].minEndPoints[2].value, sap2.hitBoxes[i].minEndPoints[2].value)
+                assertEquals(sap.hitBoxes[i].maxEndPoints[0].value, sap2.hitBoxes[i].maxEndPoints[0].value)
+                assertEquals(sap.hitBoxes[i].maxEndPoints[1].value, sap2.hitBoxes[i].maxEndPoints[1].value)
+                assertEquals(sap.hitBoxes[i].maxEndPoints[2].value, sap2.hitBoxes[i].maxEndPoints[2].value)
+            }
+
+        }
+    }
+
+    @Test
     fun checkCollision(){
         runBlocking {
             val sap = SAP()

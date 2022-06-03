@@ -35,14 +35,12 @@ class NumberBox(text : String,
 
     override val onKeyDown: (Int, Int, Int) -> Unit = { key: Int, scancode: Int, mode: Int ->
         if(StaticResources.keyIsDigit(key, mode) || StaticResources.keyIsInstruction(key, mode))
-        {
-            if((children[0] as Text).text.length == 1 && (key == GLFW.GLFW_KEY_BACKSPACE || key == GLFW.GLFW_KEY_DELETE ))
-                super.text = "0"
-            else
-                super.onKeyDown(key, scancode, mode)
-        }
-
+            super.onKeyDown(key, scancode, mode)
     }
 
+    override val onLossFocus: (() -> Unit) = {
+        if(this.text.isBlank())
+            this.text = "0"
+    }
 
 }

@@ -1,19 +1,16 @@
 package cga.exercise.components.collision
 
-import cga.framework.foreachParallelIndexed
-import kotlinx.coroutines.*
-
 
 abstract class AbstractSAP{
 
     var idCounter = 0
         get() = field++
 
-    val hitBoxes : MutableList<IHitBox> = mutableListOf()
+    var hitBoxes : MutableList<IHitBox> = mutableListOf()
 
-    protected val endPointsX = mutableListOf<EndPoint>()
-    protected val endPointsY = mutableListOf<EndPoint>()
-    protected val endPointsZ = mutableListOf<EndPoint>()
+    protected var endPointsX = mutableListOf<EndPoint>()
+    protected var endPointsY = mutableListOf<EndPoint>()
+    protected var endPointsZ = mutableListOf<EndPoint>()
 
     fun clear(){
         idCounter = 0
@@ -35,6 +32,31 @@ abstract class AbstractSAP{
 
         endPointsZ.add(hitBox.minEndPoints[2])
         endPointsZ.add(hitBox.maxEndPoints[2])
+    }
+
+    fun setAllBoxes(hitBoxes: MutableList<IHitBox>){
+        this.hitBoxes = hitBoxes
+
+        endPointsX = MutableList(hitBoxes.size * 2){
+            if(it % 2 == 0)
+                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].minEndPoints[0].value,true)
+            else
+                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].maxEndPoints[0].value,false)
+        }
+
+        endPointsY = MutableList(hitBoxes.size * 2){
+            if(it % 2 == 0)
+                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].minEndPoints[1].value,true)
+            else
+                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].maxEndPoints[1].value,false)
+        }
+
+        endPointsZ = MutableList(hitBoxes.size * 2){
+            if(it % 2 == 0)
+                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].minEndPoints[2].value,true)
+            else
+                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].maxEndPoints[2].value,false)
+        }
     }
 
     fun remove(hitBox : IHitBox){

@@ -24,6 +24,7 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     var focusedElement : GuiElement?
     get() = getMasterParent()._focusedElement
     set(value) {
+        getMasterParent()._focusedElement?.onLossFocus?.let { it() }
         getMasterParent()._focusedElement = value
     }
 
@@ -52,9 +53,11 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
 
     open var onClick : ((Int, Int) -> Unit)? = null
     protected open val onFocus : (() -> Unit)? = null
+    protected open val onLossFocus  : (() -> Unit)? = null
     open val onHover : (() -> Unit)? = null
     open var onUpdate : ((dt: Float, t: Float) -> Unit)? = null
     open val onKeyDown : ((Int, Int, Int) -> Unit)? = null
+
 
     private fun getMasterParent() : GuiElement{
         return parent?.getMasterParent() ?: this
@@ -93,7 +96,11 @@ abstract class GuiElement(var widthConstraint : IScaleConstraint = Relative(1f),
     fun globalClickEvent(button: Int, mode: Int, position: Vector2f) : Boolean{
         val elementPosition = getWorldPixelPosition()
 
+        if(hasFocus){
+            focusedElement = null
+        }
         hasFocus = false
+
         var childrenFocus = false
         children.forEach {
             if(it.globalClickEvent(button, mode, position))

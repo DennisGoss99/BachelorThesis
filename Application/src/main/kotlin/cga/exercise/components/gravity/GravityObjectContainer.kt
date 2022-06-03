@@ -8,7 +8,7 @@ import kotlin.math.pow
 class GravityObjectContainer{
 
     var gravityObjectsApply : MutableList<IGravity> = mutableListOf()
-    private var gravityObjectsGetFrom : MutableList<IGravity> = mutableListOf()
+    var gravityObjectsGetFrom : MutableList<IGravity> = mutableListOf()
 
     private val gravitationalConstant = 6.674f
 

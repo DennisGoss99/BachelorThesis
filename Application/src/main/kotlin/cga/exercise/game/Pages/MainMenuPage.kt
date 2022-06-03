@@ -35,7 +35,8 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
     private val sliderText = NumberBox(settings.objectCount.toString(), PixelWidth(60),PixelHeight(25), PixelRight(60 + 213 + 10), Center(), Color.nothing, StaticResources.fontColor1, TextMode.Right,false, 0, 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = textBoxObjectCountOnValueChanged)
     private val slider = Slider((settings.objectCount / countMultiplier.toFloat()).coerceIn(0f,1f), PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderObjectCountOnValueChanged)
 
-    private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> settings.useSampleData = b }
+    private val sampleCount = 16500
+    private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> settings.useSampleData = b; if (b) setUseSampleData() }
 
     private val testResultOutputToggleButtonOnValueChanged = { b : Boolean -> settings.shouldTestResultOutput = b; testResultOutput.forEach { it.disable(!b) } }
 
@@ -105,13 +106,19 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
             )))
         )
 
-
         jobCountTextBox.disable(!settings.executeParallel)
         testResultOutput.forEach { it.disable(!settings.shouldTestResultOutput) }
 
     }
 
     private fun updateObjectCount(sender : Int, value : Int){
+
+        if (settings.useSampleData && value > sampleCount){
+            sliderText.text = sampleCount.toString()
+            slider.value = (sampleCount / countMultiplier.toFloat()).coerceIn(0f,1f)
+            settings.objectCount = sampleCount
+            return
+        }
 
         if(sender == 0)
             sliderText.text = value.toString()
@@ -120,6 +127,14 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
             slider.value = (value / countMultiplier.toFloat()).coerceIn(0f,1f)
 
         settings.objectCount = value
+    }
+
+    private fun setUseSampleData(){
+        if(settings.objectCount > sampleCount){
+            sliderText.text = sampleCount.toString()
+            slider.value = (sampleCount / countMultiplier.toFloat()).coerceIn(0f,1f)
+            settings.objectCount = sampleCount
+        }
     }
 
 }

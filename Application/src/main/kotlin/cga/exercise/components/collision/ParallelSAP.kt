@@ -5,7 +5,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ParallelSAP : AbstractSAP() {
+class ParallelSAP(jobCount : Int) : AbstractSAP() {
 
     var jobCount = 1
         set(value) {
@@ -13,6 +13,10 @@ class ParallelSAP : AbstractSAP() {
                 throw Exception("jobCount can't be lower then 1")
             field = value
         }
+
+    init {
+        this.jobCount = jobCount
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun sort() {

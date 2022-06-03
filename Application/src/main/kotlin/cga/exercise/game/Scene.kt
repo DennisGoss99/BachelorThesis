@@ -7,7 +7,6 @@ import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial
 import cga.exercise.components.geometry.hitbox.HitBoxRendererInstancing
-import cga.exercise.components.geometry.hitbox.HitBoxRendererUniqueModel
 import cga.exercise.components.geometry.hitbox.IHitBoxRenderer
 import cga.exercise.components.geometry.material.Material
 import cga.exercise.components.geometry.material.OverlayMaterial
@@ -15,9 +14,7 @@ import cga.exercise.components.geometry.mesh.Renderable
 import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
-import cga.exercise.components.gravity.GravityObjectContainer
-import cga.exercise.components.gravity.GravityHitBox
-import cga.exercise.components.gravity.GravityProperties
+import cga.exercise.components.gravity.*
 import cga.exercise.components.gui.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.Moon
@@ -37,8 +34,6 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
-import kotlin.system.measureNanoTime
-import kotlin.system.measureTimeMillis
 
 class SceneStats{
     companion object{
@@ -130,7 +125,7 @@ class Scene(private val window: GameWindow) {
 
     private var sap : AbstractSAP = SAP()
     private var hitBoxes : IHitBoxRenderer = HitBoxRendererInstancing()
-    private val gravityContainer = GravityObjectContainer()
+    private var gravityContainer : AbstractGravityManager = GravityManager()
 
     //scene setup
     init {
@@ -191,13 +186,18 @@ class Scene(private val window: GameWindow) {
 
         window.m_updatefrequency = settings.updateFrequency.toFloat()
 
-        sap = if(settings.executeParallel) {
-            val sap = ParallelSAP()
-            sap.jobCount = settings.jobCount
-            sap
-        }else SAP()
+        sap.clear()
         hitBoxes.clear()
         gravityContainer.clear()
+
+        if(settings.executeParallel) {
+            sap = ParallelSAP(settings.jobCount)
+            gravityContainer = ParallelGravityManager(settings.jobCount)
+        }else {
+            sap = SAP()
+            gravityContainer = GravityManager()
+        }
+
 
         if(settings.useSampleData){
             var file = File("assets/sampleData/sampleData.txt")
@@ -231,9 +231,9 @@ class Scene(private val window: GameWindow) {
                 it.updateEndPoints()
             }
 
-            gravityContainer.gravityObjectsApply = MutableList(settings.objectCount){
+            gravityContainer.setAll( MutableList(settings.objectCount){
                 GravityHitBox(hitBoxes.hitboxes[it],1f, Vector3f((Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10, (Random.nextFloat() -0.5f) * 10))
-            }
+            }, GravityProperties.adopter)
 
             sap.setAllBoxes(hitBoxes.hitboxes.toMutableList())
         }
@@ -358,20 +358,14 @@ class Scene(private val window: GameWindow) {
         }
         updateCounter++
 
-
-
         if(gameState == RenderCategory.FirstPerson){
 
-            if(mainMenu.settings.executeParallel)
-                gravityContainer.applyGravityParallel(4)
-            else
-                gravityContainer.applyGravity()
-
+            gravityContainer.applyGravity()
             hitBoxes.updateModelMatrix()
             sap.sort()
             sap.checkCollision()
 
-//            earth.orbit()
+            earth.orbit()
         }
     }
 

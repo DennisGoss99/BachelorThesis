@@ -5,10 +5,10 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import org.joml.Vector3f
 import kotlin.math.pow
 
-class GravityObjectContainer{
+ abstract class AbstractGravityManager{
 
-    var gravityObjectsApply : MutableList<IGravity> = mutableListOf()
-    var gravityObjectsGetFrom : MutableList<IGravity> = mutableListOf()
+    protected var gravityObjectsApply : MutableList<IGravity> = mutableListOf()
+    protected var gravityObjectsGetFrom : MutableList<IGravity> = mutableListOf()
 
     private val gravitationalConstant = 6.674f
 
@@ -24,7 +24,19 @@ class GravityObjectContainer{
                 gravityObjectsApply.add(gravityObject)
             }
         }
+    }
 
+    fun setAll(gravityObjects : MutableList<IGravity>, gravityProperties: GravityProperties){
+        when(gravityProperties){
+            GravityProperties.source -> gravityObjectsGetFrom = gravityObjects
+
+            GravityProperties.adopter -> gravityObjectsApply = gravityObjects
+
+            GravityProperties.sourceAndAdopter -> {
+                gravityObjectsGetFrom = gravityObjects
+                gravityObjectsApply = gravityObjects
+            }
+        }
     }
 
     fun removeID(id : Int){
@@ -37,7 +49,7 @@ class GravityObjectContainer{
         gravityObjectsGetFrom.clear()
     }
 
-    private fun applyGravityTo(ob1 : IGravity, ob2 : IGravity){
+    protected fun applyGravityTo(ob1 : IGravity, ob2 : IGravity){
         if (ob1 !== ob2) {
 
             val ob1Pos = ob1.getPosition()
@@ -54,26 +66,6 @@ class GravityObjectContainer{
         }
     }
 
-    fun applyGravity(){
-        for (ob1 in gravityObjectsApply)
-            for (ob2 in gravityObjectsGetFrom)
-                applyGravityTo(ob1, ob2)
-
-        for (ob1 in gravityObjectsApply)
-            ob1.applyObjectForce()
-
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    suspend fun applyGravityParallel(jobCount : Int){
-        gravityObjectsApply.foreachParallel(jobCount){ ob1 ->
-            for (ob2 in gravityObjectsGetFrom) {
-                applyGravityTo(ob1, ob2)
-            }
-        }
-
-        for (ob1 in gravityObjectsApply)
-            ob1.applyObjectForce()
-    }
+    abstract suspend fun applyGravity()
 
 }

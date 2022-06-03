@@ -1,4 +1,4 @@
-import cga.exercise.components.gravity.GravityObjectContainer
+import cga.exercise.components.gravity.AbstractGravityManager
 import cga.exercise.components.gravity.GravityProperties
 import cga.exercise.components.gravity.IGravity
 import cga.exercise.components.gravity.TestGravityObject
@@ -17,7 +17,7 @@ class GravitySystemTest {
     @Test
     fun checkGravitySystem(){
 
-        val GOC = GravityObjectContainer()
+        val GOC = AbstractGravityManager()
 
         val testObj1 = TestGravityObject(100f, Vector3f(100f))
         val testObj2 = TestGravityObject(100f, Vector3f(-100f))
@@ -35,7 +35,7 @@ class GravitySystemTest {
     @Test
     fun checkGravitySystemOrbitX(){
 
-        val GOC = GravityObjectContainer()
+        val GOC = AbstractGravityManager()
 
         val testObj1 = TestGravityObject(2f, Vector3f(0f), Vector3f(0f,0f,0f))
         val testObj2 = TestGravityObject(0.1f, Vector3f(20f,0f,0f), Vector3f(0f, 0.81694555f,0f))
@@ -53,7 +53,7 @@ class GravitySystemTest {
     @Test
     fun checkGravitySystemOrbitY(){
 
-        val GOC = GravityObjectContainer()
+        val GOC = AbstractGravityManager()
 
         val testObj1 = TestGravityObject(6f, Vector3f(0f), Vector3f(0f,0f,0f))
         val testObj2 = TestGravityObject(0.001f, Vector3f(0f,36f,0f), Vector3f(0f, 0f,1.054672f))
@@ -70,7 +70,7 @@ class GravitySystemTest {
     @Test
     fun checkGravitySystemOrbitZ(){
 
-        val GOC = GravityObjectContainer()
+        val GOC = AbstractGravityManager()
 
         val testObj1 = TestGravityObject(80f, Vector3f(0f), Vector3f(0f,0f,0f))
         val testObj2 = TestGravityObject(0.001f, Vector3f(0f,0f,600f), Vector3f(0.9433274f,0f, 0f))
@@ -89,8 +89,8 @@ class GravitySystemTest {
         runBlocking {
 
 
-            val GOC = GravityObjectContainer()
-            val GOCp = GravityObjectContainer()
+            val GOC = AbstractGravityManager()
+            val GOCp = AbstractGravityManager()
 
             val listGOC = mutableListOf<IGravity>()
             val listGOCp = mutableListOf<IGravity>()

@@ -15,13 +15,13 @@ import kotlin.math.pow
     fun add(gravityObject : IGravity, gravityProperties: GravityProperties) {
 
         when(gravityProperties){
-            GravityProperties.source -> gravityObjectsGetFrom.add(gravityObject)
+            GravityProperties.source -> if(!gravityObjectsGetFrom.contains(gravityObject)) gravityObjectsGetFrom.add(gravityObject)
 
-            GravityProperties.adopter -> gravityObjectsApply.add(gravityObject)
+            GravityProperties.adopter -> if(!gravityObjectsApply.contains(gravityObject)) gravityObjectsApply.add(gravityObject)
 
             GravityProperties.sourceAndAdopter -> {
-                gravityObjectsGetFrom.add(gravityObject)
-                gravityObjectsApply.add(gravityObject)
+                if(!gravityObjectsGetFrom.contains(gravityObject)) gravityObjectsGetFrom.add(gravityObject)
+                if(!gravityObjectsApply.contains(gravityObject)) gravityObjectsApply.add(gravityObject)
             }
         }
     }

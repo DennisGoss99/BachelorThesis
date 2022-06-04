@@ -76,7 +76,7 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      * Hint: last column of model matrix
      * @return position
      */
-    fun getPosition(): Vector3f {
+    fun getPosition() : Vector3f {
         val tempVector = Vector3f();
         modelMatrix.getColumn(3,tempVector)
         return tempVector;

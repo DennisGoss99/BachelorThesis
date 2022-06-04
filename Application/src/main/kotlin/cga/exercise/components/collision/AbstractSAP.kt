@@ -8,9 +8,9 @@ abstract class AbstractSAP{
 
     var hitBoxes : MutableList<IHitBox> = mutableListOf()
 
-    protected var endPointsX = mutableListOf<EndPoint>()
-    protected var endPointsY = mutableListOf<EndPoint>()
-    protected var endPointsZ = mutableListOf<EndPoint>()
+    protected var endPointsX : MutableList<EndPoint> = mutableListOf()
+    protected var endPointsY : MutableList<EndPoint> = mutableListOf()
+    protected var endPointsZ : MutableList<EndPoint> = mutableListOf()
 
     fun clear(){
         idCounter = 0
@@ -21,7 +21,8 @@ abstract class AbstractSAP{
     }
 
     fun insertBox(hitBox : IHitBox){
-        hitBoxes.add(hitBox)
+        if(!hitBoxes.contains(hitBox))
+            hitBoxes.add(hitBox)
         hitBox.updateEndPoints()
 
         endPointsX.add(hitBox.minEndPoints[0])
@@ -66,10 +67,11 @@ abstract class AbstractSAP{
         endPointsZ.removeAll{ it.owner.id == hitBox.id }
     }
 
+    fun collisionCount() = hitBoxes.fold(0){acc, iHitBox -> acc + if (iHitBox.collided.get()) 1 else 0}
+
     abstract suspend fun sort()
 
     abstract suspend fun checkCollision()
 
-    fun collisionCount() = hitBoxes.fold(0){acc, iHitBox -> acc + if (iHitBox.collided.get()) 1 else 0}
 
 }

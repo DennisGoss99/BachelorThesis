@@ -15,7 +15,7 @@ class SAPTest {
     fun checkSort(){
         runBlocking {
             val sap = SAP()
-            val sap2 = ParallelSAP()
+            val sap2 = ParallelSAP(1)
 
             repeat(1000) {
                 val testBox = TestHitBox(sap.idCounter, Vector3f(Random.nextInt(-1000, 1000).toFloat(),Random.nextInt(-1000, 1000).toFloat(),Random.nextInt(-1000, 1000).toFloat()))
@@ -35,7 +35,7 @@ class SAPTest {
     fun checkSetAllBoxes(){
         runBlocking {
             val sap = SAP()
-            val sap2 = ParallelSAP()
+            val sap2 = ParallelSAP(1)
 
 
             val posList = MutableList<Vector3f>(1000){

@@ -14,7 +14,7 @@ class SAPSpeedTest {
 
     companion object{
         val sap = SAP()
-        val sap2 = ParallelSAP()
+        val sap2 = ParallelSAP(1)
 
         private val hitBoxCount = 5000
         private val jobCount = 100

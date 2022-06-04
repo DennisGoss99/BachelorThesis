@@ -1,6 +1,8 @@
 package cga.exercise.components.geometry.hitbox
 
 import cga.exercise.components.collision.HitBox
+import cga.exercise.components.collision.IHitBox
+import cga.exercise.components.gravity.GravityHitBox
 import cga.exercise.components.shader.ShaderProgram
 import kotlinx.coroutines.*
 import org.lwjgl.opengl.GL32.*
@@ -145,9 +147,11 @@ class HitBoxRendererInstancing(override var hitboxes : MutableList<HitBox> = mut
     }
 
     override fun add(hitBox: HitBox) {
-        hitboxes.add(hitBox)
-        count++
-        vertexDataMat = FloatArray(count * 17)
+        if(!hitboxes.contains(hitBox)){
+            hitboxes.add(hitBox)
+            count++
+            vertexDataMat = FloatArray(count * 17)
+        }
     }
 
     override fun removeHitBoxID(id : Int){

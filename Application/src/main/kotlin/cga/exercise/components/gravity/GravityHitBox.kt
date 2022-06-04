@@ -3,12 +3,7 @@ package cga.exercise.components.gravity
 import cga.exercise.components.collision.HitBox
 import org.joml.Vector3f
 
-class GravityHitBox(var hitBox: HitBox, override var mass: Float, override var velocity : Vector3f = Vector3f(0f, 0f, 0f)) : IGravity{
-
-    override val id : Int = hitBox.id
-
-    var startV = Vector3f(velocity)
-    var startPos = Vector3f(hitBox.getPosition())
+class GravityHitBox(id : Int, override var mass: Float, pos : Vector3f = Vector3f(0f), scale : Vector3f = Vector3f(1f), override var velocity : Vector3f = Vector3f(0f, 0f, 0f)) : HitBox(id, pos, scale), IGravity{
 
     override var acceleration : Vector3f = Vector3f(0f, 0f, 0f)
 
@@ -16,10 +11,8 @@ class GravityHitBox(var hitBox: HitBox, override var mass: Float, override var v
         velocity.add(acceleration)
         acceleration = Vector3f(0f,0f,0f)
 
-        hitBox.translateLocal(velocity)
-        hitBox.updateEndPoints()
+        translateLocal(velocity)
+        updateEndPoints()
     }
-
-    override fun getPosition(): Vector3f = hitBox.getPosition()
 
 }

@@ -225,27 +225,18 @@ class Scene(private val window: GameWindow) {
         }
 
         @Suppress("UNCHECKED_CAST")
-        hitBoxRenderer = HitBoxRendererInstancing(gravityHitBoxes.toMutableList() as MutableList<HitBox>)
-
-        @Suppress("UNCHECKED_CAST")
         gravityContainer.setAll( gravityHitBoxes.toMutableList() as MutableList<IGravity>, GravityProperties.adopter)
 
         @Suppress("UNCHECKED_CAST")
-        sap.setAllBoxes(hitBoxRenderer.hitboxes.toMutableList() as MutableList<IHitBox>)
+        hitBoxRenderer = HitBoxRendererInstancing(gravityHitBoxes.toMutableList() as MutableList<HitBox>)
+
+        @Suppress("UNCHECKED_CAST")
+        sap.setAllBoxes(gravityHitBoxes.toMutableList() as MutableList<IHitBox>)
 
         val mainGravityObject = GravityHitBox(sap.idCounter, 4000f, Vector3f(2500f), Vector3f(430f))
         gravityContainer.add(mainGravityObject, GravityProperties.source)
         hitBoxRenderer.add(mainGravityObject)
         sap.insertBox(mainGravityObject)
-//
-//        val mainGravityObject2 = GravityHitBox(sap.idCounter, 1f, Vector3f(1969f, 2105f, 2921f))
-//        hitBoxRenderer.add(mainGravityObject2)
-//        sap.insertBox(mainGravityObject2)
-//
-//        val mainGravityObject3 = GravityHitBox(sap.idCounter, Vector3f(1f), 1f)
-//        mainGravityObject3.scaleLocal(Vector3f(1f))
-//        hitBoxRenderer.add(mainGravityObject3)
-//        sap.insertBox(mainGravityObject3)
 
         hitBoxRenderer.updateModelMatrix()
 
@@ -361,7 +352,7 @@ class Scene(private val window: GameWindow) {
 
         if(gameState == RenderCategory.FirstPerson){
 
-//            gravityContainer.applyGravity()
+            gravityContainer.applyGravity()
             hitBoxRenderer.updateModelMatrix()
             sap.sort()
             sap.checkCollision()

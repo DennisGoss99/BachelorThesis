@@ -40,23 +40,23 @@ abstract class AbstractSAP{
 
         endPointsX = MutableList(hitBoxes.size * 2){
             if(it % 2 == 0)
-                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].minEndPoints[0].value,true)
+                hitBoxes[it / 2].minEndPoints[0]
             else
-                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].maxEndPoints[0].value,false)
+                hitBoxes[it / 2].maxEndPoints[0]
         }
 
         endPointsY = MutableList(hitBoxes.size * 2){
             if(it % 2 == 0)
-                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].minEndPoints[1].value,true)
+                hitBoxes[it / 2].minEndPoints[1]
             else
-                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].maxEndPoints[1].value,false)
+                hitBoxes[it / 2].maxEndPoints[1]
         }
 
         endPointsZ = MutableList(hitBoxes.size * 2){
             if(it % 2 == 0)
-                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].minEndPoints[2].value,true)
+                hitBoxes[it / 2].minEndPoints[2]
             else
-                EndPoint(hitBoxes[it / 2], hitBoxes[it / 2].maxEndPoints[2].value,false)
+                hitBoxes[it / 2].maxEndPoints[2]
         }
     }
 

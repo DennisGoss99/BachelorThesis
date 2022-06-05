@@ -25,6 +25,7 @@ import cga.exercise.game.Pages.MainMenuPage
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
+import cga.framework.printlnTimeMillis
 import kotlinx.coroutines.*
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -187,6 +188,7 @@ class Scene(private val window: GameWindow) {
         window.m_updatefrequency = settings.updateFrequency.toFloat()
 
         sap.clear()
+        hitBoxRenderer.cleanup()
         hitBoxRenderer.clear()
         gravityContainer.clear()
 
@@ -225,13 +227,13 @@ class Scene(private val window: GameWindow) {
         }
 
         @Suppress("UNCHECKED_CAST")
-        gravityContainer.setAll( gravityHitBoxes.toMutableList() as MutableList<IGravity>, GravityProperties.adopter)
+        hitBoxRenderer = HitBoxRendererInstancing(gravityHitBoxes as MutableList<HitBox>)
 
         @Suppress("UNCHECKED_CAST")
-        hitBoxRenderer = HitBoxRendererInstancing(gravityHitBoxes.toMutableList() as MutableList<HitBox>)
+        gravityContainer.setAll( gravityHitBoxes as MutableList<IGravity>, GravityProperties.adopter)
 
         @Suppress("UNCHECKED_CAST")
-        sap.setAllBoxes(gravityHitBoxes.toMutableList() as MutableList<IHitBox>)
+        sap.setAllBoxes(gravityHitBoxes as MutableList<IHitBox>)
 
         val mainGravityObject = GravityHitBox(sap.idCounter, 4000f, Vector3f(2500f), Vector3f(430f))
         gravityContainer.add(mainGravityObject, GravityProperties.source)
@@ -273,7 +275,7 @@ class Scene(private val window: GameWindow) {
 
         if (t - lastT  > 0.05f){
             val fps = frameCounter / (t - lastT)
-            mainGui.fpsGuiElement.text = "%.2f".format(fps)
+            mainGui.fpsGuiElement.text = "%.1f".format(fps)
             frameCounter = 0
             lastT = t
 
@@ -351,7 +353,6 @@ class Scene(private val window: GameWindow) {
         updateCounter++
 
         if(gameState == RenderCategory.FirstPerson){
-
             gravityContainer.applyGravity()
             hitBoxRenderer.updateModelMatrix()
             sap.sort()

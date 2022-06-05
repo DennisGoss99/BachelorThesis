@@ -1,4 +1,4 @@
-package cga.exercise.components.collision
+package cga.exercise.components.properties.collision
 
 import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.geometry.mesh.Mesh
@@ -10,8 +10,8 @@ import org.lwjgl.opengl.GL11
 import java.util.concurrent.atomic.AtomicBoolean
 
 open class HitBox(override val id : Int, pos : Vector3f = Vector3f(0f), scale : Vector3f = Vector3f(1f)) : IHitBox, Transformable(){
-    override val minEndPoints = arrayOf(EndPoint(this,-1f,true),EndPoint(this,-1f,true),EndPoint(this,-1f,true))
-    override val maxEndPoints = arrayOf(EndPoint(this,-1f,false),EndPoint(this,-1f,false),EndPoint(this,-1f,false))
+    override val minEndPoints = arrayOf(EndPoint(this,-1f,true), EndPoint(this,-1f,true), EndPoint(this,-1f,true))
+    override val maxEndPoints = arrayOf(EndPoint(this,-1f,false), EndPoint(this,-1f,false), EndPoint(this,-1f,false))
 
     override var collisionChecked = AtomicBoolean(false)
 

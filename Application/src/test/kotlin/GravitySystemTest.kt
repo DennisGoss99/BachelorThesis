@@ -1,4 +1,5 @@
 import cga.exercise.components.gravity.*
+import cga.exercise.components.properties.gravity.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.joml.Vector3f

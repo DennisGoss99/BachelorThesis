@@ -1,7 +1,6 @@
-import cga.exercise.components.collision.AbstractSAP
-import cga.exercise.components.collision.ParallelSAP
-import cga.exercise.components.collision.SAP
-import cga.exercise.components.collision.TestHitBox
+import cga.exercise.components.properties.collision.ParallelSAP
+import cga.exercise.components.properties.collision.SAP
+import cga.exercise.components.properties.collision.TestHitBox
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.joml.Vector3f
@@ -42,7 +41,7 @@ class SAPTest {
                 Vector3f(Random.nextInt(-1000, 1000).toFloat(),Random.nextInt(-1000, 1000).toFloat(),Random.nextInt(-1000, 1000).toFloat())
             }
 
-            sap.setAllBoxes(MutableList(1000){
+            sap.setAll(MutableList(1000){
                 val tH = TestHitBox(it, posList[it])
                 tH.updateEndPoints()
                 tH

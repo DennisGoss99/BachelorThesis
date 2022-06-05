@@ -1,4 +1,4 @@
-package cga.exercise.components.collision
+package cga.exercise.components.properties.collision
 
 data class EndPoint(
     val owner : IHitBox,

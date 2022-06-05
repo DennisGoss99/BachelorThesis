@@ -1,6 +1,6 @@
 package cga.exercise.components.geometry.hitbox
 
-import cga.exercise.components.collision.HitBox
+import cga.exercise.components.properties.collision.HitBox
 import cga.exercise.components.geometry.VertexAttribute
 import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.mesh.SimpleMesh

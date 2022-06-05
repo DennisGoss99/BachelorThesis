@@ -1,6 +1,6 @@
 package cga.exercise.components.geometry.hitbox
 
-import cga.exercise.components.collision.HitBox
+import cga.exercise.components.properties.collision.HitBox
 import cga.exercise.components.shader.ShaderProgram
 import kotlinx.coroutines.DelicateCoroutinesApi
 

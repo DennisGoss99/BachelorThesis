@@ -1,7 +1,7 @@
-import cga.exercise.components.collision.AbstractSAP
-import cga.exercise.components.collision.ParallelSAP
-import cga.exercise.components.collision.SAP
-import cga.exercise.components.collision.TestHitBox
+import cga.exercise.components.properties.collision.AbstractSAP
+import cga.exercise.components.properties.collision.ParallelSAP
+import cga.exercise.components.properties.collision.SAP
+import cga.exercise.components.properties.collision.TestHitBox
 import junit.framework.Assert
 import kotlinx.coroutines.runBlocking
 import org.junit.BeforeClass

@@ -1,8 +1,8 @@
-package cga.exercise.components.gravity
+package cga.exercise.components.properties.gravity
 
 import org.joml.Vector3f
 
-class TestGravityObject(override var mass: Float, var pos : Vector3f, override var velocity : Vector3f = Vector3f(0f, 0f, 0f)) : IGravity {
+class TestGravityObject(override var mass: Float, override var gravityProperty: GravityProperties, var pos : Vector3f, override var velocity : Vector3f = Vector3f(0f, 0f, 0f)) : IGravity {
 
     override val id: Int = 0
 

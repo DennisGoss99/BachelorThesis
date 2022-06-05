@@ -1,4 +1,4 @@
-package cga.exercise.components.collision
+package cga.exercise.components.properties.collision
 
 import org.joml.Vector3f
 import java.util.concurrent.atomic.AtomicBoolean
@@ -49,6 +49,11 @@ class TestHitBox : IHitBox {
 
 
     override fun updateEndPoints() {
+        TODO("Not yet implemented")
+    }
+
+    override fun translateLocal(vec: Vector3f) {
+        TODO("Not yet implemented")
     }
 
 }

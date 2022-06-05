@@ -1,4 +1,4 @@
-package cga.exercise.components.collision
+package cga.exercise.components.properties.collision
 
 import cga.framework.foreachParallelIndexed
 import kotlinx.coroutines.DelicateCoroutinesApi

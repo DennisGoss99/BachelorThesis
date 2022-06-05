@@ -1,4 +1,4 @@
-package cga.exercise.components.collision
+package cga.exercise.components.properties.collision
 
 
 abstract class AbstractSAP{
@@ -35,7 +35,7 @@ abstract class AbstractSAP{
         endPointsZ.add(hitBox.maxEndPoints[2])
     }
 
-    fun setAllBoxes(hitBoxes: MutableList<IHitBox>){
+    fun setAll(hitBoxes: MutableList<IHitBox>){
         this.hitBoxes = hitBoxes
 
         endPointsX = MutableList(hitBoxes.size * 2){

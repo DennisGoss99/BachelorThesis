@@ -18,7 +18,7 @@ init {
     if(material != null)
         meshes.forEach { it.material = material }
 
-    translateLocal(distanceToParent)
+    translate(distanceToParent)
     scaleLocal(Vector3f(size))
 
     selfRotation.mul(0.001f)

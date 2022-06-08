@@ -12,7 +12,9 @@ class GravityManager : AbstractGravityManager() {
                         applyGravityTo(ob1, ob2)
                     }
                 }
+        }
 
+        for (ob1 in gravityObjects){
             ob1.applyObjectForce()
         }
     }

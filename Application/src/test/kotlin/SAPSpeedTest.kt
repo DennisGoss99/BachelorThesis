@@ -1,4 +1,3 @@
-import cga.exercise.components.properties.collision.AbstractSAP
 import cga.exercise.components.properties.collision.ParallelSAP
 import cga.exercise.components.properties.collision.SAP
 import cga.exercise.components.properties.collision.TestHitBox
@@ -62,7 +61,7 @@ class SAPSpeedTest {
             var bestJobTime = Long.MAX_VALUE
 
             repeat(jobCount){
-                val tempTime = measureTimeMillis {sap.checkCollision()}
+                val tempTime = measureTimeMillis { sap.checkCollision()}
                 timeSum += tempTime
 
                 if (bestJobTime > tempTime){
@@ -74,7 +73,7 @@ class SAPSpeedTest {
             }
 
             println("best[$bestJobCount]:\t${bestJobTime} ms")
-            println("avg:\t\t${timeSum.toFloat()/jobCount} ms")
+            println("avg:\t\t${timeSum.toFloat()/ jobCount} ms")
         }
     }
 
@@ -96,7 +95,7 @@ class SAPSpeedTest {
 
             repeat(jobCount){
                 sap2.jobCount = it + 1
-                val tempTime = measureTimeMillis {sap2.checkCollision()}
+                val tempTime = measureTimeMillis { sap2.checkCollision()}
                 timeSum += tempTime
 
                 if (bestJobTime > tempTime){
@@ -108,7 +107,7 @@ class SAPSpeedTest {
             }
 
             println("best[$bestJobCount]:\t${bestJobTime} ms")
-            println("avg:\t\t${timeSum.toFloat()/jobCount} ms")
+            println("avg:\t\t${timeSum.toFloat()/ jobCount} ms")
         }
     }
 

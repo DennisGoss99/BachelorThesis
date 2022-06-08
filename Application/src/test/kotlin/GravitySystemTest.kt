@@ -1,4 +1,3 @@
-import cga.exercise.components.gravity.*
 import cga.exercise.components.properties.gravity.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -17,13 +16,14 @@ class GravitySystemTest {
 
         val GOC = GravityManager()
 
-        val testObj1 = TestGravityObject(100f, Vector3f(100f))
-        val testObj2 = TestGravityObject(100f, Vector3f(-100f))
-        val testObj3 = TestGravityObject(1f, Vector3f(0f))
+        val testObj1 = TestGravityObject(100f, GravityProperties.source, Vector3f(100f))
+        val testObj2 = TestGravityObject(100f, GravityProperties.source, Vector3f(-100f))
+        val testObj3 = TestGravityObject(1f, GravityProperties.adopter, Vector3f(0f))
 
-        GOC.add(testObj1, GravityProperties.source)
-        GOC.add(testObj2, GravityProperties.source)
-        GOC.add(testObj3, GravityProperties.adopter)
+        GOC.add(testObj1)
+        GOC.add(testObj2)
+        GOC.add(testObj3)
+
         runBlocking {
             repeat(1000){GOC.applyGravity()}
         }
@@ -35,11 +35,11 @@ class GravitySystemTest {
 
         val GOC = GravityManager()
 
-        val testObj1 = TestGravityObject(2f, Vector3f(0f), Vector3f(0f,0f,0f))
-        val testObj2 = TestGravityObject(0.1f, Vector3f(20f,0f,0f), Vector3f(0f, 0.81694555f,0f))
+        val testObj1 = TestGravityObject(2f, GravityProperties.source, Vector3f(0f), Vector3f(0f,0f,0f))
+        val testObj2 = TestGravityObject(0.1f, GravityProperties.adopter, Vector3f(20f,0f,0f), Vector3f(0f, 0.81694555f,0f))
 
-        GOC.add(testObj1, GravityProperties.source)
-        GOC.add(testObj2, GravityProperties.adopter)
+        GOC.add(testObj1)
+        GOC.add(testObj2)
         runBlocking {
             repeat(154) {
                 GOC.applyGravity()
@@ -53,11 +53,11 @@ class GravitySystemTest {
 
         val GOC = GravityManager()
 
-        val testObj1 = TestGravityObject(6f, Vector3f(0f), Vector3f(0f,0f,0f))
-        val testObj2 = TestGravityObject(0.001f, Vector3f(0f,36f,0f), Vector3f(0f, 0f,1.054672f))
+        val testObj1 = TestGravityObject(6f, GravityProperties.source, Vector3f(0f), Vector3f(0f,0f,0f))
+        val testObj2 = TestGravityObject(0.001f, GravityProperties.adopter, Vector3f(0f,36f,0f), Vector3f(0f, 0f,1.054672f))
 
-        GOC.add(testObj1, GravityProperties.source)
-        GOC.add(testObj2, GravityProperties.adopter)
+        GOC.add(testObj1)
+        GOC.add(testObj2)
         runBlocking {
             repeat(214){
                 GOC.applyGravity()
@@ -71,11 +71,11 @@ class GravitySystemTest {
 
         val GOC = GravityManager()
 
-        val testObj1 = TestGravityObject(80f, Vector3f(0f), Vector3f(0f,0f,0f))
-        val testObj2 = TestGravityObject(0.001f, Vector3f(0f,0f,600f), Vector3f(0.9433274f,0f, 0f))
+        val testObj1 = TestGravityObject(80f, GravityProperties.source, Vector3f(0f), Vector3f(0f,0f,0f))
+        val testObj2 = TestGravityObject(0.001f, GravityProperties.adopter, Vector3f(0f,0f,600f), Vector3f(0.9433274f,0f, 0f))
 
-        GOC.add(testObj1, GravityProperties.source)
-        GOC.add(testObj2, GravityProperties.adopter)
+        GOC.add(testObj1)
+        GOC.add(testObj2)
         runBlocking {
             repeat(3996){
                 GOC.applyGravity()
@@ -99,14 +99,14 @@ class GravitySystemTest {
 
                 val mass = Random.nextInt(1,101).toFloat()
                 val pos = Vector3f(Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat(),Random.nextInt(1,101).toFloat())
-                val testObj = TestGravityObject(mass, Vector3f(pos), Vector3f(0f,0f,0f))
-                val testObj2 = TestGravityObject(mass, Vector3f(pos), Vector3f(0f,0f,0f))
+                val testObj = TestGravityObject(mass, GravityProperties.sourceAndAdopter, Vector3f(pos), Vector3f(0f,0f,0f))
+                val testObj2 = TestGravityObject(mass, GravityProperties.sourceAndAdopter, Vector3f(pos), Vector3f(0f,0f,0f))
 
-                GOCp.add(testObj, GravityProperties.sourceAndAdopter)
+                GOCp.add(testObj)
                 listGOCp.add(testObj2)
 
                 listGOC.add(testObj)
-                GOC.add(testObj2, GravityProperties.sourceAndAdopter)
+                GOC.add(testObj2)
             }
 
             var timeSum = 0L

@@ -35,8 +35,6 @@ class TestHitBox : IHitBox {
         this.collidedWith = mutableListOf<IHitBox>()
     }
 
-
-
     @Synchronized
     override fun addCollidedWith(hitBox : IHitBox){
         collidedWith.add(hitBox)
@@ -49,11 +47,11 @@ class TestHitBox : IHitBox {
 
 
     override fun updateEndPoints() {
-        TODO("Not yet implemented")
+        //
     }
 
     override fun translateLocal(vec: Vector3f) {
-        TODO("Not yet implemented")
+        //
     }
 
 }

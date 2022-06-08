@@ -19,7 +19,7 @@ class GravityHitBox(id : Int,
         velocity.add(acceleration)
         acceleration.set(0f)
 
-        translateLocal(velocity)
+        translate(velocity)
         updateEndPoints()
     }
 

@@ -1,12 +1,8 @@
 package cga.exercise.components.properties.collision
 
-import cga.exercise.components.geometry.VertexAttribute
-import cga.exercise.components.geometry.mesh.Mesh
 import cga.exercise.components.geometry.transformable.Transformable
-import cga.exercise.components.shader.ShaderProgram
 import org.joml.Vector3f
 import org.joml.Vector4f
-import org.lwjgl.opengl.GL11
 import java.util.concurrent.atomic.AtomicBoolean
 
 open class HitBox(override val id : Int, pos : Vector3f = Vector3f(0f), scale : Vector3f = Vector3f(1f)) : IHitBox, Transformable(){
@@ -19,7 +15,7 @@ open class HitBox(override val id : Int, pos : Vector3f = Vector3f(0f), scale : 
     override var collidedWith  = mutableListOf<IHitBox>()
 
     init {
-        translateLocal(pos)
+        translate(pos)
         scaleLocal(scale)
         updateEndPoints()
     }

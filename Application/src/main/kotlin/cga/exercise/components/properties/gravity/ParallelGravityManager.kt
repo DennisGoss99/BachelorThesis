@@ -27,7 +27,9 @@ class ParallelGravityManager(jobCount : Int) : AbstractGravityManager() {
                         applyGravityTo(ob1, ob2)
                     }
                 }
+        }
 
+        gravityObjects.foreachParallel(jobCount) { ob1 ->
             ob1.applyObjectForce()
         }
     }

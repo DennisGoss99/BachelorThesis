@@ -33,8 +33,16 @@ open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Tra
      * Translates object based on its own coordinate system.
      * @param deltaPos delta positions
      */
-    fun translateLocal(deltaPos: Vector3f){
+    fun translate(deltaPos: Vector3f){
         modelMatrix.translate(deltaPos)
+    }
+
+    /**
+     * Translates object based on its own coordinate system.
+     * @param deltaPos delta positions
+     */
+    fun translateLocal(deltaPos: Vector3f){
+        modelMatrix.translateLocal(deltaPos)
     }
 
     /**

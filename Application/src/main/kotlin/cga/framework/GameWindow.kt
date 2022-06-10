@@ -359,13 +359,6 @@ abstract class GameWindow(
                 accumUI += frametime
                 GLFW.glfwPollEvents()
 
-
-//                while (accum >= timedelta) {
-//
-//                    update((timedelta * 1e-9f), (m_currentTime * 1e-9f))
-//                    accum -= timedelta
-//                }
-
                 if (accum >= timedelta){
                     update((accum * 1e-9f), (m_currentTime * 1e-9f))
                     accum -= timedelta *  (accum / timedelta)

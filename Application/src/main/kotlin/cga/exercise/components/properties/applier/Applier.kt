@@ -1,8 +1,6 @@
 package cga.exercise.components.properties.applier
 
 import org.joml.Vector3f
-import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 class Applier {
 
@@ -25,7 +23,7 @@ class Applier {
         hitBoxes.remove(hitBox)
     }
 
-    private fun collision(v1 : Vector3f, m1 : Float, v2: Vector3f, m2 : Float) : Vector3f{
+    private fun getCollisionVector(v1 : Vector3f, m1 : Float, v2: Vector3f, m2 : Float) : Vector3f{
         return Vector3f((v1.mul(m1 - m2).add(v2.mul(2 * m2))).div(m1 + m2))
     }
 
@@ -52,18 +50,18 @@ class Applier {
         }
     }
 
-    private fun getCollisionMultiplier(collisionAxis : CollisionAxis) : Vector3f{
-        return when(collisionAxis){
-            CollisionAxis.X -> Vector3f(1f,-1f,-1f)
-            CollisionAxis.Y -> Vector3f(-1f,1f,-1f)
-            CollisionAxis.Z -> Vector3f(-1f,-1f,1f)
-            CollisionAxis.XY -> Vector3f(1f,1f,-1f)
-            CollisionAxis.XZ -> Vector3f(1f,-1f,1f)
-            CollisionAxis.YZ -> Vector3f(-1f,1f,1f)
-            CollisionAxis.XYZ,
-            CollisionAxis.Unknown -> Vector3f(1f)
-        }
+    private fun getVelocityAfterCollision(velocity : Vector3f, collisionVelocity : Vector3f, collisionAxis : CollisionAxis) : Vector3f{
+        return Vector3f(
+        if (collisionAxis == CollisionAxis.X || collisionAxis == CollisionAxis.XY || collisionAxis == CollisionAxis.XZ || collisionAxis == CollisionAxis.XYZ)
+            collisionVelocity.x else velocity.x,
+        if (collisionAxis == CollisionAxis.Y || collisionAxis == CollisionAxis.XY || collisionAxis == CollisionAxis.YZ || collisionAxis == CollisionAxis.XYZ)
+            collisionVelocity.y else velocity.y,
+        if (collisionAxis == CollisionAxis.Z || collisionAxis == CollisionAxis.XZ || collisionAxis == CollisionAxis.YZ || collisionAxis == CollisionAxis.XYZ)
+            collisionVelocity.z else velocity.z,
+        )
     }
+
+    private fun swapZeroOneVectorValues(v : Vector3f) = Vector3f(if(v.x == 0f) 1f else 0f, if(v.y == 0f) 1f else 0f, if(v.z == 0f) 1f else 0f)
 
     private fun moveBoxOutOfRadiusZeroVelocity(hitBox : IApplier, hitBox2: IApplier) : Vector3f{
         val translate = Vector3f(0f)
@@ -99,7 +97,7 @@ class Applier {
         return translate
     }
 
-//    private fun moveBoxOutOfRadius(hitBox : IApplier, hitBox2: IApplier, collisionAxis : CollisionAxis) : Vector3f{
+/*    private fun moveBoxOutOfRadius(hitBox : IApplier, hitBox2: IApplier, collisionAxis : CollisionAxis) : Vector3f{
 //
 //        if(collisionAxis == CollisionAxis.Unknown){
 //            println("Collision with unknownAxis")
@@ -180,6 +178,7 @@ class Applier {
 //
 //        return Vector3f(0f)
 //    }
+*/
 
     private fun moveBoxOutOfRadius(hitBox : IApplier, hitBox2: IApplier, collisionAxis : CollisionAxis) : Vector3f{
 
@@ -274,7 +273,6 @@ class Applier {
 
                 if (hitBox2 != null) {
                     val collisionAxis = getCollisionAxis(hitBox, hitBox2)
-                    val axisCorrectionMultiplier = getCollisionMultiplier(collisionAxis)
 
                     if (hitBox2.interact){
 
@@ -287,13 +285,13 @@ class Applier {
                         hitBox2.translateLocal(translate2)
                         hitBox2.updateEndPoints()
 
-                        l[hitBox.id] = collision(Vector3f(hitBox.velocity), hitBox.mass, Vector3f(hitBox2.velocity), hitBox2.mass).mul(axisCorrectionMultiplier)
-                        l[hitBox2.id] = collision(Vector3f(hitBox2.velocity), hitBox2.mass, Vector3f(hitBox.velocity), hitBox.mass).mul(axisCorrectionMultiplier)
+                        l[hitBox.id] = getVelocityAfterCollision(hitBox.velocity, getCollisionVector(Vector3f(hitBox.velocity), hitBox.mass, Vector3f(hitBox2.velocity), hitBox2.mass), collisionAxis)
+                        l[hitBox2.id] = getVelocityAfterCollision(hitBox2.velocity, getCollisionVector(Vector3f(hitBox2.velocity), hitBox2.mass, Vector3f(hitBox.velocity), hitBox.mass), collisionAxis)
                     }else{
                         hitBox.translateLocal(moveBoxOutOfRadius(hitBox, hitBox2, collisionAxis))
                         hitBox.updateEndPoints()
 
-                        l[hitBox.id] = Vector3f(hitBox.velocity).mul(-1f).mul(axisCorrectionMultiplier)
+                        l[hitBox.id] = getVelocityAfterCollision(hitBox.velocity, Vector3f(hitBox.velocity).mul(-1f), collisionAxis)
                     }
                 }
             }

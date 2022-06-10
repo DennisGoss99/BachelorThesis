@@ -8,7 +8,6 @@ import kotlin.math.pow
  abstract class AbstractGravityManager{
 
     protected var gravityObjects : MutableList<IGravity> = mutableListOf()
-//    protected var gravityObjectsGetFrom : MutableList<IGravity> = mutableListOf()
 
     private val gravitationalConstant = 6.674f
 

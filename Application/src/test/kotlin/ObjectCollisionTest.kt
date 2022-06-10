@@ -132,9 +132,9 @@ class ObjectCollisionTest {
                 sap.remove(testApplierObject)
                 applier.remove(testApplierObject)
 
-                assertEquals(testMessage, finalPos.x, testApplierObject.pos.x, 0.001f)
-                assertEquals(testMessage, finalPos.y, testApplierObject.pos.y, 0.001f)
-                assertEquals(testMessage, finalPos.z, testApplierObject.pos.z, 0.001f)
+                assertEquals("$testMessage x", finalPos.x, testApplierObject.pos.x, 0.001f)
+                assertEquals("$testMessage y", finalPos.y, testApplierObject.pos.y, 0.001f)
+                assertEquals("$testMessage z", finalPos.z, testApplierObject.pos.z, 0.001f)
             }
         }
 
@@ -216,6 +216,20 @@ class ObjectCollisionTest {
 
         testApplierObject("testOb22", testOb22, Vector3f(-1.25f, 0f, 0f))
         assertEquals("testOb22 testOb1", testOb1.pos, Vector3f(0.25f, 0f, 0f))
+
+        testOb1.velocity = Vector3f(3f, 0f, 0f)
+        testOb1.pos = Vector3f(0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(6f, 0f, 0f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, 0f, 0f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(2f/3f, 0f, 0f))
 
         testOb1.velocity = Vector3f(0f)
         testOb1.pos = Vector3f(0f)
@@ -420,6 +434,20 @@ class ObjectCollisionTest {
         testApplierObject("testOb22", testOb22, Vector3f(0f, -1.25f, 0f))
         assertEquals("testOb22 testOb1", testOb1.pos, Vector3f(0f, 0.25f, 0f))
 
+        testOb1.velocity = Vector3f(0f, 3f, 0f)
+        testOb1.pos = Vector3f(0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 6f, 0f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(0f, -1f -1f/3f, 0f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(0f, 2f/3f, 0f))
+
         testOb1.velocity = Vector3f(0f)
         testOb1.pos = Vector3f(0f)
         testOb1.scale = Vector3f(1f)
@@ -622,6 +650,20 @@ class ObjectCollisionTest {
         testApplierObject("testOb22", testOb22, Vector3f(0f, 0f, -1.25f))
         assertEquals("testOb22 testOb1", testOb1.pos, Vector3f(0f, 0f, 0.25f))
 
+        testOb1.velocity = Vector3f(0f, 0f, 3f)
+        testOb1.pos = Vector3f(0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 6f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(0f, 0f, -1f -1f/3f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(0f, 0f, 2f/3f))
+
         testOb1.velocity = Vector3f(0f)
         testOb1.pos = Vector3f(0f)
         testOb1.scale = Vector3f(1f)
@@ -821,8 +863,22 @@ class ObjectCollisionTest {
         testApplierObject("testOb06", testOb06, Vector3f(1f, 2f, 0f))
         assertEquals("testOb06 testOb1", Vector3f(3f, 0f, 0f), testOb1.pos)
 
+        testOb1.velocity = Vector3f(3f, 3f, 0f)
         testOb1.pos = Vector3f(0f)
-        testOb1.velocity = Vector3f(0f,0f,0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(6f, 6f, 0f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, -1f -1f/3f, 0f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(2f/3f, 2f/3f, 0f))
+
+        testOb1.velocity = Vector3f(0f)
+        testOb1.pos = Vector3f(0f)
         testOb1.scale = Vector3f(1f)
     }
 
@@ -1020,8 +1076,22 @@ class ObjectCollisionTest {
         testApplierObject("testOb06", testOb06, Vector3f(1f, 0f, 2f))
         assertEquals("testOb06 testOb1", Vector3f(3f, 0f, 0f), testOb1.pos)
 
+        testOb1.velocity = Vector3f(3f, 0f, 3f)
         testOb1.pos = Vector3f(0f)
-        testOb1.velocity = Vector3f(0f,0f,0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(6f, 0f, 6f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, 0f, -1f -1f/3f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(2f/3f, 0f, 2f/3f))
+
+        testOb1.velocity = Vector3f(0f)
+        testOb1.pos = Vector3f(0f)
         testOb1.scale = Vector3f(1f)
     }
 
@@ -1219,8 +1289,22 @@ class ObjectCollisionTest {
         testApplierObject("testOb06", testOb06, Vector3f(0f, 1f, 2f))
         assertEquals("testOb06 testOb1", Vector3f(0f, 3f, 0f), testOb1.pos)
 
+        testOb1.velocity = Vector3f(0f, 3f, 3f)
         testOb1.pos = Vector3f(0f)
-        testOb1.velocity = Vector3f(0f,0f,0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 6f, 6f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(0f, -1f -1f/3f, -1f -1f/3f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(0f, 2f/3f, 2f/3f))
+
+        testOb1.velocity = Vector3f(0f)
+        testOb1.pos = Vector3f(0f)
         testOb1.scale = Vector3f(1f)
     }
 
@@ -1419,8 +1503,22 @@ class ObjectCollisionTest {
         testApplierObject("testOb06", testOb06, Vector3f(2f, 1f, 2f))
         assertEquals("testOb06 testOb1", Vector3f(0f, 3f, 0f), testOb1.pos)
 
+        testOb1.velocity = Vector3f(3f, 3f, 3f)
         testOb1.pos = Vector3f(0f)
-        testOb1.velocity = Vector3f(0f,0f,0f)
+        testOb1.scale = Vector3f(1f)
+
+        val testOb23 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(6f, 6f, 6f), GravityProperties.nothing, true)
+        with(testOb23) {
+            sap.insertBox(this)
+            gravityManager.add(this)
+            applier.add(this)
+        }
+
+        testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, -1f -1f/3f, -1f -1f/3f))
+        assertEquals("testOb23 testOb1", testOb1.pos, Vector3f(2f/3f, 2f/3f, 2f/3f))
+
+        testOb1.velocity = Vector3f(0f)
+        testOb1.pos = Vector3f(0f)
         testOb1.scale = Vector3f(1f)
     }
 

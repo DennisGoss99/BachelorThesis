@@ -14,7 +14,8 @@ import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.*
-import cga.exercise.components.properties.applier.Applier
+import cga.exercise.components.properties.applier.AbstractCollisionHandler
+import cga.exercise.components.properties.applier.CollisionHandler
 import cga.exercise.components.properties.collision.AbstractSAP
 import cga.exercise.components.properties.collision.ParallelSAP
 import cga.exercise.components.properties.collision.SAP
@@ -36,7 +37,6 @@ import org.lwjgl.opengl.GL11.*
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.random.Random
 
 class SceneStats{
     companion object{
@@ -129,7 +129,7 @@ class Scene(private val window: GameWindow) {
     private var sap : AbstractSAP = SAP()
     private var hitBoxRenderer : IHitBoxRenderer = HitBoxRendererInstancing()
     private var gravityContainer : AbstractGravityManager = GravityManager()
-    private var applier : Applier = Applier()
+    private var abstractCollisionHandler : AbstractCollisionHandler = CollisionHandler()
 
     //scene setup
     init {
@@ -238,27 +238,27 @@ class Scene(private val window: GameWindow) {
 //        hitBoxRenderer.add(mainGravityObject)
 //        sap.insertBox(mainGravityObject)
 
-        val h1 = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(0f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0.2f,0.2f))
+        val h1 = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(0f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
         with(h1){
             gravityContainer.add(this)
             hitBoxRenderer.add(this)
             sap.insertBox(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
-        val h2 = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(4f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
+        val h2 = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(-5f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
         with(h2) {
             gravityContainer.add(this)
             hitBoxRenderer.add(this)
             sap.insertBox(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
-        with(GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(4f, 4f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))) {
-            gravityContainer.add(this)
-            hitBoxRenderer.add(this)
-            sap.insertBox(this)
-            applier.add(this)
-        }
+//        with(GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(4f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))) {
+//            gravityContainer.add(this)
+//            hitBoxRenderer.add(this)
+//            sap.insertBox(this)
+//            applier.add(this)
+//        }
 
 //        repeat(10){
 //            val test01Object = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(Random.nextInt(-20, 20).toFloat(),Random.nextInt(-20, 20).toFloat(),Random.nextInt(-20, 20).toFloat()), Vector3f(4f))
@@ -608,17 +608,17 @@ class Scene(private val window: GameWindow) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
                 hitBoxRenderer.updateModelMatrix()
                 gravityContainer.applyGravity()
                 earth.orbit()
             }
             println("--------")
-            println("${applier.hitBoxes[0].getPosition().x} ${applier.hitBoxes[0].getPosition().y}")
-            println("${applier.hitBoxes[0].velocity.x} ${applier.hitBoxes[0].velocity.y}")
+            println("${abstractCollisionHandler.hitBoxes[0].getPosition().x} ${abstractCollisionHandler.hitBoxes[0].getPosition().y}")
+            println("${abstractCollisionHandler.hitBoxes[0].velocity.x} ${abstractCollisionHandler.hitBoxes[0].velocity.y}")
             println()
-            println("${applier.hitBoxes[1].getPosition().x} ${applier.hitBoxes[1].getPosition().y}")
-            println("${applier.hitBoxes[1].velocity.x} ${applier.hitBoxes[1].velocity.y}")
+            println("${abstractCollisionHandler.hitBoxes[1].getPosition().x} ${abstractCollisionHandler.hitBoxes[1].getPosition().y}")
+            println("${abstractCollisionHandler.hitBoxes[1].velocity.x} ${abstractCollisionHandler.hitBoxes[1].velocity.y}")
         }
     }
 

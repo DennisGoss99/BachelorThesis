@@ -1,5 +1,6 @@
-import cga.exercise.components.properties.applier.Applier
+import cga.exercise.components.properties.applier.AbstractCollisionHandler
 import cga.exercise.components.properties.applier.CollisionAxis
+import cga.exercise.components.properties.applier.CollisionHandler
 import cga.exercise.components.properties.applier.TestApplierObject
 import cga.exercise.components.properties.collision.SAP
 import cga.exercise.components.properties.gravity.GravityManager
@@ -8,7 +9,6 @@ import junit.framework.Assert
 import kotlinx.coroutines.runBlocking
 import org.joml.Vector3f
 import org.junit.Test
-import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.jvm.isAccessible
 
@@ -20,23 +20,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(1f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(1f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -44,7 +44,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.X, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.X, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -52,23 +52,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(-0.2f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(-2f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -76,7 +76,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.X, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.X, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -84,23 +84,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f,1f,  0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f,1f,  0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -108,7 +108,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.Y, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.Y, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -116,23 +116,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f,-0.2f,  0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f( 0f, -2f,0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -140,7 +140,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.Y, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.Y, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -148,23 +148,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f( 0f, 0f, 1f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 1f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -172,7 +172,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.Z, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.Z, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -180,23 +180,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f( 0f, 0f, -0.2f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, -2f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -204,7 +204,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.Z, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.Z, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -212,23 +212,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(2f, 2f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -236,7 +236,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.XY, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.XY, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -244,23 +244,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(2f,0f,2f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -268,7 +268,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.XZ, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.XZ, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -276,23 +276,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f,2f,  2f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -300,7 +300,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.YZ, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.YZ, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -308,23 +308,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(2f,2f,  2f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -332,7 +332,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.XYZ, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.XYZ, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
     @Test
@@ -340,23 +340,23 @@ class GetCollisionAxisTest {
 
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
-        val funGetCollisionAxis = Applier::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
+        val funGetCollisionAxis = AbstractCollisionHandler::class.declaredMemberFunctions.find { it.name == "getCollisionAxis" }!!
         funGetCollisionAxis.isAccessible = true
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f( 1.9f, 1.9f, -1.9f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb2) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         runBlocking {
@@ -364,7 +364,7 @@ class GetCollisionAxisTest {
             sap.checkCollision()
         }
 
-        Assert.assertEquals(CollisionAxis.Unknown, funGetCollisionAxis.call(applier, testOb1, testOb2))
+        Assert.assertEquals(CollisionAxis.Unknown, funGetCollisionAxis.call(abstractCollisionHandler, testOb1, testOb2))
     }
 
 }

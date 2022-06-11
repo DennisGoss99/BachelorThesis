@@ -16,6 +16,8 @@ class TestApplierObject(
     override var interact: Boolean
 ) :  IApplier{
 
+    override var checked: AtomicBoolean = AtomicBoolean(false)
+
     var pos : Vector3f = pos
         set(value) {
             field = value

@@ -1,4 +1,5 @@
-import cga.exercise.components.properties.applier.Applier
+import cga.exercise.components.properties.applier.AbstractCollisionHandler
+import cga.exercise.components.properties.applier.CollisionHandler
 import cga.exercise.components.properties.applier.TestApplierObject
 import cga.exercise.components.properties.collision.SAP
 import cga.exercise.components.properties.gravity.GravityManager
@@ -7,7 +8,6 @@ import kotlinx.coroutines.runBlocking
 import org.joml.Vector3f
 import org.junit.Test
 import junit.framework.Assert.assertEquals
-import org.joml.Matrix4f
 
 class ObjectCollisionTest {
 
@@ -15,23 +15,23 @@ class ObjectCollisionTest {
     fun simpleMoveBoxOutOfRadiusX(){
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage : String, testApplierObject : TestApplierObject, finalPos : Vector3f){
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -41,7 +41,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, 0f, 0f))
@@ -50,7 +50,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(-2f, 0f, 0f))
@@ -59,7 +59,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb3", testOb03, Vector3f(-3f, 0f, 0f))
@@ -68,7 +68,7 @@ class ObjectCollisionTest {
         with(testOb11) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb11", testOb11, Vector3f(2f, 0f, 0f))
@@ -77,7 +77,7 @@ class ObjectCollisionTest {
         with(testOb12) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb12", testOb12, Vector3f(2f, 0f, 0f))
@@ -86,7 +86,7 @@ class ObjectCollisionTest {
         with(testOb13) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb13", testOb13, Vector3f(3f, 0f, 0f))
@@ -95,7 +95,7 @@ class ObjectCollisionTest {
         with(testOb21) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb21", testOb21, Vector3f(3f, -2f, 2f))
@@ -104,7 +104,7 @@ class ObjectCollisionTest {
         with(testOb22) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb22", testOb22, Vector3f(-1.5f, 0f, 0f))
@@ -114,23 +114,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesX(){
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage : String, testApplierObject : TestApplierObject, finalPos : Vector3f){
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals("$testMessage x", finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals("$testMessage y", finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -142,7 +142,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, 0f, 0f))
@@ -155,7 +155,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(-1.5f, 0f, 0f))
@@ -169,7 +169,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb3", testOb03, Vector3f(-2.5f, 0f, 0f))
@@ -183,7 +183,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(1.5f, 0f, 0f))
@@ -197,7 +197,7 @@ class ObjectCollisionTest {
         with(testOb11) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb11", testOb11, Vector3f(-5f/3f, 0f, 0f))
@@ -211,7 +211,7 @@ class ObjectCollisionTest {
         with(testOb22) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb22", testOb22, Vector3f(-1.25f, 0f, 0f))
@@ -225,7 +225,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, 0f, 0f))
@@ -240,23 +240,23 @@ class ObjectCollisionTest {
     fun simpleMoveBoxOutOfRadiusY(){
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage : String, testApplierObject : TestApplierObject, finalPos : Vector3f){
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -266,7 +266,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(0f,-2f,0f))
@@ -275,7 +275,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(0f,-2f,0f))
@@ -284,7 +284,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb3", testOb03, Vector3f(0f,-3f, 0f))
@@ -293,7 +293,7 @@ class ObjectCollisionTest {
         with(testOb11) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb11", testOb11, Vector3f(0f,2f,  0f))
@@ -302,7 +302,7 @@ class ObjectCollisionTest {
         with(testOb12) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb12", testOb12, Vector3f(0f,2f,  0f))
@@ -311,7 +311,7 @@ class ObjectCollisionTest {
         with(testOb13) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb13", testOb13, Vector3f(0f,3f,0f))
@@ -320,7 +320,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(  -2f,3f,2f))
@@ -331,23 +331,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesY(){
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage : String, testApplierObject : TestApplierObject, finalPos : Vector3f){
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals(testMessage, finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -359,7 +359,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(0f, -2f, 0f))
@@ -372,7 +372,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(0f, -1.5f, 0f))
@@ -386,7 +386,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb3", testOb03, Vector3f(0f, -2.5f, 0f))
@@ -400,7 +400,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(0f, 1.5f, 0f))
@@ -414,7 +414,7 @@ class ObjectCollisionTest {
         with(testOb11) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb11", testOb11, Vector3f(0f, -5f/3f, 0f))
@@ -428,7 +428,7 @@ class ObjectCollisionTest {
         with(testOb22) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb22", testOb22, Vector3f(0f, -1.25f, 0f))
@@ -442,7 +442,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(0f, -1f -1f/3f, 0f))
@@ -457,23 +457,23 @@ class ObjectCollisionTest {
     fun simpleMoveBoxOutOfRadiusZ(){
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage : String, testApplierObject : TestApplierObject, finalPos : Vector3f){
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -483,7 +483,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(0f,0f,-2f))
@@ -492,7 +492,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(0f,0f,-2f))
@@ -501,7 +501,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb3", testOb03, Vector3f(0f, 0f,-3f))
@@ -510,7 +510,7 @@ class ObjectCollisionTest {
         with(testOb11) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb11", testOb11, Vector3f(0f,0f,2f))
@@ -519,7 +519,7 @@ class ObjectCollisionTest {
         with(testOb12) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb12", testOb12, Vector3f(0f,0f,2f))
@@ -528,7 +528,7 @@ class ObjectCollisionTest {
         with(testOb13) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb13", testOb13, Vector3f(0f,0f,3f))
@@ -537,7 +537,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(-2f,2f, 3f))
@@ -547,23 +547,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesZ(){
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter,1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage : String, testApplierObject : TestApplierObject, finalPos : Vector3f){
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals(testMessage, finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -575,7 +575,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(0f, 0f, -2f))
@@ -588,7 +588,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(0f, 0f, -1.5f))
@@ -602,7 +602,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb3", testOb03, Vector3f(0f, 0f, -2.5f))
@@ -616,7 +616,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(0f, 0f, 1.5f))
@@ -630,7 +630,7 @@ class ObjectCollisionTest {
         with(testOb11) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb11", testOb11, Vector3f(0f, 0f, -5f/3f))
@@ -644,7 +644,7 @@ class ObjectCollisionTest {
         with(testOb22) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb22", testOb22, Vector3f(0f, 0f, -1.25f))
@@ -658,7 +658,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(0f, 0f, -1f -1f/3f))
@@ -673,23 +673,23 @@ class ObjectCollisionTest {
     fun simpleMoveBoxOutOfRadiusXY() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -699,7 +699,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, -2f, 0f))
@@ -708,7 +708,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(2f, 2f, 0f))
@@ -717,7 +717,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(-2f, -2f, 0f))
@@ -726,7 +726,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(2f, 2f, 0f))
@@ -735,7 +735,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(1.5f, 1f, 0f))
@@ -744,7 +744,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(1.5f, 0.75f, 0f))
@@ -754,23 +754,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesXY() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals("$testMessage x", finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals("$testMessage y", finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -786,7 +786,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, -2f, 0f))
@@ -800,7 +800,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(1.5f, 1.5f, 0f))
@@ -814,7 +814,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(1.5f, 1.5f, 0f))
@@ -828,7 +828,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(-5f/3f, -5f/3f, 0f))
@@ -843,7 +843,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(-2f, 0f, 0f))
@@ -857,7 +857,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(1f, 2f, 0f))
@@ -871,7 +871,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, -1f -1f/3f, 0f))
@@ -886,23 +886,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusXZ() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -912,7 +912,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, 0f, -2f))
@@ -921,7 +921,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(2f, 0f, 2f))
@@ -930,7 +930,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(-2f, 0f, -2f))
@@ -939,7 +939,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(2f, 0f, 2f))
@@ -948,7 +948,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(1.5f, 0f, 1f))
@@ -957,7 +957,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(1.5f, 0f, 0.75f))
@@ -967,23 +967,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesXZ() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals("$testMessage x", finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals("$testMessage y", finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -999,7 +999,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, 0f, -2f))
@@ -1013,7 +1013,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(1.5f, 0f, 1.5f))
@@ -1027,7 +1027,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(1.5f, 0f, 1.5f))
@@ -1041,7 +1041,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(-5f/3f, 0f, -5f/3f))
@@ -1056,7 +1056,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(-2f, 0f, 0f))
@@ -1070,7 +1070,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(1f, 0f, 2f))
@@ -1084,7 +1084,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, 0f, -1f -1f/3f))
@@ -1099,23 +1099,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusYZ() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -1125,7 +1125,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f( 0f, -2f,-2f))
@@ -1134,7 +1134,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(0f, 2f, 2f))
@@ -1143,7 +1143,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(0f, -2f, -2f))
@@ -1152,7 +1152,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(0f, 2f, 2f))
@@ -1161,7 +1161,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(0f, 1.5f, 1f))
@@ -1170,7 +1170,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(0f, 1.5f, 0.75f))
@@ -1180,23 +1180,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesYZ() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals("$testMessage x", finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals("$testMessage y", finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -1212,7 +1212,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(0f, -2f, -2f))
@@ -1226,7 +1226,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(0f, 1.5f, 1.5f))
@@ -1240,7 +1240,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(0f, 1.5f, 1.5f))
@@ -1254,7 +1254,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(0f, -5f/3f, -5f/3f))
@@ -1269,7 +1269,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(0f, -2f, 0f))
@@ -1283,7 +1283,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(0f, 1f, 2f))
@@ -1297,7 +1297,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(0f, -1f -1f/3f, -1f -1f/3f))
@@ -1312,23 +1312,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusXYZ() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals(testMessage, finalPos, testApplierObject.pos)
             }
@@ -1338,7 +1338,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f( -2f, -2f,-2f))
@@ -1347,7 +1347,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(2f, 2f, 2f))
@@ -1356,7 +1356,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(-2f, -2f, -2f))
@@ -1365,7 +1365,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(2f, 2f, 2f))
@@ -1374,7 +1374,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(1f, 1.5f, 1f))
@@ -1383,7 +1383,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(0.75f, 1.5f, 0.75f))
@@ -1393,23 +1393,23 @@ class ObjectCollisionTest {
     fun moveBoxOutOfRadiusBothBoxesXYZ() {
         val sap = SAP()
         val gravityManager = GravityManager()
-        val applier = Applier()
+        val abstractCollisionHandler = CollisionHandler()
 
         val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
         with(testOb1) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         fun testApplierObject(testMessage: String, testApplierObject: TestApplierObject, finalPos: Vector3f) {
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
 
                 sap.remove(testApplierObject)
-                applier.remove(testApplierObject)
+                abstractCollisionHandler.remove(testApplierObject)
 
                 assertEquals("$testMessage x", finalPos.x, testApplierObject.pos.x, 0.001f)
                 assertEquals("$testMessage y", finalPos.y, testApplierObject.pos.y, 0.001f)
@@ -1425,7 +1425,7 @@ class ObjectCollisionTest {
         with(testOb01) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb01", testOb01, Vector3f(-2f, -2f, -2f))
@@ -1439,7 +1439,7 @@ class ObjectCollisionTest {
         with(testOb02) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb02", testOb02, Vector3f(1.5f, 1.5f, 1.5f))
@@ -1453,7 +1453,7 @@ class ObjectCollisionTest {
         with(testOb03) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb03", testOb03, Vector3f(1.5f, 1.5f, 1.5f))
@@ -1467,7 +1467,7 @@ class ObjectCollisionTest {
         with(testOb04) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb04", testOb04, Vector3f(-5f/3f, -5f/3f, -5f/3f))
@@ -1483,7 +1483,7 @@ class ObjectCollisionTest {
         with(testOb05) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb05", testOb05, Vector3f(-2f, -2f, 0f))
@@ -1497,7 +1497,7 @@ class ObjectCollisionTest {
         with(testOb06) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb06", testOb06, Vector3f(2f, 1f, 2f))
@@ -1511,7 +1511,7 @@ class ObjectCollisionTest {
         with(testOb23) {
             sap.insertBox(this)
             gravityManager.add(this)
-            applier.add(this)
+            abstractCollisionHandler.add(this)
         }
 
         testApplierObject("testOb23", testOb23, Vector3f(-1f -1f/3f, -1f -1f/3f, -1f -1f/3f))
@@ -1527,20 +1527,20 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val abstractCollisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0.2f, 0f, 0f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(2f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, true)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
 
@@ -1548,7 +1548,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(0f), testOb1.velocity)
@@ -1561,20 +1561,20 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val abstractCollisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f,0f,0f), Vector3f(1f), Vector3f(0f,0.2f,0f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f,2f,0f), Vector3f(1f), Vector3f(0f,0f,0f), GravityProperties.nothing, true)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
 
@@ -1582,7 +1582,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(0f), testOb1.velocity)
@@ -1595,20 +1595,20 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val abstractCollisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f,0f,0f), Vector3f(1f), Vector3f(0f,0f,0.2f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f,0f,2f), Vector3f(1f), Vector3f(0f,0f,0f), GravityProperties.nothing, true)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
 
@@ -1616,7 +1616,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(0f), testOb1.velocity)
@@ -1629,20 +1629,20 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val abstractCollisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0.2f, 0f, 0f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter, 1f, Vector3f(2f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                abstractCollisionHandler.add(this)
             }
 
 
@@ -1650,7 +1650,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                abstractCollisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(-0.2f, 0f, 0f), testOb1.velocity )
@@ -1663,20 +1663,20 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val collisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f,0f,0f), Vector3f(1f), Vector3f(0f,0.2f,0f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f,2f,0f), Vector3f(1f), Vector3f(0f,0f,0f), GravityProperties.nothing, false)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
 
@@ -1684,7 +1684,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                collisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(0f,-0.2f,0f), testOb1.velocity)
@@ -1697,20 +1697,20 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val collisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f,0f,0f), Vector3f(1f), Vector3f(0f,0f,0.2f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter,1f, Vector3f(0f,0f,2f), Vector3f(1f), Vector3f(0f,0f,0f), GravityProperties.nothing, false)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
 
@@ -1718,7 +1718,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                collisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(0f,0f,-0.2f), testOb1.velocity)
@@ -1731,27 +1731,27 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val collisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(3f, 1.5f, 0f), Vector3f(1f), Vector3f(-0.2f, -0.2f, 0f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter, 1f, Vector3f(-3f, 0f, -1.5f), Vector3f(1f), Vector3f(0.2f, 0f, 0.2f), GravityProperties.nothing, true)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb3 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
             with(testOb3) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
 
@@ -1759,7 +1759,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                collisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(0.2f, -0.2f, 0f), testOb1.velocity)
@@ -1772,27 +1772,27 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val collisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(1.5f, 3f, 0f), Vector3f(1f), Vector3f(-0.2f, -0.2f, 0f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f,-3f, -1.5f), Vector3f(1f), Vector3f( 0f, 0.2f, 0.2f), GravityProperties.nothing, true)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb3 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
             with(testOb3) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
 
@@ -1800,7 +1800,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                collisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f(-0.2f, 0.2f,0f), testOb1.velocity)
@@ -1813,27 +1813,27 @@ class ObjectCollisionTest {
         runBlocking {
             val sap = SAP()
             val gravityManager = GravityManager()
-            val applier = Applier()
+            val collisionHandler = CollisionHandler()
 
             val testOb1 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 1.5f, 3f), Vector3f(1f), Vector3f(0f, -0.2f, -0.2f), GravityProperties.nothing, true)
             with(testOb1) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb2 = TestApplierObject(sap.idCounter, 1f, Vector3f(-1.5f, 0f, -3f), Vector3f(1f), Vector3f( 0.2f, 0f, 0.2f), GravityProperties.nothing, true)
             with(testOb2) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
             val testOb3 = TestApplierObject(sap.idCounter, 1f, Vector3f(0f, 0f, 0f), Vector3f(1f), Vector3f(0f, 0f, 0f), GravityProperties.nothing, false)
             with(testOb3) {
                 sap.insertBox(this)
                 gravityManager.add(this)
-                applier.add(this)
+                collisionHandler.add(this)
             }
 
 
@@ -1841,7 +1841,7 @@ class ObjectCollisionTest {
                 gravityManager.applyGravity()
                 sap.sort()
                 sap.checkCollision()
-                applier.checkBounceOff()
+                collisionHandler.handleCollision()
             }
 
             assertEquals(Vector3f( 0f,-0.2f,0.2f), testOb1.velocity)

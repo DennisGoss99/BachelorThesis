@@ -3,9 +3,6 @@ package cga.exercise.components.properties.collision
 
 abstract class AbstractSAP{
 
-    var idCounter = 0
-        get() = field++
-
     var hitBoxes : MutableList<IHitBox> = mutableListOf()
 
     protected var endPointsX : MutableList<EndPoint> = mutableListOf()
@@ -13,7 +10,6 @@ abstract class AbstractSAP{
     protected var endPointsZ : MutableList<EndPoint> = mutableListOf()
 
     fun clear(){
-        idCounter = 0
         hitBoxes.clear()
         endPointsX.clear()
         endPointsY.clear()
@@ -65,6 +61,13 @@ abstract class AbstractSAP{
         endPointsX.removeAll{ it.owner.id == hitBox.id }
         endPointsY.removeAll{ it.owner.id == hitBox.id }
         endPointsZ.removeAll{ it.owner.id == hitBox.id }
+    }
+
+    fun remove(id : Int){
+        hitBoxes.removeAll { it.id == id }
+        endPointsX.removeAll{ it.owner.id == id }
+        endPointsY.removeAll{ it.owner.id == id }
+        endPointsZ.removeAll{ it.owner.id == id }
     }
 
     fun collisionCount() = hitBoxes.fold(0){acc, iHitBox -> acc + if (iHitBox.collided.get()) 1 else 0}

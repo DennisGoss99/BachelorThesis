@@ -2,6 +2,7 @@ package cga.exercise.components.geometry.transformable
 
 import org.joml.Math.toRadians
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
 
 

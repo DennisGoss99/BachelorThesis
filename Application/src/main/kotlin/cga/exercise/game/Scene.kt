@@ -16,7 +16,9 @@ import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.*
 import cga.exercise.components.properties.applier.AbstractCollisionHandler
 import cga.exercise.components.properties.applier.CollisionHandler
+import cga.exercise.components.properties.applier.ParallelCollisionHandler
 import cga.exercise.components.properties.collision.AbstractSAP
+import cga.exercise.components.properties.collision.IHitBox
 import cga.exercise.components.properties.collision.ParallelSAP
 import cga.exercise.components.properties.collision.SAP
 import cga.exercise.components.properties.gravity.*
@@ -79,7 +81,6 @@ class Scene(private val window: GameWindow) {
         "assets/textures/skybox/BluePinkNebular_front.png"
     ))
 
-
     val moonMaterial = Material(
         Texture2D("assets/textures/planets/moon_diff.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
         Texture2D("assets/textures/planets/moon_emit.png",true).setTexParams( GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR),
@@ -126,10 +127,18 @@ class Scene(private val window: GameWindow) {
     private val mainMenu = MainMenuPage(startButtonOnClick, autoTesterButtonOnClick)
     private val mainGui = MainGuiPage()
 
+    private val removeHitBox : ((Int) -> Unit) = {id -> sap.remove(id); hitBoxRenderer.removeHitBoxID(id); gravityContainer.remove(id); collisionHandler.remove(id)
+        mainGui.objectCount = hitBoxRenderer.hitboxes.size
+    }
+    private val addHitBox : ((mass : Float, velocity : Vector3f, pos : Vector3f, scale : Vector3f) -> Unit) = { mass : Float, velocity : Vector3f, pos : Vector3f, scale : Vector3f ->
+        with(GravityHitBox(IHitBox.idCounter, mass, GravityProperties.adopter, pos, scale, velocity)){sap.insertBox(this); hitBoxRenderer.add(this); gravityContainer.add(this); collisionHandler.add(this)}
+        mainGui.objectCount = hitBoxRenderer.hitboxes.size
+    }
+
     private var sap : AbstractSAP = SAP()
     private var hitBoxRenderer : IHitBoxRenderer = HitBoxRendererInstancing()
     private var gravityContainer : AbstractGravityManager = GravityManager()
-    private var abstractCollisionHandler : AbstractCollisionHandler = CollisionHandler()
+    private var collisionHandler : AbstractCollisionHandler = CollisionHandler(removeHitBox, addHitBox)
 
     //scene setup
     init {
@@ -193,11 +202,15 @@ class Scene(private val window: GameWindow) {
         if(settings.executeParallel) {
             sap = ParallelSAP(settings.jobCount)
             gravityContainer = ParallelGravityManager(settings.jobCount)
+            collisionHandler = ParallelCollisionHandler(settings.jobCount, removeHitBox, addHitBox)
         }else {
             sap = SAP()
             gravityContainer = GravityManager()
+            collisionHandler = CollisionHandler(removeHitBox, addHitBox)
         }
 
+        collisionHandler.seed = 85
+        collisionHandler.scatterAmount = 20
 
 //        val gravityHitBoxes = if(settings.useSampleData){
 //
@@ -238,19 +251,27 @@ class Scene(private val window: GameWindow) {
 //        hitBoxRenderer.add(mainGravityObject)
 //        sap.insertBox(mainGravityObject)
 
-        val h1 = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(0f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
+        val h1 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(0f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(-0.5f,0f,0f))
         with(h1){
             gravityContainer.add(this)
             hitBoxRenderer.add(this)
             sap.insertBox(this)
-            abstractCollisionHandler.add(this)
+            collisionHandler.add(this)
         }
-        val h2 = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(-5f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
+        val h2 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(-5f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0.5f,0f,0f))
         with(h2) {
             gravityContainer.add(this)
             hitBoxRenderer.add(this)
             sap.insertBox(this)
-            abstractCollisionHandler.add(this)
+            collisionHandler.add(this)
+        }
+
+        val h3 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(-100f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(2f,0f,0f))
+        with(h3) {
+            gravityContainer.add(this)
+            hitBoxRenderer.add(this)
+            sap.insertBox(this)
+            collisionHandler.add(this)
         }
 
 //        with(GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(4f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))) {
@@ -605,20 +626,23 @@ class Scene(private val window: GameWindow) {
 
         if (key == GLFW_KEY_G && (action == 1 || action == 2))
         {
+
             runBlocking {
                 sap.sort()
                 sap.checkCollision()
-                abstractCollisionHandler.handleCollision()
+                collisionHandler.handleCollision()
                 hitBoxRenderer.updateModelMatrix()
                 gravityContainer.applyGravity()
                 earth.orbit()
             }
-            println("--------")
-            println("${abstractCollisionHandler.hitBoxes[0].getPosition().x} ${abstractCollisionHandler.hitBoxes[0].getPosition().y}")
-            println("${abstractCollisionHandler.hitBoxes[0].velocity.x} ${abstractCollisionHandler.hitBoxes[0].velocity.y}")
-            println()
-            println("${abstractCollisionHandler.hitBoxes[1].getPosition().x} ${abstractCollisionHandler.hitBoxes[1].getPosition().y}")
-            println("${abstractCollisionHandler.hitBoxes[1].velocity.x} ${abstractCollisionHandler.hitBoxes[1].velocity.y}")
+
+
+//            println("--------")
+//            println("${collisionHandler.hitBoxes[0].getPosition().x} ${collisionHandler.hitBoxes[0].getPosition().y}")
+//            println("${collisionHandler.hitBoxes[0].velocity.x} ${collisionHandler.hitBoxes[0].velocity.y}")
+//            println()
+//            println("${collisionHandler.hitBoxes[1].getPosition().x} ${collisionHandler.hitBoxes[1].getPosition().y}")
+//            println("${collisionHandler.hitBoxes[1].velocity.x} ${collisionHandler.hitBoxes[1].velocity.y}")
         }
     }
 

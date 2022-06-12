@@ -1,3 +1,4 @@
+import cga.exercise.components.properties.collision.IHitBox
 import cga.exercise.components.properties.collision.ParallelSAP
 import cga.exercise.components.properties.collision.SAP
 import cga.exercise.components.properties.collision.TestHitBox
@@ -33,8 +34,8 @@ class SAPSpeedTest {
                     val y2 = y1 + Random.nextInt(1,5)
                     val z1 = Random.nextInt(0,501).toFloat()
                     val z2 = z1 + Random.nextInt(1,5)
-                    sap.insertBox(TestHitBox(sap.idCounter, x1,x2,y1,y2,z1,z2))
-                    sap2.insertBox(TestHitBox(sap2.idCounter, x1,x2,y1,y2,z1,z2))
+                    sap.insertBox(TestHitBox(IHitBox.idCounter, x1,x2,y1,y2,z1,z2))
+                    sap2.insertBox(TestHitBox(IHitBox.idCounter, x1,x2,y1,y2,z1,z2))
                 }
 
                 sap.sort()

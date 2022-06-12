@@ -23,6 +23,9 @@ import kotlin.math.pow
     fun remove(gravityObject : IGravity){
         gravityObjects.remove(gravityObject)
     }
+    fun remove(id : Int){
+        gravityObjects.removeAll{it.id == id}
+    }
 
     fun clear(){
         gravityObjects.clear()

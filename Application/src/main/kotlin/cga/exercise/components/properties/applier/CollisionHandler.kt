@@ -1,8 +1,11 @@
 package cga.exercise.components.properties.applier
 
+import cga.exercise.components.properties.gravity.GravityHitBox
 import org.joml.Vector3f
+import kotlin.math.pow
+import kotlin.random.Random
 
-class CollisionHandler : AbstractCollisionHandler() {
+class CollisionHandler(removeObject : ((id : Int) -> Unit)? = null, addObject : ((mass : Float, velocity : Vector3f, pos : Vector3f, scale : Vector3f) -> Unit)? = null) : AbstractCollisionHandler(removeObject, addObject) {
 
     override suspend fun handleCollision(){
 
@@ -10,32 +13,19 @@ class CollisionHandler : AbstractCollisionHandler() {
 
         hitBoxes.forEach { it.checked.set(false) }
 
-        hitBoxes.forEach { hitBox ->
+        hitBoxes.toList().forEach { hitBox ->
             if (hitBox.interact && hitBox.collided.get() && !hitBox.checked.getAndSet(true)) {
+
                 val hitBox2 = hitBox.collidedWith[0]
-
                 if (hitBox2 is IApplier && !hitBox2.checked.getAndSet(true)) {
-                    val collisionAxis = getCollisionAxis(hitBox, hitBox2)
 
-                    if (hitBox2.interact){
+                    val impact = Vector3f(hitBox.velocity).max(hitBox2.velocity).sub(Vector3f(hitBox.velocity).min(hitBox2.velocity))
+                    val maxImpact = if(impact.x > impact.y) if(impact.x > impact.z) impact.x else impact.z else if(impact.y > impact.z) impact.y else impact.z
 
-                        val translate1 = moveBoxOutOfRadius(hitBox, hitBox2, collisionAxis)
-                        val translate2 = moveBoxOutOfRadius(hitBox2, hitBox, collisionAxis)
-
-                        hitBox.translateLocal(translate1)
-                        hitBox.updateEndPoints()
-
-                        hitBox2.translateLocal(translate2)
-                        hitBox2.updateEndPoints()
-
-                        l[hitBox] = getVelocityAfterCollision(hitBox.velocity, getCollisionVector(Vector3f(hitBox.velocity), hitBox.mass, Vector3f(hitBox2.velocity), hitBox2.mass), collisionAxis)
-                        l[hitBox2] = getVelocityAfterCollision(hitBox2.velocity, getCollisionVector(Vector3f(hitBox2.velocity), hitBox2.mass, Vector3f(hitBox.velocity), hitBox.mass), collisionAxis)
-                    }else{
-                        hitBox.translateLocal(moveBoxOutOfRadius(hitBox, hitBox2, collisionAxis))
-                        hitBox.updateEndPoints()
-
-                        l[hitBox] = getVelocityAfterCollision(hitBox.velocity, Vector3f(hitBox.velocity).mul(-1f), collisionAxis)
-                    }
+                    if (hitBox2.interact && maxImpact >= impactScatterValue)
+                        scatterObjects(hitBox, hitBox2)
+                    else
+                        bounceOf(hitBox, hitBox2, l)
                 }
             }
         }
@@ -44,5 +34,4 @@ class CollisionHandler : AbstractCollisionHandler() {
             entry.key.velocity = entry.value
         }
     }
-
 }

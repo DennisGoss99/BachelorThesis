@@ -1,8 +1,17 @@
 package cga.exercise.components.properties.applier
 
 import org.joml.Vector3f
+import kotlin.math.pow
+import kotlin.random.Random
 
-abstract class AbstractCollisionHandler {
+abstract class AbstractCollisionHandler(protected val removeObject : ((id : Int) -> Unit)?, protected val addObject : ((mass : Float, velocity : Vector3f, pos : Vector3f, scale : Vector3f) -> Unit)?) {
+
+    var seed : Long = 0
+
+    var impactScatterValue = 1f
+
+    var scatterAmount : Int = 2
+        set(value) { if(value >= 0) field = value }
 
     var hitBoxes : MutableList<IApplier> = mutableListOf()
 
@@ -23,11 +32,15 @@ abstract class AbstractCollisionHandler {
         hitBoxes.remove(hitBox)
     }
 
-    protected fun getCollisionVector(v1 : Vector3f, m1 : Float, v2: Vector3f, m2 : Float) : Vector3f{
+    fun remove(id : Int) {
+        hitBoxes.removeAll{it.id == id}
+    }
+
+    private fun getCollisionVector(v1 : Vector3f, m1 : Float, v2: Vector3f, m2 : Float) : Vector3f{
         return Vector3f((v1.mul(m1 - m2).add(v2.mul(2 * m2))).div(m1 + m2))
     }
 
-    protected fun getCollisionAxis(hitBox: IApplier, hitBox2: IApplier) : CollisionAxis{
+    private fun getCollisionAxis(hitBox: IApplier, hitBox2: IApplier) : CollisionAxis{
 
         val oldHitBox1minPos = Vector3f(hitBox.minEndPoints[0].value, hitBox.minEndPoints[1].value, hitBox.minEndPoints[2].value).sub(hitBox.velocity)
         val oldHitBox1maxPos = Vector3f(hitBox.maxEndPoints[0].value, hitBox.maxEndPoints[1].value, hitBox.maxEndPoints[2].value).sub(hitBox.velocity)
@@ -50,7 +63,7 @@ abstract class AbstractCollisionHandler {
         }
     }
 
-    protected fun getVelocityAfterCollision(velocity : Vector3f, collisionVelocity : Vector3f, collisionAxis : CollisionAxis) : Vector3f{
+    private fun getVelocityAfterCollision(velocity : Vector3f, collisionVelocity : Vector3f, collisionAxis : CollisionAxis) : Vector3f{
         return Vector3f(
         if (collisionAxis == CollisionAxis.X || collisionAxis == CollisionAxis.XY || collisionAxis == CollisionAxis.XZ || collisionAxis == CollisionAxis.XYZ)
             collisionVelocity.x else velocity.x,
@@ -61,7 +74,7 @@ abstract class AbstractCollisionHandler {
         )
     }
 
-    protected fun moveBoxOutOfRadiusZeroVelocity(hitBox : IApplier, hitBox2: IApplier) : Vector3f{
+    private fun moveBoxOutOfRadiusZeroVelocity(hitBox : IApplier, hitBox2: IApplier) : Vector3f{
         val translate = Vector3f(0f)
 
         val hitBox1Pos = hitBox.getPosition()
@@ -95,7 +108,7 @@ abstract class AbstractCollisionHandler {
         return translate
     }
 
-    protected fun moveBoxOutOfRadius(hitBox : IApplier, hitBox2: IApplier, collisionAxis : CollisionAxis) : Vector3f{
+    private fun moveBoxOutOfRadius(hitBox : IApplier, hitBox2: IApplier, collisionAxis : CollisionAxis) : Vector3f{
 
         if(collisionAxis == CollisionAxis.Unknown){
 //            println("Collision with unknownAxis")
@@ -176,6 +189,58 @@ abstract class AbstractCollisionHandler {
         }
 
         return Vector3f(0f)
+    }
+
+    protected fun bounceOf(hitBox: IApplier, hitBox2: IApplier, changingHitBoxes: MutableMap<IApplier, Vector3f>, ) {
+        val collisionAxis = getCollisionAxis(hitBox, hitBox2)
+
+        if (hitBox2.interact) {
+
+            val translate1 = moveBoxOutOfRadius(hitBox, hitBox2, collisionAxis)
+            val translate2 = moveBoxOutOfRadius(hitBox2, hitBox, collisionAxis)
+
+            hitBox.translateLocal(translate1)
+            hitBox.updateEndPoints()
+
+            hitBox2.translateLocal(translate2)
+            hitBox2.updateEndPoints()
+
+            changingHitBoxes[hitBox] = getVelocityAfterCollision(hitBox.velocity,
+                getCollisionVector(Vector3f(hitBox.velocity), hitBox.mass, Vector3f(hitBox2.velocity), hitBox2.mass),
+                collisionAxis)
+            changingHitBoxes[hitBox2] = getVelocityAfterCollision(hitBox2.velocity,
+                getCollisionVector(Vector3f(hitBox2.velocity), hitBox2.mass, Vector3f(hitBox.velocity), hitBox.mass),
+                collisionAxis)
+        } else {
+            hitBox.translateLocal(moveBoxOutOfRadius(hitBox, hitBox2, collisionAxis))
+            hitBox.updateEndPoints()
+
+            changingHitBoxes[hitBox] = getVelocityAfterCollision(hitBox.velocity,
+                getCollisionVector(Vector3f(hitBox.velocity), hitBox.mass, Vector3f(hitBox2.velocity), hitBox2.mass),
+                collisionAxis)
+        }
+    }
+
+    protected fun scatterObjects(hitBox: IApplier, hitBox2: IApplier) {
+        val cubeCombinedVolume =
+            (((hitBox.maxEndPoints[0].value - hitBox.minEndPoints[0].value) * (hitBox.maxEndPoints[1].value - hitBox.minEndPoints[1].value) * (hitBox.maxEndPoints[2].value - hitBox.minEndPoints[2].value))
+                    + ((hitBox2.maxEndPoints[0].value - hitBox2.minEndPoints[0].value) * (hitBox2.maxEndPoints[1].value - hitBox2.minEndPoints[1].value) * (hitBox2.maxEndPoints[2].value - hitBox2.minEndPoints[2].value))).div(8f)
+
+        val cubeSize = Vector3f(cubeCombinedVolume.div(scatterAmount).pow(1f / 3f))
+        val combinedVelocity = Vector3f(hitBox.velocity).add(hitBox2.velocity).mul(0.5f)
+
+        repeat(scatterAmount) {
+            addObject?.invoke(0.1f,
+                Vector3f(combinedVelocity).add(Vector3f(
+                    (Random(seed++).nextFloat() - 0.5f) / 2f,
+                    (Random(seed++).nextFloat() - 0.5f) / 2f,
+                    (Random(seed++).nextFloat() - 0.5f) / 2f)),
+                Vector3f(hitBox.getPosition()),
+                cubeSize)
+        }
+
+        removeObject?.invoke(hitBox.id)
+        removeObject?.invoke(hitBox2.id)
     }
 
     abstract suspend fun handleCollision()

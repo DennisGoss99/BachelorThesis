@@ -1,6 +1,7 @@
 import cga.exercise.components.properties.applier.CollisionHandler
 import cga.exercise.components.properties.applier.ParallelCollisionHandler
 import cga.exercise.components.properties.applier.TestApplierObject
+import cga.exercise.components.properties.collision.IHitBox
 import cga.exercise.components.properties.collision.ParallelSAP
 import cga.exercise.components.properties.collision.SAP
 import cga.exercise.components.properties.collision.TestHitBox
@@ -39,11 +40,11 @@ class CollisionHandlerTest {
             val velocity = Vector3f((Random.nextFloat() -0.5f) * 4f ,(Random.nextFloat() -0.5f) * 4f ,(Random.nextFloat() -0.5f) * 4f )
             val mass = Random.nextFloat() * 10
 
-            with(TestApplierObject(sap.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
+            with(TestApplierObject(IHitBox.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
                 sap.insertBox(this)
                 collisionHandler.add(this)
             }
-            with(TestApplierObject(sap.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
+            with(TestApplierObject(IHitBox.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
                 sap2.insertBox(this)
                 collisionHandler2.add(this)
             }
@@ -91,7 +92,7 @@ class CollisionHandlerTest {
                     val velocity = Vector3f((Random.nextFloat() -0.5f) * 4f ,(Random.nextFloat() -0.5f) * 4f ,(Random.nextFloat() -0.5f) * 4f )
                     val mass = Random.nextFloat() * 10
 
-                    with(TestApplierObject(sap.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
+                    with(TestApplierObject(IHitBox.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
                         sap.insertBox(this)
                         collisionHandler.add(this)
                     }
@@ -127,7 +128,7 @@ class CollisionHandlerTest {
                     val velocity = Vector3f((Random.nextFloat() -0.5f) * 4f ,(Random.nextFloat() -0.5f) * 4f ,(Random.nextFloat() -0.5f) * 4f )
                     val mass = Random.nextFloat() * 10
 
-                    with(TestApplierObject(sap2.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
+                    with(TestApplierObject(IHitBox.idCounter, mass, Vector3f(position), Vector3f(1f), Vector3f(velocity), GravityProperties.nothing, true)){
                         sap2.insertBox(this)
                         collisionHandler2.add(this)
                     }

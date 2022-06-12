@@ -6,6 +6,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 interface IHitBox {
 
+    companion object{
+        var idCounter = 0
+            get() = field++
+    }
+
     val id : Int
 
     val minEndPoints : Array<EndPoint>
@@ -20,4 +25,5 @@ interface IHitBox {
 
     fun updateEndPoints()
     fun translateLocal(vec : Vector3f)
+
 }

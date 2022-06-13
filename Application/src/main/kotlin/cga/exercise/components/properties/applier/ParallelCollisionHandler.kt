@@ -27,7 +27,7 @@ class ParallelCollisionHandler(jobCount : Int, removeObject : ((id : Int) -> Uni
 
         hitBoxes.forEach { it.checked.set(false) }
 
-        hitBoxes.foreachParallel(jobCount) { hitBox ->
+        hitBoxes.toList().foreachParallel(jobCount) { hitBox ->
             if (hitBox.interact && hitBox.collided.get() && !hitBox.checked.getAndSet(true)) {
 
                 val hitBox2 = hitBox.collidedWith[0]

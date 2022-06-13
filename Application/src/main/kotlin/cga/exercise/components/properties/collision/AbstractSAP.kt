@@ -64,10 +64,10 @@ abstract class AbstractSAP{
     }
 
     fun remove(id : Int){
-        hitBoxes.removeAll { it.id == id }
         endPointsX.removeAll{ it.owner.id == id }
         endPointsY.removeAll{ it.owner.id == id }
         endPointsZ.removeAll{ it.owner.id == id }
+        hitBoxes.removeAll { it.id == id }
     }
 
     fun collisionCount() = hitBoxes.fold(0){acc, iHitBox -> acc + if (iHitBox.collided.get()) 1 else 0}

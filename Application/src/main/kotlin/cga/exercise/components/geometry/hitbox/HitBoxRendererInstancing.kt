@@ -11,9 +11,6 @@ import org.lwjgl.opengl.GL33.glVertexAttribDivisor
 
 class HitBoxRendererInstancing(hitBoxes : MutableList<HitBox> = mutableListOf()) : IHitBoxRenderer {
 
-    val count : Int
-        get() = hitboxes.count()
-
     override var hitboxes : MutableList<HitBox> = hitBoxes
         set(value) {
             vertexDataMat = FloatArray(count * 17)
@@ -153,10 +150,9 @@ class HitBoxRendererInstancing(hitBoxes : MutableList<HitBox> = mutableListOf())
     }
 
     override fun add(hitBox: HitBox) {
-        if(!hitboxes.contains(hitBox)){
+        if(!hitboxes.contains(hitBox))
             hitboxes.add(hitBox)
-            vertexDataMat = FloatArray(count * 17)
-        }
+        vertexDataMat = FloatArray(count * 17)
     }
 
     override fun removeHitBoxID(id : Int){

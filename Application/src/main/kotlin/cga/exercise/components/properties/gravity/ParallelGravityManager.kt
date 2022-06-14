@@ -1,6 +1,7 @@
 package cga.exercise.components.properties.gravity
 
 import cga.framework.foreachParallel
+import cga.framework.printlnTimeMillis
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 class ParallelGravityManager(jobCount : Int) : AbstractGravityManager() {
@@ -19,14 +20,10 @@ class ParallelGravityManager(jobCount : Int) : AbstractGravityManager() {
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun applyGravity() {
 
-        gravityObjects.foreachParallel(jobCount){ ob1 ->
-
-            if(ob1.gravityProperty == GravityProperties.adopter || ob1.gravityProperty == GravityProperties.sourceAndAdopter)
-                for (ob2 in gravityObjects) {
-                    if ((ob2.gravityProperty == GravityProperties.source || ob2.gravityProperty == GravityProperties.sourceAndAdopter) && ob1 !== ob2) {
-                        applyGravityTo(ob1, ob2)
-                    }
-                }
+        adopterObjects.foreachParallel(jobCount){ ob1 ->
+            for (ob2 in sourceObjects) {
+                applyGravityTo(ob1, ob2)
+            }
         }
 
         gravityObjects.foreachParallel(jobCount) { ob1 ->

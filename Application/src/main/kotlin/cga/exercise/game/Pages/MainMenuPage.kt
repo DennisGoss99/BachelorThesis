@@ -38,7 +38,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
     private val sampleCount = 16500
     private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> settings.useSampleData = b; if (b) setUseSampleData() }
 
-    private val testResultOutputToggleButtonOnValueChanged = { b : Boolean -> settings.shouldTestResultOutput = b; testResultOutput.forEach { it.disable(!b) } }
+//    private val testResultOutputToggleButtonOnValueChanged = { b : Boolean -> settings.shouldTestResultOutput = b; testResultOutput.forEach { it.disable(!b) } }
 
     //private val texResultPathOnValueChanged = { s : String -> settings.testResultPath = s }
 
@@ -92,12 +92,12 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
                             sliderText,
                             slider
                         )),
-                        Text("Test Result Output:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("Should tests be executed.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(settings.shouldTestResultOutput, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, testResultOutputToggleButtonOnValueChanged)
-                        )),
-                        testResultOutput[0],
+//                        Text("Test Result Output:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+//                        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+//                            Text("Should tests be executed.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+//                            ToggleButton(settings.shouldTestResultOutput, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, testResultOutputToggleButtonOnValueChanged)
+//                        )),
+//                        testResultOutput[0],
 //                        testResultOutput[1],
                     )),
 
@@ -107,7 +107,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
         )
 
         jobCountTextBox.disable(!settings.executeParallel)
-        testResultOutput.forEach { it.disable(!settings.shouldTestResultOutput) }
+//        testResultOutput.forEach { it.disable(!settings.shouldTestResultOutput) }
 
     }
 

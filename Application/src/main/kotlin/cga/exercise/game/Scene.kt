@@ -14,14 +14,8 @@ import cga.exercise.components.geometry.skybox.Skybox
 import cga.exercise.components.geometry.skybox.SkyboxPerspective
 import cga.exercise.components.geometry.transformable.Transformable
 import cga.exercise.components.gui.*
-import cga.exercise.components.properties.applier.AbstractCollisionHandler
-import cga.exercise.components.properties.applier.CollisionHandler
-import cga.exercise.components.properties.applier.ParallelCollisionHandler
-import cga.exercise.components.properties.applier.TestApplierObject
-import cga.exercise.components.properties.collision.AbstractSAP
-import cga.exercise.components.properties.collision.IHitBox
-import cga.exercise.components.properties.collision.ParallelSAP
-import cga.exercise.components.properties.collision.SAP
+import cga.exercise.components.properties.applier.*
+import cga.exercise.components.properties.collision.*
 import cga.exercise.components.properties.gravity.*
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.spaceObjects.Moon
@@ -32,6 +26,7 @@ import cga.exercise.game.Pages.MainMenuPage
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
+import cga.framework.printlnTimeMillis
 import kotlinx.coroutines.*
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -130,10 +125,10 @@ class Scene(private val window: GameWindow) {
     private val mainGui = MainGuiPage()
 
     private val removeHitBox : ((Int) -> Unit) = {
-            id -> sap.remove(id); hitBoxRenderer.removeHitBoxID(id); gravityContainer.remove(id); collisionHandler.remove(id)
+            id -> sap.remove(id); hitBoxRenderer.removeHitBoxID(id); gravityContainer.remove(id); collisionHandler.remove(id);
     }
     private val addHitBox : ((mass : Float, velocity : Vector3f, pos : Vector3f, scale : Vector3f) -> Unit) = { mass : Float, velocity : Vector3f, pos : Vector3f, scale : Vector3f ->
-        with(GravityHitBox(IHitBox.idCounter, mass, GravityProperties.nothing, pos, scale, velocity)){ sap.insertBox(this); hitBoxRenderer.add(this); gravityContainer.add(this); collisionHandler.add(this) }
+        with(GravityHitBox(IHitBox.idCounter, mass, GravityProperties.adopter, pos, scale, velocity)){ sap.insertBox(this); hitBoxRenderer.add(this); gravityContainer.add(this); collisionHandler.add(this) }
     }
 
     private var sap : AbstractSAP = SAP()
@@ -158,13 +153,8 @@ class Scene(private val window: GameWindow) {
 
         camera.rotateLocal(-10f,-100f,45f)
 
-//            GlobalScope.launch {
-//                delay(1000)
-//                gameState = mutableListOf(RenderCategory.FirstPerson)
-//            }
-
-         mainMenu.refresh()
-         mainGui.refresh()
+        mainMenu.refresh()
+        mainGui.refresh()
     }
 
     var testerId = 0
@@ -213,244 +203,53 @@ class Scene(private val window: GameWindow) {
         }
 
         collisionHandler.seed = seed
-        collisionHandler.impactScatterValue = 0.1f
-        collisionHandler.scatterAmount = 20
+        collisionHandler.impactScatterValue = 1f
+        collisionHandler.scatterAmount = 10
 
 
-//        val gravityHitBoxes = if(settings.useSampleData){
-//
-//            val file = File("assets/sampleData/sampleData.txt")
-//            val lines = file.readLines()
-//
-//            MutableList<GravityHitBox>(settings.objectCount){
-//                val data = lines[it].split(", ").map { it.toFloat() }
-//
-//                val pos = Vector3f(data[0], data[1], data[2])
-//                val scale = Vector3f(1f)
-//                val mass = 1f
-//                val velocity = Vector3f(data[3], data[4], data[5])
-//                GravityHitBox(sap.idCounter, mass, pos, scale, velocity)
-//            }
-//        }
-//        else {
-//            MutableList<GravityHitBox>(settings.objectCount) {
-//                val pos = Vector3f(Random.nextInt(1, 5001).toFloat(),Random.nextInt(1, 5001).toFloat(),Random.nextInt(1, 5001).toFloat())
-//                val scale = Vector3f(1f)
-//                val mass = 1f
-//                val velocity = Vector3f((Random.nextFloat() - 0.5f) * 10,(Random.nextFloat() - 0.5f) * 10,(Random.nextFloat() - 0.5f) * 10)
-//                GravityHitBox(sap.idCounter, mass, pos, scale, velocity)
-//            }
-//        }
-//
-//        @Suppress("UNCHECKED_CAST")
-//        hitBoxRenderer = HitBoxRendererInstancing(gravityHitBoxes as MutableList<HitBox>)
-//
-//        @Suppress("UNCHECKED_CAST")
-//        gravityContainer.setAll( gravityHitBoxes as MutableList<IGravity>, GravityProperties.adopter)
-//
-//        @Suppress("UNCHECKED_CAST")
-//        sap.setAllBoxes(gravityHitBoxes as MutableList<IHitBox>)
+        val gravityHitBoxes = if(settings.useSampleData){
 
-//        val mainGravityObject = GravityHitBox(sap.idCounter, 4000f, Vector3f(2500f), Vector3f(430f))
-//        gravityContainer.add(mainGravityObject, GravityProperties.source)
-//        hitBoxRenderer.add(mainGravityObject)
-//        sap.insertBox(mainGravityObject)
+            val file = File("assets/sampleData/sampleData.txt")
+            val lines = file.readLines()
 
-//        val h1 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(1f, 2f, 3f), Vector3f(1f,1f,1f), velocity = Vector3f(-1f,0f,0f))
-//        with(h1){
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            collisionHandler.add(this)
-//        }
-//        val h2 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(1f, 2f, 3f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
-//        with(h2) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            collisionHandler.add(this)
-//        }
+            MutableList<GravityHitBox>(settings.objectCount){
+                val data = lines[it].split(", ").map { it.toFloat() }
 
-        var move = 0f
-        repeat(64){
-            if(it % 2 == 0)
-                move += 200f
-
-            val position = Vector3f(move,(Random(seed).nextFloat() -0.5f) * 2f ,(Random(seed+1).nextFloat() -0.5f) * 2f )
-            val velocity = Vector3f((Random(seed+2).nextFloat() -0.5f) * 4f ,(Random(seed+3).nextFloat() -0.5f) * 4f ,(Random(seed+4).nextFloat() -0.5f) * 4f )
-            val mass = Random(seed+5).nextFloat() * 10
-
-            with(GravityHitBox(IHitBox.idCounter, mass, GravityProperties.nothing, Vector3f(position), Vector3f(1f), Vector3f(velocity).mul(if(it % 2 == 0) 1f else -1f), true)){
-                sap.insertBox(this)
-                collisionHandler.add(this)
-                hitBoxRenderer.add(this)
+                val pos = Vector3f(data[0], data[1], data[2])
+                val scale = Vector3f(1f)
+                val mass = 1f
+                val velocity = Vector3f(data[3], data[4], data[5])
+                GravityHitBox(IHitBox.idCounter, mass, GravityProperties.adopter, pos, scale, velocity)
+            }
+        }
+        else {
+            MutableList<GravityHitBox>(settings.objectCount) {
+                val pos = Vector3f(Random.nextInt(1, 5001).toFloat(),Random.nextInt(1, 5001).toFloat(),Random.nextInt(1, 5001).toFloat())
+                val scale = Vector3f(1f)
+                val mass = 1f
+                val velocity = Vector3f((Random.nextFloat() - 0.5f) * 10,(Random.nextFloat() - 0.5f) * 10,(Random.nextFloat() - 0.5f) * 10)
+                GravityHitBox(IHitBox.idCounter, mass, GravityProperties.adopter, pos, scale, velocity)
             }
         }
 
-//        val h3 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(-100f, 0.1f, 0.2f), Vector3f(1f,1f,1f), velocity = Vector3f(2f,0f,0f))
-//        with(h3) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            collisionHandler.add(this)
-//        }
-//
-//        val h4 = GravityHitBox(IHitBox.idCounter, 0.1f, GravityProperties.nothing, Vector3f(-100f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))
-//        with(h4) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            collisionHandler.add(this)
-//        }
+        @Suppress("UNCHECKED_CAST")
+        hitBoxRenderer = HitBoxRendererInstancing(gravityHitBoxes as MutableList<HitBox>)
 
-//        with(GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(4f, 0f, 0f), Vector3f(1f,1f,1f), velocity = Vector3f(0f,0f,0f))) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            applier.add(this)
-//        }
+        @Suppress("UNCHECKED_CAST")
+        gravityContainer.setAll( gravityHitBoxes as MutableList<IGravity>)
 
-//        repeat(10){
-//            val test01Object = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.sourceAndAdopter, Vector3f(Random.nextInt(-20, 20).toFloat(),Random.nextInt(-20, 20).toFloat(),Random.nextInt(-20, 20).toFloat()), Vector3f(4f))
-//            gravityContainer.add(test01Object)
-//            hitBoxRenderer.add(test01Object)
-//            sap.insertBox(test01Object)
-//            applier.add(test01Object)
-//        }
+        @Suppress("UNCHECKED_CAST")
+        sap.setAll(gravityHitBoxes as MutableList<IHitBox>)
 
-        /* Line Test*/
-//        with(GravityHitBox(sap.idCounter, 1f, GravityProperties.nothing, Vector3f(4f, 0f, 0f), velocity = Vector3f(0.2f,0f,0f))) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            applier.add(this)
-//        }
-//
-//        with(GravityHitBox(sap.idCounter, 1f, GravityProperties.nothing, Vector3f(-4f, 0f, 0f), velocity = Vector3f(0f,0f,0f))) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            applier.add(this)
-//        }
-//        with(GravityHitBox(sap.idCounter, 1f, GravityProperties.nothing, Vector3f(-6f, 0f, 0f), velocity = Vector3f(0f,0f,0f))) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            applier.add(this)
-//        }
-//
-//        val test3Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(-15f,0f,0f), Vector3f(1f,5f,5f), interact = false)
-//        gravityContainer.add(test3Object)
-//        hitBoxRenderer.add(test3Object)
-//        sap.insertBox(test3Object)
-//        applier.add(test3Object)
-//
-//        val test4Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(15f,0f,0f), Vector3f(1f,5f,5f), interact = false)
-//        gravityContainer.add(test4Object)
-//        hitBoxRenderer.add(test4Object)
-//        sap.insertBox(test4Object)
-//        applier.add(test4Object)
+        @Suppress("UNCHECKED_CAST")
+        collisionHandler.setAll(gravityHitBoxes as MutableList<IApplier>)
+
+        val mainGravityObject = GravityHitBox(IHitBox.idCounter, 4000f, GravityProperties.source, Vector3f(2500f), Vector3f(430f), Vector3f(0f), false)
+        gravityContainer.add(mainGravityObject)
+        hitBoxRenderer.add(mainGravityObject)
+        sap.insertBox(mainGravityObject)
 
 
-        /* Box Test*/
-/*
-//        repeat(10){
-//            val test01Object = GravityHitBox(sap.idCounter, 0.1f, GravityProperties.nothing, Vector3f(Random.nextInt(-17, 17).toFloat(),Random.nextInt(-17, 17).toFloat(),Random.nextInt(-17, 17).toFloat()), velocity = Vector3f(Random.nextFloat() *0.5f,Random.nextFloat() *0.5f,Random.nextFloat() *0.5f))
-//            gravityContainer.add(test01Object)
-//            hitBoxRenderer.add(test01Object)
-//            sap.insertBox(test01Object)
-//            applier.add(test01Object)
-//        }
-//
-//        val test3Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(-20.1f,0f,0f), Vector3f(1f,20f,20f), interact = false)
-//        gravityContainer.add(test3Object)
-//        hitBoxRenderer.add(test3Object)
-//        sap.insertBox(test3Object)
-//        applier.add(test3Object)
-//
-//        val test4Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(20.1f,0f,0f), Vector3f(1f,20f,20f), interact = false)
-//        gravityContainer.add(test4Object)
-//        hitBoxRenderer.add(test4Object)
-//        sap.insertBox(test4Object)
-//        applier.add(test4Object)
-//
-//        val test5Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,-20.1f,0f), Vector3f(20f,1f,20f), interact = false)
-//        gravityContainer.add(test5Object)
-//        hitBoxRenderer.add(test5Object)
-//        sap.insertBox(test5Object)
-//        applier.add(test5Object)
-//
-//        val test6Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,20.1f,0f), Vector3f(20f,1f,20f), interact = false)
-//        gravityContainer.add(test6Object)
-//        hitBoxRenderer.add(test6Object)
-//        sap.insertBox(test6Object)
-//        applier.add(test6Object)
-//
-//        val test7Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,0f,-20.1f), Vector3f(20f,20f,1f), interact = false)
-//        gravityContainer.add(test7Object)
-//        hitBoxRenderer.add(test7Object)
-//        sap.insertBox(test7Object)
-//        applier.add(test7Object)
-//
-//        val test8Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f, 0f, 20.1f), Vector3f(20f,20f,1f), interact = false)
-//        gravityContainer.add(test8Object)
-//        hitBoxRenderer.add(test8Object)
-//        sap.insertBox(test8Object)
-//        applier.add(test8Object)
-*/
-        //Hit Test
-/*
-//        with(GravityHitBox(sap.idCounter, 1f, GravityProperties.nothing, Vector3f(0f, 0f, 0f), Vector3f(1f), velocity = Vector3f(5f,0f,0f), interact = true)) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            applier.add(this)
-//        }
-//
-
-//        with(GravityHitBox(sap.idCounter, 1f, GravityProperties.nothing, Vector3f(5f, 0f, 0f), Vector3f(1f), velocity = Vector3f(-1f, 1f,0f), interact = true)) {
-//            gravityContainer.add(this)
-//            hitBoxRenderer.add(this)
-//            sap.insertBox(this)
-//            applier.add(this)
-//        }
-
-//        val test3Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(-21.1f,0f,0f), Vector3f(1f,20f,20f), interact = false)
-//        gravityContainer.add(test3Object)
-//        hitBoxRenderer.add(test3Object)
-//        sap.insertBox(test3Object)
-//        applier.add(test3Object)
-//
-//        val test4Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(21.1f,0f,0f), Vector3f(1f,20f,20f), interact = false)
-//        gravityContainer.add(test4Object)
-//        hitBoxRenderer.add(test4Object)
-//        sap.insertBox(test4Object)
-//        applier.add(test4Object)
-//
-//        val test5Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,-21.1f,0f), Vector3f(20f,1f,20f), interact = false)
-//        gravityContainer.add(test5Object)
-//        hitBoxRenderer.add(test5Object)
-//        sap.insertBox(test5Object)
-//        applier.add(test5Object)
-//
-//        val test6Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,21.1f,0f), Vector3f(20f,1f,20f), interact = false)
-//        gravityContainer.add(test6Object)
-//        hitBoxRenderer.add(test6Object)
-//        sap.insertBox(test6Object)
-//        applier.add(test6Object)
-//
-//        val test7Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,0f,-21.1f), Vector3f(20f,20f,1f), interact = false)
-//        gravityContainer.add(test7Object)
-//        hitBoxRenderer.add(test7Object)
-//        sap.insertBox(test7Object)
-//        applier.add(test7Object)
-//
-//        val test8Object = GravityHitBox(sap.idCounter, 999f, GravityProperties.nothing, Vector3f(0f,0f,21.1f), Vector3f(20f,20f,1f), interact = false)
-//        gravityContainer.add(test8Object)
-//        hitBoxRenderer.add(test8Object)
-//        sap.insertBox(test8Object)
-//        applier.add(test8Object)
-*/
         hitBoxRenderer.updateModelMatrix()
 
         runBlocking {
@@ -484,6 +283,7 @@ class Scene(private val window: GameWindow) {
     private var counterFPS = 0L
 
 
+    private var lastTime = 0f
     private var renderCount = 0L
     fun render(dt: Float, t: Float) {
 
@@ -505,15 +305,14 @@ class Scene(private val window: GameWindow) {
 
         if(gameState == RenderCategory.FirstPerson) {
 
-//            mainShader.use()
+            mainShader.use()
 
-//            if (t - lastTime > 0.01f)
-//                mainShader.setUniform("time", t)
+            if (t - lastTime > 0.01f)
+                mainShader.setUniform("time", t)
 
 
-
-//            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//            earth.render(mainShader)
+            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+            earth.render(mainShader)
 
 
             camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
@@ -542,8 +341,8 @@ class Scene(private val window: GameWindow) {
 
         guiRenderer.afterGUIRender()
 
-//        if(t - lastTime > 0.5f)
-//            lastTime = t
+        if(t - lastTime > 0.5f)
+            lastTime = t
 
 
 
@@ -563,18 +362,20 @@ class Scene(private val window: GameWindow) {
     suspend fun update(dt: Float, t: Float) {
         if (t - updateLastT  > 0.5f){
             mainGui.upsGuiElement.text = "%.0f".format(updateCounter / ( t - updateLastT))
+            mainGui.objectCount = hitBoxRenderer.count
             updateLastT = t
             updateCounter = 0
         }
         updateCounter++
 
         if(gameState == RenderCategory.FirstPerson){
-//            gravityContainer.applyGravity()
-//            hitBoxRenderer.updateModelMatrix()
-//            sap.sort()
-//            sap.checkCollision()
-//            earth.orbit()
-//            applier.checkBounceOff()
+            sap.sort()
+            sap.checkCollision()
+            collisionHandler.handleCollision()
+            hitBoxRenderer.updateModelMatrix()
+            gravityContainer.applyGravity()
+            earth.orbit()
+
         }
     }
 

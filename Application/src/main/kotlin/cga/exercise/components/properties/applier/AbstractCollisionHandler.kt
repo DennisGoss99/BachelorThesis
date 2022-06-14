@@ -119,13 +119,6 @@ abstract class AbstractCollisionHandler(protected val removeObject : ((id : Int)
                 moveBoxOutOfRadiusZeroVelocity(hitBox, hitBox2)
         }
 
-
-        if(hitBox.velocity.x == 0f && hitBox.velocity.y == 0f && hitBox.velocity.z == 0f)
-            return if (hitBox2.velocity.x == 0f && hitBox2.velocity.y == 0f && hitBox2.velocity.z == 0f )
-                moveBoxOutOfRadiusZeroVelocity(hitBox, hitBox2).mul(0.5f)
-            else
-                Vector3f(0f)
-
         val hitBox1Pos = hitBox.getPosition()
         val hitBox1Scale = Vector3f((hitBox.maxEndPoints[0].value - hitBox.minEndPoints[0].value) /2f, (hitBox.maxEndPoints[1].value - hitBox.minEndPoints[1].value) /2f, (hitBox.maxEndPoints[2].value - hitBox.minEndPoints[2].value) /2f)
         val hitBox2Pos = hitBox2.getPosition()
@@ -221,14 +214,14 @@ abstract class AbstractCollisionHandler(protected val removeObject : ((id : Int)
     }
 
     @Synchronized
-    private fun spawnAndRemove(hitBox : IApplier, hitBox2 : IApplier, combinedPosition : Vector3f, combinedVelocity : Vector3f, cubeSize : Float){
+    private fun spawnAndRemove(hitBox : IApplier, hitBox2 : IApplier, mass : Float, combinedPosition : Vector3f, combinedVelocity : Vector3f, cubeSize : Float){
         repeat(scatterAmount) { spawnIndex ->
             val seeds = Triple(seed + (combinedPosition.x * 100f).toInt() + spawnIndex, seed + (combinedPosition.y * 100f).toInt() + spawnIndex, seed + (combinedPosition.z * 100f).toInt() + spawnIndex)
 
             val velocity = Vector3f(combinedVelocity).add(Vector3f((Random(seeds.first).nextFloat() - 0.5f) / 2f, (Random(seeds.second).nextFloat() - 0.5f) / 2f, (Random(seeds.third).nextFloat() - 0.5f) / 2f))
             val position = Vector3f(hitBox.getPosition()).add(Vector3f(velocity).mul(15f + scatterAmount * 1.5f ))
 
-            addObject?.invoke(0.1f, velocity, position, Vector3f(cubeSize) )
+            addObject?.invoke(mass, velocity, position, Vector3f(cubeSize) )
         }
 
         removeObject?.invoke(hitBox.id)
@@ -243,8 +236,9 @@ abstract class AbstractCollisionHandler(protected val removeObject : ((id : Int)
         val cubeSize = cubeCombinedVolume.div(scatterAmount).pow(1f / 3f)
         val combinedVelocity = Vector3f(hitBox.velocity).add(hitBox2.velocity).mul(0.5f)
         val combinedPosition = Vector3f(hitBox.getPosition()).add(hitBox2.getPosition()).mul(0.5f)
+        val mass = (hitBox.mass + hitBox2.mass) / scatterAmount
 
-        spawnAndRemove(hitBox, hitBox2, combinedPosition, combinedVelocity, cubeSize)
+        spawnAndRemove(hitBox, hitBox2, mass, combinedPosition, combinedVelocity, cubeSize)
     }
 
     abstract suspend fun handleCollision()

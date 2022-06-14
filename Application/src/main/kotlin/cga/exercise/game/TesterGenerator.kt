@@ -3,7 +3,7 @@ package cga.exercise.game
 fun main(args : Array<String>) {
 
     Tester.saveTester(Tester(200, cycleSettings= listOf(
-        Settings(true, 4, 1, 0, false, true),
+//        Settings(true, 4, 1, 0, false, true),
 //        Settings(true, 4, 1, 10, false, true),
 //        Settings(true, 4, 1, 20, false, true),
 //        Settings(true, 4, 1, 50, false, true),

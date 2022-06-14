@@ -5,6 +5,9 @@ import cga.exercise.components.shader.ShaderProgram
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 interface IHitBoxRenderer {
+    val count : Int
+        get() = hitboxes.size
+
     var hitboxes: MutableList<HitBox>
 
     fun add(hitBox: HitBox)

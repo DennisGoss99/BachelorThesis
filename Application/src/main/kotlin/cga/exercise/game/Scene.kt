@@ -5,6 +5,7 @@ import cga.exercise.components.camera.FirstPersonCamera
 import cga.exercise.components.geometry.RenderCategory
 import cga.exercise.components.geometry.atmosphere.Atmosphere
 import cga.exercise.components.geometry.atmosphere.AtmosphereMaterial
+import cga.exercise.components.geometry.atmosphere.atmospherePerspective
 import cga.exercise.components.geometry.hitbox.HitBoxRendererInstancing
 import cga.exercise.components.geometry.hitbox.IHitBoxRenderer
 import cga.exercise.components.geometry.material.Material
@@ -186,9 +187,30 @@ class Scene(private val window: GameWindow) {
 
     val seed = Random.nextLong()
 
+    private var renderObjects = true
+    private var renderVisuals = true
+    private var evaluateCollisions = true
+    private var applyCollisionEffect = true
+    private var applyGravityEffect = true
+
     private fun applySettings(settings: Settings){
         mainGui.objectCount = settings.objectCount
         mainGui.executeParallel = settings.executeParallel
+
+        mainGui.renderAnything = settings.renderObjects
+        renderObjects = settings.renderObjects
+
+        mainGui.renderEarth = settings.renderVisuals
+        renderVisuals = settings.renderVisuals
+
+        mainGui.executeCollision = settings.evaluateCollisions
+        evaluateCollisions = settings.evaluateCollisions
+
+        mainGui.executeShatter = settings.applyCollisionEffect
+        applyCollisionEffect = settings.applyCollisionEffect
+
+        mainGui.executeGravity = settings.applyGravityEffect
+        applyGravityEffect = settings.applyGravityEffect
 
         window.m_updatefrequency = settings.updateFrequency.toFloat()
 
@@ -305,28 +327,30 @@ class Scene(private val window: GameWindow) {
 
         if(gameState == RenderCategory.FirstPerson) {
 
-            mainShader.use()
+            if(renderVisuals){
+                mainShader.use()
 
-            if (t - lastTime > 0.01f)
-                mainShader.setUniform("time", t)
-
-
-            camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-            earth.render(mainShader)
+                if (t - lastTime > 0.01f)
+                    mainShader.setUniform("time", t)
 
 
-            camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-            hitBoxRenderer.render(spaceObjectShader)
+                camera.bind(mainShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+                earth.render(mainShader)
 
-            //-- SkyBoxShader
-            SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-            skyboxRenderer.render(skyBoxShader)
-            //--
+                //-- SkyBoxShader
+                SkyboxPerspective.bind(skyBoxShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+                skyboxRenderer.render(skyBoxShader)
+                //--
 
-            //-- AtmosphereShader
-//            atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
-//                earth.atmosphere?.render(atmosphereShader)
-            //--
+                //-- AtmosphereShader
+                atmospherePerspective.bind(atmosphereShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+                earth.atmosphere?.render(atmosphereShader)
+                //--
+            }
+            if(renderObjects) {
+                camera.bind(spaceObjectShader, camera.getCalculateProjectionMatrix(), camera.getCalculateViewMatrix())
+                hitBoxRenderer.render(spaceObjectShader)
+            }
         }
 
         guiRenderer.beforeGUIRender()
@@ -369,13 +393,19 @@ class Scene(private val window: GameWindow) {
         updateCounter++
 
         if(gameState == RenderCategory.FirstPerson){
-            sap.sort()
-            sap.checkCollision()
-            collisionHandler.handleCollision()
-            hitBoxRenderer.updateModelMatrix()
-            gravityContainer.applyGravity()
-            earth.orbit()
+            if(evaluateCollisions){
+                sap.sort()
+                sap.checkCollision()
 
+                if(applyCollisionEffect)
+                    collisionHandler.handleCollision()
+            }
+            if(renderObjects)
+                hitBoxRenderer.updateModelMatrix()
+            if(applyGravityEffect)
+                gravityContainer.applyGravity()
+            if (renderVisuals)
+                earth.orbit()
         }
     }
 

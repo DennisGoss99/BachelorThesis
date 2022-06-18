@@ -16,6 +16,12 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
 
     private val parallelToggleButtonOnValueChanged = { b : Boolean -> settings.executeParallel = b; jobCountTextBox.disable(!b) }
 
+    private val renderObjectsToggleButtonOnValueChanged = { b : Boolean -> settings.renderObjects = b}
+    private val renderVisualsToggleButtonOnValueChanged = { b : Boolean -> settings.renderVisuals = b}
+    private val evaluateCollisionsToggleButtonOnValueChanged = { b : Boolean -> settings.evaluateCollisions = b}
+    private val applyCollisionEffectToggleButtonOnValueChanged = { b : Boolean -> settings.applyCollisionEffect = b}
+    private val applyGravityToggleButtonOnValueChanged = { b : Boolean -> settings.applyGravityEffect = b}
+
     private val jobCountOnValueChanged = { s : String -> settings.jobCount = (s).toIntOrNull() ?: 1 }
 
     private val jobCountTextBox = LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
@@ -38,21 +44,6 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
     private val sampleCount = 16500
     private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> settings.useSampleData = b; if (b) setUseSampleData() }
 
-//    private val testResultOutputToggleButtonOnValueChanged = { b : Boolean -> settings.shouldTestResultOutput = b; testResultOutput.forEach { it.disable(!b) } }
-
-    //private val texResultPathOnValueChanged = { s : String -> settings.testResultPath = s }
-
-    val testResultOutput = listOf(
-        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-            Text("How many update cycles will be executed.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-            NumberBox("1000", PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), fontSize = 2.5f, cursorColor = StaticResources.highlightColor)
-        )),
-//        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-//            Text("Sets the output path.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-//            //TextBox(settings.testResultPath, PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), textMode = TextMode.Left, fontSize = 2.5f, cursorColor = StaticResources.highlightColor, OnValueChanged = texResultPathOnValueChanged)
-//        ))
-    )
-
     init {
         children = listOf(
             Scrollbar(Relative(1f), Relative(1f), Center(), Center(), true, false, StaticResources.backGroundColor, innerElement =
@@ -61,44 +52,50 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
                         Text("Settings:", 5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(30)),
 
                         Text("Execute Parallel:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(35)),
-                        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("The collision detection and gravity system are executed parallel.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(settings.executeParallel, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, parallelToggleButtonOnValueChanged)
-                        )),
-                        jobCountTextBox,
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("The collision detection and gravity system are executed parallel.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.executeParallel, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, parallelToggleButtonOnValueChanged)
+                            )),
+                            jobCountTextBox,
 
-                        Text("Test2:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                        LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
-                        )),
-                        LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, \nsed diam nonumy eirmod tempor invidunt ut labore et.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(false, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true)
-                        )),
+                        Text("Effects:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("Render anything to the Screen", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.renderObjects, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, renderObjectsToggleButtonOnValueChanged)
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("Render visual effects", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.renderVisuals, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, renderVisualsToggleButtonOnValueChanged)
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("Check if boxes collied", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.evaluateCollisions, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, evaluateCollisionsToggleButtonOnValueChanged)
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("Apply shatter/ bounce off effect after collision", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.applyCollisionEffect, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, applyCollisionEffectToggleButtonOnValueChanged)
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("Apply gravity effect to boxes", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.applyGravityEffect, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, applyGravityToggleButtonOnValueChanged)
+                            )),
+
                         Text("Updates:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                        LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("This setting is used to limit how many updates per Second \ncan occur. (The minimum amount of updates per Frame is one)", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            updateFrequencyText,
-                            Slider(((settings.updateFrequency -1f) / 599f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderUpdateFrequencyOnValueChanged)
-                        )),
-                        Text("Objects:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-                        LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("If true, predetermined sample data will be used to spawn \nthe selected amount of Objects.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            ToggleButton(settings.useSampleData, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, useSampleDataToggleButtonOnValueChanged)
-                        )),
-                        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-                            Text("How many Objects will be generated.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-                            sliderText,
-                            slider
-                        )),
-//                        Text("Test Result Output:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
-//                        LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
-//                            Text("Should tests be executed.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
-//                            ToggleButton(settings.shouldTestResultOutput, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, testResultOutputToggleButtonOnValueChanged)
-//                        )),
-//                        testResultOutput[0],
-//                        testResultOutput[1],
+                            LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("This setting is used to limit how many updates per Second \ncan occur. (The minimum amount of updates per Frame is one)", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                updateFrequencyText,
+                                Slider(((settings.updateFrequency -1f) / 599f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderUpdateFrequencyOnValueChanged)
+                            )),
+                            Text("Objects:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                            LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("If true, predetermined sample data will be used to spawn \nthe selected amount of Objects.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                ToggleButton(settings.useSampleData, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, useSampleDataToggleButtonOnValueChanged)
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("How many Objects will be generated.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                sliderText,
+                                slider
+                            )),
                     )),
 
                     Button("AutoTester", PixelWidth(160), PixelHeight(60), PixelRight(55 + 160 + 10), PixelBottom(40), onClick = autoTesterButtonOnClick),
@@ -107,7 +104,6 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
         )
 
         jobCountTextBox.disable(!settings.executeParallel)
-//        testResultOutput.forEach { it.disable(!settings.shouldTestResultOutput) }
 
     }
 

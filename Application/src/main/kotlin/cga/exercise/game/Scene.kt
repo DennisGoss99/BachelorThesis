@@ -185,7 +185,7 @@ class Scene(private val window: GameWindow) {
                 "\n")
     }
 
-    val seed = Random.nextLong()
+    private var seed = 0L
 
     private var renderObjects = true
     private var renderVisuals = true
@@ -224,9 +224,10 @@ class Scene(private val window: GameWindow) {
             collisionHandler = CollisionHandler(removeHitBox, addHitBox)
         }
 
-        collisionHandler.seed = seed
-        collisionHandler.impactScatterValue = 1f
-        collisionHandler.scatterAmount = 10
+        seed = settings.seed
+        collisionHandler.seed = settings.seed
+        collisionHandler.impactScatterValue = settings.impactVelocity
+        collisionHandler.scatterAmount = settings.shatterAmount
 
 
         val gravityHitBoxes = if(settings.useSampleData){
@@ -246,10 +247,10 @@ class Scene(private val window: GameWindow) {
         }
         else {
             MutableList<GravityHitBox>(settings.objectCount) {
-                val pos = Vector3f(Random.nextInt(1, 5001).toFloat(),Random.nextInt(1, 5001).toFloat(),Random.nextInt(1, 5001).toFloat())
+                val pos = Vector3f(Random(it * 6 + seed).nextInt(1, 5001).toFloat(),Random(it * 6  + seed + 1).nextInt(1, 5001).toFloat(),Random(it * 6  + seed + 2).nextInt(1, 5001).toFloat())
                 val scale = Vector3f(1f)
                 val mass = 1f
-                val velocity = Vector3f((Random.nextFloat() - 0.5f) * 10,(Random.nextFloat() - 0.5f) * 10,(Random.nextFloat() - 0.5f) * 10)
+                val velocity = Vector3f((Random(it * 6  + seed + 3).nextFloat() - 0.5f) * 10,(Random(it * 6  + seed + 4).nextFloat() - 0.5f) * 10,(Random(it * 6  + seed + 5).nextFloat() - 0.5f) * 10)
                 GravityHitBox(IHitBox.idCounter, mass, GravityProperties.adopter, pos, scale, velocity)
             }
         }

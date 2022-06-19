@@ -17,33 +17,5 @@ import kotlin.random.Random
 fun main(args : Array<String>) {
     val game = Game(1280, 720)
     game.run()
-//    runBlocking {
-//        var i = 0
-//        val f : ((Int)->Unit)= @Synchronized {a-> i+= a}
-//
-//        val j1 = GlobalScope.launch {
-//            repeat(100000){
-//                f.invoke(1)
-//            }
-//        }
-//
-//        val j2 = GlobalScope.launch {
-//            repeat(100000){
-//                f.invoke(1)
-//            }
-//        }
-//
-//
-//        val j3 = GlobalScope.launch {
-//            repeat(100000){
-//                f.invoke(1)
-//            }
-//        }
-//
-//
-//        j1.join()
-//        j2.join()
-//        j3.join()
-//        println(i)
-//    }
+
 }

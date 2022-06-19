@@ -22,7 +22,7 @@ data class Settings(
     var useSampleData : Boolean = true,
 
     var seed : Long = Random.nextLong(),
-    var splitterAmount : Int = 10,
+    var shatterAmount : Int = 10,
     var impactVelocity : Float = 1f
     )
 {

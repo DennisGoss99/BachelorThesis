@@ -4,9 +4,11 @@ package cga.exercise.game.Pages
 import cga.exercise.components.gui.*
 import cga.exercise.components.gui.TextComponents.TextMode
 import cga.exercise.components.gui.constraints.*
+import cga.exercise.components.texture.Texture2D
 import cga.exercise.game.Settings
 import cga.exercise.game.StaticResources
 import cga.exercise.game.Tester
+import kotlin.random.Random
 
 class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnClick : ((Int,Int) -> Unit)) : LayoutBox(Relative(1f), Relative(1f), Center(), Center()) {
 
@@ -43,6 +45,26 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
 
     private val sampleCount = 16500
     private val useSampleDataToggleButtonOnValueChanged = { b : Boolean -> settings.useSampleData = b; if (b) setUseSampleData() }
+
+
+
+    private val refreshIcon = Texture2D("assets/textures/gui/refreshIcon.png", true)
+    private val refreshButton = Image(refreshIcon, PixelWidth(25),PixelHeight(25), PixelRight(60), Center(), StaticResources.backGroundColor)
+
+    private val seedNumberBox = NumberBox(settings.seed.toString(), Relative(0.16f), PixelHeight(25), PixelRight(90), Center(), fontSize = 2.5f, textMode = TextMode.Right, OnValueChanged = {s -> settings.seed = if (s.isBlank()) 0 else s.toLong() })
+
+    private val onRefreshButtonClick : ((Int, Int) -> Unit) = {_, _ -> settings.seed = Random.nextLong(); seedNumberBox.text = settings.seed.toString(); }
+
+    init {
+        refreshButton.onClick = onRefreshButtonClick
+    }
+
+    private val shatterAmountText = Text(settings.shatterAmount.toString(), 2.5f, StaticResources.standardFont,30f,TextMode.Right, false, PixelRight(60 + 213 + 10), Center(), StaticResources.fontColor1)
+    private val sliderShatterAmountOnValueChanged = { f : Float -> settings.shatterAmount = (f * 30f).toInt(); shatterAmountText.text = settings.shatterAmount.toString() }
+
+    private val impactVelocityText = Text("%.2f".format(settings.impactVelocity), 2.5f, StaticResources.standardFont,30f,TextMode.Right, false, PixelRight(60 + 213 + 10), Center(), StaticResources.fontColor1)
+    private val sliderImpactVelocityOnValueChanged = { f : Float -> settings.impactVelocity = (f * 20f); impactVelocityText.text = "%.2f".format(settings.impactVelocity)}
+
 
     init {
         children = listOf(
@@ -86,7 +108,7 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
                                 updateFrequencyText,
                                 Slider(((settings.updateFrequency -1f) / 599f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderUpdateFrequencyOnValueChanged)
                             )),
-                            Text("Objects:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                        Text("Objects:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
                             LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
                                 Text("If true, predetermined sample data will be used to spawn \nthe selected amount of Objects.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
                                 ToggleButton(settings.useSampleData, PixelWidth(42),PixelHeight(25), PixelRight(60), Center(), true, useSampleDataToggleButtonOnValueChanged)
@@ -96,9 +118,25 @@ class MainMenuPage(startButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
                                 sliderText,
                                 slider
                             )),
+                        Text("Shatter:", 3.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(30), PixelTop(28)),
+                            LayoutBox(Relative(0.98f), Relative(0.035f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("The seed value determines output of generated random values.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                seedNumberBox,
+                                refreshButton,
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("If two objects collied and shatter, then this value will determine the \nfragment count.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                shatterAmountText,
+                                Slider((settings.shatterAmount / 30f),PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderShatterAmountOnValueChanged)
+                            )),
+                            LayoutBox(Relative(0.98f), Relative(0.07f), PixelLeft(32), PixelTop(10), children = listOf(
+                                Text("If the collision critical impact velocity is greater then the set Value \nthe collided objects will shatter.", 2.5f, StaticResources.standardFont,30f,TextMode.Left, true, PixelLeft(0), Center(), StaticResources.fontColor1),
+                                impactVelocityText,
+                                Slider((settings.impactVelocity / 20f), PixelWidth(213), PixelHeight(25), PixelRight(60), Center(), sliderImpactVelocityOnValueChanged)
+                            )),
                     )),
 
-                    Button("AutoTester", PixelWidth(160), PixelHeight(60), PixelRight(55 + 160 + 10), PixelBottom(40), onClick = autoTesterButtonOnClick),
+                    Button("AutoTester", PixelWidth(200), PixelHeight(60), PixelRight(55 + 160 + 10), PixelBottom(40), onClick = autoTesterButtonOnClick),
                     Button("Start", PixelWidth(160), PixelHeight(60), PixelRight(55), PixelBottom(40), onClick = startButtonOnClick)
             )))
         )

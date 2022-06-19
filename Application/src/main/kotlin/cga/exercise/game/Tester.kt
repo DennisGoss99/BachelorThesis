@@ -6,9 +6,8 @@ import java.io.File
 
 @Serializable
 data class Tester(
-    val cycleCount : Long,
     var testResultPath : String = "",
-    val cycleSettings : List<Settings>,
+    val cycleSettings : List<Pair<Long, Settings>>,
 )
 {
 

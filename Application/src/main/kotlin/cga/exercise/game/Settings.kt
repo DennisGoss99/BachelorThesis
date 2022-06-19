@@ -3,6 +3,7 @@ package cga.exercise.game
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.io.File
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 @Serializable
@@ -21,7 +22,7 @@ data class Settings(
     var objectCount : Int = 0,
     var useSampleData : Boolean = true,
 
-    var seed : Long = Random.nextLong(),
+    var seed : Long = Random.nextLong().absoluteValue,
     var shatterAmount : Int = 10,
     var impactVelocity : Float = 1f
     )

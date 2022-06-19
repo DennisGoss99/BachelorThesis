@@ -38,6 +38,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
+import kotlin.system.measureNanoTime
 
 class SceneStats{
     companion object{
@@ -118,7 +119,7 @@ class Scene(private val window: GameWindow) {
         if(startUpMenu.testScript != null){
             useTestScript = true
 
-            testFile = File(startUpMenu.testScript!!.testResultPath + "result${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd-HHmmss"))}.txt")
+            testFile = File(startUpMenu.testScript!!.testResultPath + "result${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd-HHmmss"))}.csv")
             applyTester(startUpMenu.testScript)
         }
     }
@@ -146,23 +147,23 @@ class Scene(private val window: GameWindow) {
     //scene setup
     init {
 
-         //initial opengl state
-         glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
+        //initial opengl state
+        glClearColor(0f, 0f, 0f, 1.0f); GLError.checkThrow()
 
-         glEnable(GL_CULL_FACE); GLError.checkThrow()
-         glFrontFace(GL_CCW); GLError.checkThrow()
-         glCullFace(GL_BACK); GLError.checkThrow()
+        glEnable(GL_CULL_FACE); GLError.checkThrow()
+        glFrontFace(GL_CCW); GLError.checkThrow()
+        glCullFace(GL_BACK); GLError.checkThrow()
 
-         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
-         glDepthFunc(GL_LESS); GLError.checkThrow()
-
-//            camera.translateLocal(Vector3f(3f * 20f,0f,60f))
+        glEnable(GL_DEPTH_TEST); GLError.checkThrow()
+        glDepthFunc(GL_LESS); GLError.checkThrow()
 
         camera.rotateLocal(-10f,-100f,45f)
 
+        startUpMenu.refresh()
         mainMenu.refresh()
         mainGui.refresh()
-        startUpMenu.refresh()
+
+        mainMenu.globalOnUpdateEvent(0f, 0f)
     }
 
     var testerId = 0
@@ -172,23 +173,47 @@ class Scene(private val window: GameWindow) {
             return
 
         if(testScript.cycleSettings.count() - 1 >= testerId){
-            testerCycleCount = testScript.cycleCount
-            applySettings(testScript.cycleSettings[testerId])
+            IHitBox.idCounter = 0
+            sap.clear()
+            hitBoxRenderer.clear()
+            collisionHandler.clear()
+            gravityContainer.clear()
+
+            testerCycleCount = testScript.cycleSettings[testerId].first
+            applySettings(testScript.cycleSettings[testerId].second)
+            updateNanoTime = 0L
+            collisionNanoTime = 0L
+            collisionHandlerNanoTime = 0L
+            gravityNanoTime = 0L
+
             testerId++
         }else{
             testerId = 0
             useTestScript = false
             exitToMenu()
+            gameState = RenderCategory.StartUp
         }
     }
+
+
+    var updateNanoTime = 0L
+    var collisionNanoTime = 0L
+    var collisionHandlerNanoTime = 0L
+    var gravityNanoTime = 0L
 
     private fun printTesterResults(testScript: Tester?){
         if (testScript == null)
             return
 
-        testFile?.appendText("${testerId -1}, " +
-                "${testScript.cycleSettings[testerId - 1].objectCount}, "+
-                "%.2f, ".format(sumFPS / counterFPS) +
+        testFile?.appendText("${testerId -1};" +
+                "${testScript.cycleSettings[testerId - 1].second.objectCount};"+
+                "${testScript.cycleSettings[testerId - 1].first};"+
+                "${testScript.cycleSettings[testerId - 1].second.executeParallel};"+
+                "%.2f;".format(sumFPS / counterFPS) +
+                "%.0f;".format(updateNanoTime / testScript.cycleSettings[testerId - 1].first.toDouble()) +
+                "%.0f;".format(collisionNanoTime / testScript.cycleSettings[testerId - 1].first.toDouble()) +
+                "%.0f;".format(collisionHandlerNanoTime / testScript.cycleSettings[testerId - 1].first.toDouble()) +
+                "%.0f;".format(gravityNanoTime / testScript.cycleSettings[testerId - 1].first.toDouble()) +
                 "\n")
     }
 
@@ -301,8 +326,13 @@ class Scene(private val window: GameWindow) {
         sap.clear()
         hitBoxRenderer.clear()
         gravityContainer.clear()
+        collisionHandler.clear()
 
-        gameState = RenderCategory.Gui
+        useTestScript = false
+        updateCounter = 0
+        testerId = 0
+        testerCycleCount = 0
+
         window.setCursorVisible(true)
     }
 
@@ -314,7 +344,6 @@ class Scene(private val window: GameWindow) {
 
 
     private var lastTime = 0f
-    private var renderCount = 0L
     fun render(dt: Float, t: Float) {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
@@ -327,13 +356,11 @@ class Scene(private val window: GameWindow) {
 
             sumFPS += fps
             counterFPS++
-
-            renderCount++
         }
         frameCounter++
 
 
-        if(gameState == RenderCategory.FirstPerson) {
+        if(gameState != RenderCategory.Gui) {
 
             if(renderVisuals){
                 mainShader.use()
@@ -376,21 +403,11 @@ class Scene(private val window: GameWindow) {
 
         if(t - lastTime > 0.5f)
             lastTime = t
-
-
-
-        if (useTestScript){
-            if(renderCount > testerCycleCount ){
-                printTesterResults(startUpMenu.testScript)
-                applyTester(startUpMenu.testScript)
-                renderCount = 0
-            }
-        }
     }
 
     private var updateCounter = 0
     private var updateLastT = 0f
-
+    private var testUpdateCount = 0L
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun update(dt: Float, t: Float) {
         if (t - updateLastT  > 0.5f){
@@ -398,58 +415,70 @@ class Scene(private val window: GameWindow) {
             mainGui.objectCount = hitBoxRenderer.count
             updateLastT = t
             updateCounter = 0
+
         }
         updateCounter++
 
-        if(gameState == RenderCategory.FirstPerson){
-            if(evaluateCollisions){
-                sap.sort()
-                sap.checkCollision()
+        when(gameState) {
+            RenderCategory.FirstPerson -> {
+                updateNanoTime += measureNanoTime {
 
-                if(applyCollisionEffect)
-                    collisionHandler.handleCollision()
+                    if (evaluateCollisions) {
+                        collisionNanoTime += measureNanoTime {
+                            sap.sort()
+                            sap.checkCollision()
+                        }
+
+                        if (applyCollisionEffect){
+                            collisionHandlerNanoTime += measureNanoTime {
+                                collisionHandler.handleCollision()
+                            }
+                        }
+                    }
+                    if (renderObjects)
+                        hitBoxRenderer.updateModelMatrix()
+                    if (applyGravityEffect) {
+                        gravityNanoTime += measureNanoTime {
+                            gravityContainer.applyGravity()
+                        }
+                    }
+                    if (renderVisuals)
+                        earth.orbit()
+                }
+                if (useTestScript){
+                    if(testUpdateCount > testerCycleCount ){
+                        printTesterResults(startUpMenu.testScript)
+                        applyTester(startUpMenu.testScript)
+                        testUpdateCount = 0
+                    }else{
+                        testUpdateCount++
+                    }
+                }
+
             }
-            if(renderObjects)
-                hitBoxRenderer.updateModelMatrix()
-            if(applyGravityEffect)
-                gravityContainer.applyGravity()
-            if (renderVisuals)
+            RenderCategory.StartUp -> {
                 earth.orbit()
+            }
         }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun updateUI(dt: Float, t: Float) {
         when(gameState) {
-            RenderCategory.Gui -> mainMenu.globalOnUpdateEvent(dt, t)
             RenderCategory.StartUp -> startUpMenu.globalOnUpdateEvent(dt, t)
-            else ->{}
+            RenderCategory.Gui -> mainMenu.globalOnUpdateEvent(dt, t)
         }
-
 
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
 
-//        if (window.getKeyState(GLFW_KEY_Q)) {
-//            movingObject.rotateLocal(rotationMultiplier * dt, 0.0f, 0.0f)
-//        }
-//
-//        if (window.getKeyState(GLFW_KEY_E)) {
-//            movingObject.rotateLocal(-rotationMultiplier  * dt, 0.0f, 0.0f)
-//        }
-
-        if (window.getKeyState ( GLFW_KEY_W) && !window.getKeyState ( GLFW_KEY_T)) {
+        if (window.getKeyState ( GLFW_KEY_W) && !window.getKeyState ( GLFW_KEY_T))
             movingObject.translate(Vector3f(0.0f, 0.0f, -translationMultiplier * dt))
-            //spaceship.activateMainThrusters()
-        }
 
-        if (window.getKeyState ( GLFW_KEY_S)) {
+
+        if (window.getKeyState ( GLFW_KEY_S))
             movingObject.translate(Vector3f(0.0f, 0.0f, translationMultiplier * dt))
-        }
-//
-//        if (window.getKeyState ( GLFW_KEY_G)) {
-//            movingObject.translateLocal(Vector3f(0.0f, 0.0f, translationMultiplier * dt * 10))
-//        }
+
 
         if (gameState == RenderCategory.FirstPerson){
             if (window.getKeyState ( GLFW_KEY_T))
@@ -462,22 +491,8 @@ class Scene(private val window: GameWindow) {
                 movingObject.rotateLocal(0.0f, 0.0f, -rotationMultiplier* dt)
         }
 
-//        if (gameState.contains(RenderCategory.ThirdPerson)){
-//            if (window.getKeyState ( GLFW_KEY_A)) {
-//                movingObject.rotateLocal(0.0f, rotationMultiplier * dt, 0.0f)
-//                spaceship.activateRightTurnThruster()
-//            }
-//
-//            if (window.getKeyState ( GLFW_KEY_D)) {
-//                movingObject.rotateLocal(0.0f, -rotationMultiplier * dt, 0.0f)
-//                spaceship.activateLeftTurnThruster()
-//            }
-//        }
         SceneStats.mouseScroll = 0
     }
-
-    private var lastCameraMode = gameState
-    private var lastCamera = camera
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
 
@@ -499,6 +514,7 @@ class Scene(private val window: GameWindow) {
                 }
                 RenderCategory.FirstPerson -> {
                     exitToMenu()
+                    gameState = RenderCategory.Gui
                 }
             }
         }

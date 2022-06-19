@@ -12,10 +12,13 @@ class StartUpMenu(manualButtonOnClick : ((Int,Int) -> Unit), autoTesterButtonOnC
 
     init {
         children = listOf(
-            Button("ManualMode", PixelWidth(200), PixelHeight(60), PixelLeft(50), PixelBottom(50 + 65*2), onClick = manualButtonOnClick),
-            Button("AutoTester", PixelWidth(200), PixelHeight(60), PixelLeft(50), PixelBottom(50 + 65), onClick = autoTesterButtonOnClick),
+            Button("Manual Mode", PixelWidth(200), PixelHeight(60), PixelLeft(50), PixelBottom(50 + 65*2), onClick = manualButtonOnClick),
+            Button("Auto Tester", PixelWidth(200), PixelHeight(60), PixelLeft(50), PixelBottom(50 + 65), onClick = autoTesterButtonOnClick),
             Button("Exit", PixelWidth(200), PixelHeight(60), PixelLeft(50), PixelBottom(50), onClick = exitButtonOnClick),
         )
+
+        if(testScript == null)
+            children[1].disable(true)
     }
 
 

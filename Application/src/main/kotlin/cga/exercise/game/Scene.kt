@@ -24,6 +24,7 @@ import cga.exercise.components.spaceObjects.Planet
 import cga.exercise.components.texture.Texture2D
 import cga.exercise.game.Pages.MainGuiPage
 import cga.exercise.game.Pages.MainMenuPage
+import cga.exercise.game.Pages.StartUpMenu
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.ModelLoader
@@ -59,7 +60,7 @@ class Scene(private val window: GameWindow) {
     private val spaceObjectShader : ShaderProgram = ShaderProgram("assets/shaders/spaceObject_vert.glsl", "assets/shaders/spaceObject_frag.glsl")
 
     private val guiShader: ShaderProgram = ShaderProgram("assets/shaders/gui_vert.glsl", "assets/shaders/gui_frag.glsl")
-    private var gameState = RenderCategory.Gui
+    private var gameState = RenderCategory.StartUp
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -114,16 +115,21 @@ class Scene(private val window: GameWindow) {
     private var useTestScript = false
     private var testFile : File? = null
     private val autoTesterButtonOnClick :((Int, Int) -> Unit)= { _, _ ->
-        if(mainMenu.testScript != null){
+        if(startUpMenu.testScript != null){
             useTestScript = true
 
-            testFile = File(mainMenu.testScript!!.testResultPath + "result${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd-HHmmss"))}.txt")
-            applyTester(mainMenu.testScript)
+            testFile = File(startUpMenu.testScript!!.testResultPath + "result${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd-HHmmss"))}.txt")
+            applyTester(startUpMenu.testScript)
         }
     }
 
-    private val mainMenu = MainMenuPage(startButtonOnClick, autoTesterButtonOnClick)
+    private val goToSettingsOnClick : ((Int, Int) -> Unit)= { _, _ ->
+        gameState = RenderCategory.Gui
+    }
+
+    private val mainMenu = MainMenuPage(startButtonOnClick)
     private val mainGui = MainGuiPage()
+    private val startUpMenu = StartUpMenu(goToSettingsOnClick, autoTesterButtonOnClick, {_,_ -> window.quit()})
 
     private val removeHitBox : ((Int) -> Unit) = {
             id -> sap.remove(id); hitBoxRenderer.removeHitBoxID(id); gravityContainer.remove(id); collisionHandler.remove(id);
@@ -156,6 +162,7 @@ class Scene(private val window: GameWindow) {
 
         mainMenu.refresh()
         mainGui.refresh()
+        startUpMenu.refresh()
     }
 
     var testerId = 0
@@ -357,10 +364,11 @@ class Scene(private val window: GameWindow) {
         guiRenderer.beforeGUIRender()
 
         //-- GuiRenderer
-        if(gameState == RenderCategory.FirstPerson)
-            guiRenderer.render(mainGui, dt, t)
-        else
-            guiRenderer.render(mainMenu, dt, t)
+        when(gameState){
+            RenderCategory.FirstPerson -> guiRenderer.render(mainGui, dt, t)
+            RenderCategory.StartUp -> guiRenderer.render(startUpMenu, dt, t)
+            RenderCategory.Gui -> guiRenderer.render(mainMenu, dt, t)
+        }
         //--
 
 
@@ -373,8 +381,8 @@ class Scene(private val window: GameWindow) {
 
         if (useTestScript){
             if(renderCount > testerCycleCount ){
-                printTesterResults(mainMenu.testScript)
-                applyTester(mainMenu.testScript)
+                printTesterResults(startUpMenu.testScript)
+                applyTester(startUpMenu.testScript)
                 renderCount = 0
             }
         }
@@ -412,8 +420,12 @@ class Scene(private val window: GameWindow) {
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun updateUI(dt: Float, t: Float) {
-        if(gameState == RenderCategory.Gui)
-            mainMenu.globalOnUpdateEvent(dt, t)
+        when(gameState) {
+            RenderCategory.Gui -> mainMenu.globalOnUpdateEvent(dt, t)
+            RenderCategory.StartUp -> startUpMenu.globalOnUpdateEvent(dt, t)
+            else ->{}
+        }
+
 
         val rotationMultiplier = 30f
         val translationMultiplier = 35.0f
@@ -474,10 +486,16 @@ class Scene(private val window: GameWindow) {
         if(gameState == RenderCategory.Gui && (action == 1 || action == 2))
             mainMenu.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
 
+        if(gameState == RenderCategory.StartUp && (action == 1 || action == 2))
+            startUpMenu.focusedElement?.onKeyDown?.let { it(key, scancode, mode) }
+
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
             when(gameState){
-                RenderCategory.Gui -> {
+                RenderCategory.StartUp -> {
                     window.quit()
+                }
+                RenderCategory.Gui -> {
+                    gameState = RenderCategory.StartUp
                 }
                 RenderCategory.FirstPerson -> {
                     exitToMenu()
@@ -507,8 +525,11 @@ class Scene(private val window: GameWindow) {
     }
 
     fun onMouseButton(button: Int, action: Int, mode: Int) {
-        if(action == 1 && gameState == RenderCategory.Gui){
-            mainMenu.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
+        if(action == 1){
+            if(gameState == RenderCategory.Gui)
+                mainMenu.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
+            if(gameState == RenderCategory.StartUp)
+                startUpMenu.globalClickEvent(button, action, Vector2f(mouseXPos, mouseYPos))
         }
 
         when(button){
@@ -562,6 +583,7 @@ class Scene(private val window: GameWindow) {
     fun cleanup() {
         mainMenu.cleanup()
         mainGui.cleanup()
+        startUpMenu.cleanup()
 
         guiRenderer.cleanup()
         mainShader.cleanup()

@@ -150,7 +150,6 @@ object ModelLoader {
 //default textures
         val ddata = BufferUtils.createByteBuffer(4)
         ddata.put(0.toByte()).put(0.toByte()).put(0.toByte()).put(0.toByte())
-        ddata.flip()
         for (i in model.textures.indices) {
             if (model.textures[i].isEmpty()) {
                 textures.add(Texture2D(ddata, 1, 1, true))
